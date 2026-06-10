@@ -15,6 +15,7 @@
 		0AAB4E979B19C18124EF9878 /* VoiceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87314EDCB1DB95132154D9EC /* VoiceConfig.swift */; };
 		0C3141C082E367B747A4ADD7 /* hangeul_hnc_hanja.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 324B49EBB8B079DDE7AEA954 /* hangeul_hnc_hanja.dict.yaml */; };
 		0D124B85B5B76F4CF379CFCB /* phrases.la_py_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 5D5348769E8C9534A567466C /* phrases.la_py_w.dict.yaml */; };
+		0D2349D392E9810868F5B87A /* SquirrelSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA144B208C55981607ED1526 /* SquirrelSettingsModel.swift */; };
 		11704504879C0222896ED489 /* zh-hans-t-essay-bgc.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6554432A81A34F5F38AA8F32 /* zh-hans-t-essay-bgc.gram */; };
 		120B422DA03653D2A5AE764C /* phrases.jp_hkkseg.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 614D49C488906EE5685928C9 /* phrases.jp_hkkseg.dict.yaml */; };
 		142B4F2CBFF5E49EDFCB9BCE /* latinin1.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 2207458AAD95A7D272D1359A /* latinin1.dict.yaml */; };
@@ -36,6 +37,7 @@
 		31DD407D924F5CE31BDF711D /* phrases.en_l_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */; };
 		35704CA58B5355AE5E88A905 /* lua_custom_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = C7B145C09EC7969C62BFB3C3 /* lua_custom_phrase.txt */; };
 		3620497F933F2007C79915D4 /* zh-hans-t-essay-bgw.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */; };
+		369B41E898A8377206E2FC91 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24754E5AA1D7AD205361FE0A /* GeneralSettingsView.swift */; };
 		3A58475CB9CEF4F969D8806D /* phrases.en_u_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */; };
 		3AB2427FBF0053210406992F /* essay-jp-onion.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 0A334EA39BDE90747673DFF9 /* essay-jp-onion.txt */; };
 		3CA845C6A6E093E119E54534 /* punct_mark.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 33FA475FB752159DB630BED8 /* punct_mark.txt */; };
@@ -164,6 +166,7 @@
 		B3EF08EA2F17125E00433A45 /* Rime.icon in Resources */ = {isa = PBXBuildFile; fileRef = B3EF08E92F17125E00433A45 /* Rime.icon */; };
 		B574414C84259C7F72797BBF /* back_mark_ocm.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 8AAE421E83035CCC9119B25B /* back_mark_ocm.json */; };
 		B946450E88EE2F7316135A2F /* cyrillic.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */; };
+		C2C8409B91EBBF45BEB22117 /* RimeCustomPatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959F4EAEA951C13952468A0D /* RimeCustomPatcher.swift */; };
 		CB234920BF034403F0D2FC10 /* ChatGPTBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */; };
 		CBF44FA792D89C9D48EAEB00 /* ocm_moedict_big5e_hkscs_jis.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */; };
 		CCE24EEFABE32AE24A71E3B7 /* back_mark_script.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 559044D7B1D50815DE77C7DB /* back_mark_script.txt */; };
@@ -276,6 +279,8 @@
 				441E638022B7E96F006DCCDD /* terra_pinyin.schema.yaml in Copy Shared Support Files */,
 441E638322B7E96F006DCCDD /* detenele.schema.yaml in Copy Shared Support Files */,
 441E638122B7E96F006DCCDD /* cangjie5.base.dict.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
@@ -406,6 +411,7 @@
 		1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_u_w.dict.yaml; path = data/onion/phrases.en_u_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		2207458AAD95A7D272D1359A /* latinin1.dict.yaml */ = {isa = PBXFileReference; name = latinin1.dict.yaml; path = data/onion/latinin1.dict.yaml; sourceTree = SOURCE_ROOT; };
 		2464427A85E5847B4865D753 /* allbpm.schema.yaml */ = {isa = PBXFileReference; name = allbpm.schema.yaml; path = data/onion/allbpm.schema.yaml; sourceTree = SOURCE_ROOT; };
+		24754E5AA1D7AD205361FE0A /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralSettingsView.swift; path = sources/Settings/GeneralSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		25FB476A920C7D979238BB71 /* element_bopomo.yaml */ = {isa = PBXFileReference; name = element_bopomo.yaml; path = data/onion/element_bopomo.yaml; sourceTree = SOURCE_ROOT; };
 		285042898B2CC74445C3373C /* ChatGPTLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatGPTLoginView.swift; path = sources/Voice/ChatGPTLoginView.swift; sourceTree = SOURCE_ROOT; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -521,6 +527,7 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = "<group>"; };
 		8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */ = {isa = PBXFileReference; name = easy_en_upper.schema.yaml; path = data/onion/easy_en_upper.schema.yaml; sourceTree = SOURCE_ROOT; };
 		92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.dict.yaml; path = data/onion/hangeul_hnc.dict.yaml; sourceTree = SOURCE_ROOT; };
+		959F4EAEA951C13952468A0D /* RimeCustomPatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RimeCustomPatcher.swift; path = sources/Settings/RimeCustomPatcher.swift; sourceTree = SOURCE_ROOT; };
 		99F24101930C39FED468124D /* GroqSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqSecrets.swift; path = sources/Voice/GroqSecrets.swift; sourceTree = SOURCE_ROOT; };
 		9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */ = {isa = PBXFileReference; name = latinin1.extended.dict.yaml; path = data/onion/latinin1.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
 		A3964EC69608F26FFDD3CBFA /* bpm_moedict_big5e_hkscs_jis.json */ = {isa = PBXFileReference; name = bpm_moedict_big5e_hkscs_jis.json; path = data/onion/opencc/bpm_moedict_big5e_hkscs_jis.json; sourceTree = SOURCE_ROOT; };
@@ -568,6 +575,7 @@
 		E5BA4185887BE4837A80EFC4 /* bopomo_onionplus_phrase.txt */ = {isa = PBXFileReference; name = bopomo_onionplus_phrase.txt; path = data/onion/bopomo_onionplus_phrase.txt; sourceTree = SOURCE_ROOT; };
 		E93074B60A5C264700470842 /* InputMethodKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InputMethodKit.framework; path = /System/Library/Frameworks/InputMethodKit.framework; sourceTree = "<absolute>"; };
 		E932433BAB077EE4A8B2101E /* punct_mark.json */ = {isa = PBXFileReference; name = punct_mark.json; path = data/onion/opencc/punct_mark.json; sourceTree = SOURCE_ROOT; };
+		EA144B208C55981607ED1526 /* SquirrelSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SquirrelSettingsModel.swift; path = sources/Settings/SquirrelSettingsModel.swift; sourceTree = SOURCE_ROOT; };
 		F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */ = {isa = PBXFileReference; name = cyrillic.dict.yaml; path = data/onion/cyrillic.dict.yaml; sourceTree = SOURCE_ROOT; };
 		F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceInputController.swift; path = sources/Voice/VoiceInputController.swift; sourceTree = SOURCE_ROOT; };
 		F30442019B33705CF5FF19C7 /* allbpm.dict.yaml */ = {isa = PBXFileReference; name = allbpm.dict.yaml; path = data/onion/allbpm.dict.yaml; sourceTree = SOURCE_ROOT; };
@@ -608,6 +616,7 @@
 				B35D2FE72BF00839009D156B /* BridgingFunctions.swift */,
 				B38E9B8F2BE9AE1E0036ABEF /* Squirrel-Bridging-Header.h */,
 				E0034254ADFF1B8A516E3FBD /* Voice */,
+				77DD4D4AA1EBCAFB62285271 /* Settings */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -827,6 +836,16 @@
 			name = SharedSupport;
 			sourceTree = "<group>";
 		};
+		77DD4D4AA1EBCAFB62285271 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				24754E5AA1D7AD205361FE0A /* GeneralSettingsView.swift */,
+				959F4EAEA951C13952468A0D /* RimeCustomPatcher.swift */,
+				EA144B208C55981607ED1526 /* SquirrelSettingsModel.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		7B5488A71D2DAC9D0056A1BE /* plum */ = {
 			isa = PBXGroup;
 			children = (
@@ -844,6 +863,8 @@
 				441E636522B7E90C006DCCDD /* terra_pinyin.schema.yaml */,
 441E638422B7E90C006DCCDD /* detenele.schema.yaml */,
 441E638222B7E90C006DCCDD /* cangjie5.base.dict.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
 				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
@@ -1001,6 +1022,9 @@
 				566440F186A6EFC0BFB168FB /* VoicePrompts.swift in Sources */,
 				94E8490FB3B0D81761AFC316 /* VoiceSettingsView.swift in Sources */,
 				5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */,
+				369B41E898A8377206E2FC91 /* GeneralSettingsView.swift in Sources */,
+				C2C8409B91EBBF45BEB22117 /* RimeCustomPatcher.swift in Sources */,
+				0D2349D392E9810868F5B87A /* SquirrelSettingsModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

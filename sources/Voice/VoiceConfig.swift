@@ -56,6 +56,7 @@ struct VoiceSettings {
   var customModifiers: UInt = NSEvent.ModifierFlags([.control, .option]).rawValue
   var transcribeLanguage: String = "zh"
   var transcribeModel: String = "whisper-large-v3-turbo"
+  var transcribePrompt: String = VoicePrompts.transcribeZhTW
   var cleanupEnabled: Bool = true
   var cleanupModel: String = "llama-3.3-70b-versatile"
   var cleanupChatGPTModel: String = "gpt-5-5"
@@ -80,6 +81,7 @@ enum VoiceConfig {
     case customModifiers = "voice.customModifiers"
     case transcribeLanguage = "voice.transcribeLanguage"
     case transcribeModel = "voice.transcribeModel"
+    case transcribePrompt = "voice.transcribePrompt"
     case cleanupEnabled = "voice.cleanupEnabled"
     case cleanupModel = "voice.cleanupModel"
     case cleanupChatGPTModel = "voice.cleanupChatGPTModel"
@@ -117,6 +119,7 @@ enum VoiceConfig {
     s.customKeyCode = int(.customKeyCode, "voice_input/hotkey/key_code", s.customKeyCode)
     s.transcribeLanguage = str(.transcribeLanguage, "voice_input/transcribe/language", s.transcribeLanguage)
     s.transcribeModel = str(.transcribeModel, "voice_input/transcribe/model", s.transcribeModel)
+    s.transcribePrompt = str(.transcribePrompt, "voice_input/transcribe/prompt", s.transcribePrompt)
     s.cleanupEnabled = bool(.cleanupEnabled, "voice_input/cleanup/enabled", s.cleanupEnabled)
     s.cleanupModel = str(.cleanupModel, "voice_input/cleanup/model", s.cleanupModel)
     s.cleanupChatGPTModel = str(.cleanupChatGPTModel, "voice_input/cleanup/chatgpt_model", s.cleanupChatGPTModel)

@@ -450,8 +450,9 @@ voice_input:
     # key_code: 49                    # macOS keycode（49 = Space）
     # modifiers: control+option
   transcribe:
-    language: zh                      # Whisper 語言碼
+    language: zh                      # Whisper 語言碼（zh 無繁簡之分，靠 prompt 引導正體）
     model: whisper-large-v3-turbo
+    # prompt: 自訂 Whisper initial prompt；預設為台灣正體引導句（見 VoicePrompts.transcribeZhTW）
   cleanup:
     enabled: true
     model: llama-3.3-70b-versatile    # Groq cleanup 模型

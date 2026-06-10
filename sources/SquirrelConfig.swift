@@ -99,6 +99,21 @@ final class SquirrelConfig {
     return baseConfig?.getColor(option, inSpace: colorSpace)
   }
 
+  /// Keys of a config map node (e.g. "preset_color_schemes" → scheme ids).
+  func getMapKeys(_ path: String) -> [String] {
+    var keys: [String] = []
+    guard isOpen else { return keys }
+    var iterator = RimeConfigIterator()
+    guard rimeAPI.config_begin_map(&iterator, &config, path) else { return keys }
+    while rimeAPI.config_next(&iterator) {
+      if let key = iterator.key {
+        keys.append(String(cString: key))
+      }
+    }
+    rimeAPI.config_end(&iterator)
+    return keys
+  }
+
   func getAppOptions(_ appName: String) -> [String: Bool] {
     let rootKey = "app_options/\(appName)"
     var appOptions = [String: Bool]()

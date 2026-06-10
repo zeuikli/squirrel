@@ -14,7 +14,9 @@ import Foundation
 protocol SpeechProvider: AnyObject {
   /// Transcribe the audio file. Returns the raw transcript text.
   /// `model` is the Whisper model name (ignored by backends with a fixed model).
-  func transcribe(audioURL: URL, language: String, model: String) async throws -> String
+  /// `prompt` is the Whisper initial prompt steering style/script (e.g.
+  /// Traditional Chinese); backends without prompt support ignore it.
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String
 
   /// Run the cleanup LLM pass over `raw` using `prompt`. Returns cleaned text.
   func cleanup(raw: String, prompt: String, model: String, language: String) async throws -> String

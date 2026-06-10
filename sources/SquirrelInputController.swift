@@ -292,6 +292,8 @@ final class SquirrelInputController: IMKInputController {
     logDir.target = self
     let setting = NSMenuItem(title: NSLocalizedString("Settings...", comment: "Menu item"), action: #selector(openRimeFolder), keyEquivalent: "")
     setting.target = self
+    let preferences = NSMenuItem(title: NSLocalizedString("Preferences...", comment: "Menu item"), action: #selector(openPreferences), keyEquivalent: "")
+    preferences.target = self
     let voiceSetting = NSMenuItem(title: NSLocalizedString("Voice Input Settings...", comment: "Menu item"), action: #selector(openVoiceSettings), keyEquivalent: "")
     voiceSetting.target = self
     let wiki = NSMenuItem(title: NSLocalizedString("Rime Wiki...", comment: "Menu item"), action: #selector(openWiki), keyEquivalent: "")
@@ -304,6 +306,7 @@ final class SquirrelInputController: IMKInputController {
     menu.addItem(sync)
     menu.addItem(logDir)
     menu.addItem(setting)
+    menu.addItem(preferences)
     menu.addItem(voiceSetting)
     menu.addItem(wiki)
     menu.addItem(update)
@@ -329,6 +332,10 @@ final class SquirrelInputController: IMKInputController {
 
   @objc func openVoiceSettings() {
     NSApp.squirrelAppDelegate.openVoiceSettings()
+  }
+
+  @objc func openPreferences() {
+    NSApp.squirrelAppDelegate.openPreferences(tab: .general)
   }
 
   @objc func checkForUpdates() {

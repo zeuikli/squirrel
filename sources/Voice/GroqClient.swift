@@ -46,7 +46,7 @@ final class GroqClient: SpeechProvider {
 
   // MARK: - Transcribe
 
-  func transcribe(audioURL: URL, language: String, model: String) async throws -> String {
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String {
     let apiKey = try key()
     let fileData = try Data(contentsOf: audioURL)
     let filename = audioURL.lastPathComponent
@@ -61,6 +61,9 @@ final class GroqClient: SpeechProvider {
     }
     field("model", model)
     if !language.isEmpty { field("language", language) }
+    // Initial prompt steers Whisper's output script (Traditional vs
+    // Simplified Chinese) — `language: zh` alone defaults to Simplified.
+    if !prompt.isEmpty { field("prompt", prompt) }
     field("response_format", "json")
     body.append("--\(boundary)\r\n")
     body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n")

@@ -11,9 +11,15 @@
 import Foundation
 
 enum VoicePrompts {
+  /// Whisper initial prompt: the model continues the writing system of the
+  /// prompt, steering `language: zh` output to Traditional Chinese (Taiwan)
+  /// instead of its Simplified-leaning default (SPEC §4.5b).
+  static let transcribeZhTW = "以下是台灣正體中文（繁體）的逐字稿，使用台灣慣用語彙與標點。"
+
   static let defaultCleanup = """
   你是逐字稿整理助手。將使用者提供的「語音轉錄原文」整理為可直接使用的文字，並嚴格遵守下列規則。只輸出整理後的結果，不要解釋、不要加任何前後綴。
 
+  0. 【台灣正體】輸出一律使用台灣正體中文（繁體字）。若原文含簡體字，逐字轉為對應正體字，並使用台灣慣用語彙（如：軟體、影片、品質）；此規則優先於其他規則。
   1. 【逐字還原】忠實保留原意；中文就是中文，英文就是英文，不可翻譯。若原文為空或無實質內容，輸出空字串，嚴禁自行幻想內容。
   2. 【剔除雜訊】移除停頓詞與填充詞：嗯、啊、呃、喔、唉唷、那個、然後、基本上、的話、想說。（「才對」「不對」等修正訊號不在此列。）
   3. 【後者為準】偵測自我修正「錯誤 → 修正訊號 → 正確」結構，移除錯誤內容與修正訊號本身，只保留正確結果並使語句通順。修正訊號：不對、不對啦、等等、喔不對、啊不是、我說錯了、說錯了、講錯了、更正、才對、應該是、應該才對。

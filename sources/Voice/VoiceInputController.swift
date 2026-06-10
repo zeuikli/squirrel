@@ -219,7 +219,8 @@ final class VoiceInputController {
       status = .transcribing
       let raw = try await provider.transcribe(audioURL: url,
                                               language: settings.transcribeLanguage,
-                                              model: settings.transcribeModel)
+                                              model: settings.transcribeModel,
+                                              prompt: settings.transcribePrompt)
       guard !raw.isEmpty else { status = .ready; return }
 
       var final = raw

@@ -126,8 +126,10 @@ final class ChatGPTBridge: NSObject, WKNavigationDelegate, SpeechProvider {
   // MARK: - Transcribe
 
   /// POST audio to /backend-api/transcribe. Returns the raw transcript text.
-  /// `model` is unused — ChatGPT picks its own transcription model.
-  func transcribe(audioURL: URL, language: String, model: String) async throws -> String {
+  /// `model` is unused — ChatGPT picks its own transcription model. `prompt`
+  /// is unsupported by this endpoint; Traditional Chinese is enforced by the
+  /// cleanup pass instead (SPEC §4.5b).
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String {
     guard isReady else { throw BridgeError.notReady }
     let data = try Data(contentsOf: audioURL)
     let b64 = data.base64EncodedString()

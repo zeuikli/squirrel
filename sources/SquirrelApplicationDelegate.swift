@@ -214,12 +214,16 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   }
 
   func openVoiceSettings() {
+    openPreferences(tab: .voice)
+  }
+
+  func openPreferences(tab: SettingsTab = .general) {
     Task { @MainActor [weak self] in
       guard let self = self else { return }
       if self.voiceSettingsWindow == nil {
         self.voiceSettingsWindow = VoiceSettingsWindowController()
       }
-      self.voiceSettingsWindow?.show()
+      self.voiceSettingsWindow?.show(tab: tab)
     }
   }
 
