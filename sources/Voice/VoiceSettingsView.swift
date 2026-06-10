@@ -27,6 +27,7 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var chatgptLoginStatus: String = ""
   @Published var micAuthorized = PermissionsManager.micAuthorized
   @Published var accessibilityTrusted = PermissionsManager.accessibilityTrusted
+  @Published var inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
 
   private var permTimer: Timer?
 
@@ -54,6 +55,29 @@ final class VoiceSettingsModel: ObservableObject {
   func refreshPermissions() {
     micAuthorized = PermissionsManager.micAuthorized
     accessibilityTrusted = PermissionsManager.accessibilityTrusted
+    inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
+  }
+
+  /// Trigger the system Input Monitoring prompt; if it doesn't appear
+  /// (already denied), fall back to System Settings.
+  func requestInputMonitoring() {
+    if !PermissionsManager.requestInputMonitoring() {
+      PermissionsManager.openInputMonitoringSettings()
+    }
+    refreshPermissions()
+  }
+
+  /// Trigger the system mic prompt while it is still available
+  /// (.notDetermined); after a denial only System Settings can re-enable.
+  func requestMicAccess() {
+    if PermissionsManager.micUndetermined {
+      Task { @MainActor [weak self] in
+        _ = await PermissionsManager.requestMic()
+        self?.refreshPermissions()
+      }
+    } else {
+      PermissionsManager.openMicSettings()
+    }
   }
 
   func save() {
@@ -122,18 +146,40 @@ struct VoiceSettingsView: View {
           Text(model.accessibilityTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
             .foregroundColor(model.accessibilityTrusted ? .green : .red)
         }
-        if !model.micAuthorized || !model.accessibilityTrusted {
+        LabeledContent(NSLocalizedString("Input Monitoring (key events)", comment: "Voice settings")) {
+          Text(model.inputMonitoringTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
+            .foregroundColor(model.inputMonitoringTrusted ? .green : .red)
+        }
+        if !model.micAuthorized {
           HStack {
-            Text(NSLocalizedString("Voice input cannot work without these. Re-grant after every reinstall (ad-hoc build).", comment: "Voice settings"))
+            Text(NSLocalizedString("Microphone access is required for recording.", comment: "Voice settings"))
+              .font(.footnote)
+              .foregroundColor(.orange)
+            Spacer()
+            Button(NSLocalizedString("Grant microphone…", comment: "Voice settings")) {
+              model.requestMicAccess()
+            }
+          }
+        }
+        if !model.accessibilityTrusted {
+          HStack {
+            Text(NSLocalizedString("Accessibility is required for the push-to-talk key.", comment: "Voice settings"))
               .font(.footnote)
               .foregroundColor(.orange)
             Spacer()
             Button(NSLocalizedString("Open System Settings", comment: "Voice settings")) {
-              if !model.accessibilityTrusted {
-                PermissionsManager.openAccessibilitySettings()
-              } else {
-                PermissionsManager.openMicSettings()
-              }
+              PermissionsManager.openAccessibilitySettings()
+            }
+          }
+        }
+        if !model.inputMonitoringTrusted {
+          HStack {
+            Text(NSLocalizedString("Input Monitoring is required to receive the key events.", comment: "Voice settings"))
+              .font(.footnote)
+              .foregroundColor(.orange)
+            Spacer()
+            Button(NSLocalizedString("Grant input monitoring…", comment: "Voice settings")) {
+              model.requestInputMonitoring()
             }
           }
         }

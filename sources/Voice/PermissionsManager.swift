@@ -21,6 +21,12 @@ enum PermissionsManager {
     AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
   }
 
+  /// True while the user has never been asked — the system prompt can still
+  /// be triggered by `requestMic()`. After a denial only System Settings helps.
+  static var micUndetermined: Bool {
+    AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined
+  }
+
   static func requestMic() async -> Bool {
     if micAuthorized { return true }
     return await AVCaptureDevice.requestAccess(for: .audio)
