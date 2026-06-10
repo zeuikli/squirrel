@@ -435,3 +435,28 @@ app_options:
   ru.keepcoder.Telegram:
     # 規避 https://github.com/rime/squirrel/issues/475
     inline: true
+
+# 語音輸入（本客製版新增，SPEC §7）
+# 按住熱鍵講話、放開上字；文字走 IMK commit，不經剪貼簿。
+voice_input:
+  enabled: true
+  backend: groq                       # groq | chatgpt
+  chatgpt:
+    cookies_path: ""                  # backend=chatgpt 時必填（Cookie-Editor 匯出的 cookies.json）
+  hotkey:
+    mode: hold_modifier               # hold_modifier | custom_combo
+    modifier: right_option            # right_option | right_command | right_control | fn
+    # custom_combo 模式時：
+    # key_code: 49                    # macOS keycode（49 = Space）
+    # modifiers: control+option
+  transcribe:
+    language: zh                      # Whisper 語言碼
+    model: whisper-large-v3-turbo
+  cleanup:
+    enabled: true
+    model: llama-3.3-70b-versatile    # Groq cleanup 模型
+    # chatgpt_model: gpt-5-5          # ChatGPT 後端 cleanup 模型
+    language: zh-TW
+  max_recording_seconds: 60
+  play_sounds: true
+  no_active_client: clipboard         # 無文字框焦點時：clipboard | discard

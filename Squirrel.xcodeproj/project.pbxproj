@@ -7,9 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		037A47128059D7A8EE85D7D7 /* terra_pinyin_onion.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 00994244BA22936EB3062569 /* terra_pinyin_onion.dict.yaml */; };
+		07714BAFBA16B7A3AC30FD41 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38142BBB284A4B05834FD90 /* HotkeyManager.swift */; };
+		07BC4C94AA20A4A0230969DE /* jpnin1.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B9354E9BBF8218938968704D /* jpnin1.schema.yaml */; };
+		09B2476C80F24B3C2453E5EC /* greek.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = C44F4DD593CFD26ED5953F30 /* greek.schema.yaml */; };
+		09E741CB930715BC42AD8B64 /* cyrillic.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D1654A9AB87982DD0FF8D853 /* cyrillic.schema.yaml */; };
+		0AAB4E979B19C18124EF9878 /* VoiceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87314EDCB1DB95132154D9EC /* VoiceConfig.swift */; };
+		0C3141C082E367B747A4ADD7 /* hangeul_hnc_hanja.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 324B49EBB8B079DDE7AEA954 /* hangeul_hnc_hanja.dict.yaml */; };
+		0D124B85B5B76F4CF379CFCB /* phrases.la_py_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 5D5348769E8C9534A567466C /* phrases.la_py_w.dict.yaml */; };
+		11704504879C0222896ED489 /* zh-hans-t-essay-bgc.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6554432A81A34F5F38AA8F32 /* zh-hans-t-essay-bgc.gram */; };
+		120B422DA03653D2A5AE764C /* phrases.jp_hkkseg.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 614D49C488906EE5685928C9 /* phrases.jp_hkkseg.dict.yaml */; };
+		142B4F2CBFF5E49EDFCB9BCE /* latinin1.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 2207458AAD95A7D272D1359A /* latinin1.dict.yaml */; };
+		158545E4AF8C74FF50E21533 /* punct_mark.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = E932433BAB077EE4A8B2101E /* punct_mark.json */; };
+		17F044C2A7BFB2FA74AB1C64 /* back_mark_series.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = AD9E410392CF62B9714894AA /* back_mark_series.json */; };
+		19674064AE1C36C07E4D8FB6 /* hangeul_hnc.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */; };
+		19E540B6BA73E1F141E27BD5 /* space.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 63154CCFA71DFC2599DB836B /* space.dict.yaml */; };
+		1C044ADF94DDC01592C0FFCE /* back_mark_ocm.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 373549A1BFECACD0E6D3E751 /* back_mark_ocm.txt */; };
+		1DA84EE880EA2B9B34C86EEC /* phrases.gr_all.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = CD07489A8FC365EA043EF4EE /* phrases.gr_all.dict.yaml */; };
+		1FE14F2D93B30F87258481F7 /* GroqClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814D46AEAA72085E33DA5545 /* GroqClient.swift */; };
+		24BA4AC981B6A881996FEECA /* easy_en_lower.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = ACCA49639C6897AC9AF4057B /* easy_en_lower.dict.yaml */; };
+		29A44ACF8A4E4EABD0628616 /* element_bopomo.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 25FB476A920C7D979238BB71 /* element_bopomo.yaml */; };
+		2C454321A7635788AE1EED2F /* symbols_bpmf.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D30646C695AC9335801976C9 /* symbols_bpmf.dict.yaml */; };
+		2C6B4B9B81F69A21BB43024C /* punct_mark_plus.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 060E4B0B949D1B9117A5A1D6 /* punct_mark_plus.json */; };
 		2C6B9F9D2BCD086700E327DF /* librime-lua.dylib in Copy Rime plugins */ = {isa = PBXBuildFile; fileRef = 2C6B9F9A2BCD086700E327DF /* librime-lua.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2C6B9F9E2BCD086700E327DF /* librime-octagram.dylib in Copy Rime plugins */ = {isa = PBXBuildFile; fileRef = 2C6B9F9B2BCD086700E327DF /* librime-octagram.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2C6B9F9F2BCD086700E327DF /* librime-predict.dylib in Copy Rime plugins */ = {isa = PBXBuildFile; fileRef = 2C6B9F9C2BCD086700E327DF /* librime-predict.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2F094E7FA80138EAD36A72BE /* ChatGPTLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285042898B2CC74445C3373C /* ChatGPTLoginView.swift */; };
+		31DD407D924F5CE31BDF711D /* phrases.en_l_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */; };
+		35704CA58B5355AE5E88A905 /* lua_custom_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = C7B145C09EC7969C62BFB3C3 /* lua_custom_phrase.txt */; };
+		3620497F933F2007C79915D4 /* zh-hans-t-essay-bgw.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */; };
+		3A58475CB9CEF4F969D8806D /* phrases.en_u_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */; };
+		3AB2427FBF0053210406992F /* essay-jp-onion.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 0A334EA39BDE90747673DFF9 /* essay-jp-onion.txt */; };
+		3CA845C6A6E093E119E54534 /* punct_mark.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 33FA475FB752159DB630BED8 /* punct_mark.txt */; };
+		3F20446D983FD46BFEF28E98 /* back_mark_table.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 0F5546AE8B7D4E5CA39E57F8 /* back_mark_table.txt */; };
+		41534EAE83B9411A0FAF1704 /* hangeul_hnc.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = A7E84D2AA8C9195D91E092C2 /* hangeul_hnc.schema.yaml */; };
+		42254DA2BF42DC8883C9580D /* GroqSecrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F24101930C39FED468124D /* GroqSecrets.swift */; };
 		441E637722B7E96F006DCCDD /* bopomofo_express.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636C22B7E90D006DCCDD /* bopomofo_express.schema.yaml */; };
 		441E637822B7E96F006DCCDD /* bopomofo_tw.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636722B7E90D006DCCDD /* bopomofo_tw.schema.yaml */; };
 		441E637922B7E96F006DCCDD /* bopomofo.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636822B7E90D006DCCDD /* bopomofo.schema.yaml */; };
@@ -20,8 +52,12 @@
 		441E637E22B7E96F006DCCDD /* stroke.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636B22B7E90D006DCCDD /* stroke.schema.yaml */; };
 		441E637F22B7E96F006DCCDD /* terra_pinyin.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636422B7E90C006DCCDD /* terra_pinyin.dict.yaml */; };
 		441E638022B7E96F006DCCDD /* terra_pinyin.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E636522B7E90C006DCCDD /* terra_pinyin.schema.yaml */; };
-		441E638122B7E96F006DCCDD /* detenele.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638222B7E90C006DCCDD /* detenele.schema.yaml */; };
+441E638322B7E96F006DCCDD /* detenele.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638422B7E90C006DCCDD /* detenele.schema.yaml */; };
+441E638122B7E96F006DCCDD /* cangjie5.base.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638222B7E90C006DCCDD /* cangjie5.base.dict.yaml */; };
 		441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */; };
+		441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */; };
+		441E638522B7E96F006DCCDD /* cangjie5.stem.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638622B7E90C006DCCDD /* cangjie5.stem.dict.yaml */; };
+		441E638722B7E96F006DCCDD /* cangjie5_char.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 441E638822B7E90C006DCCDD /* cangjie5_char.dict.yaml */; };
 		442B5B881570C37200370DEA /* squirrel.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 442B5B871570C37200370DEA /* squirrel.yaml */; };
 		442C64921F7A410A0027EFBE /* rime-install in CopyFiles */ = {isa = PBXBuildFile; fileRef = 442C64901F7A404A0027EFBE /* rime-install */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		446C01D71F767BD400A6C23E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 446C01D61F767BD400A6C23E /* Assets.xcassets */; };
@@ -29,6 +65,8 @@
 		447765CA25C30E97002415AF /* Sparkle.framework in Copy 3rd-party Frameworks */ = {isa = PBXBuildFile; fileRef = 447765C725C30E6B002415AF /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		448363DD25BDBBED0022C7BA /* pinyin.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 448363D925BDBBBF0022C7BA /* pinyin.yaml */; };
 		448363DE25BDBBED0022C7BA /* zhuyin.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 448363DA25BDBBBF0022C7BA /* zhuyin.yaml */; };
+		44844119BED88B0B1FC3B030 /* back_mark.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = AF14400C81E6D43F4A7F02BC /* back_mark.json */; };
+		4494494E9D2E0912F29C0C90 /* fullshape.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 2E9C4CC4A29A2B07C9B42506 /* fullshape.schema.yaml */; };
 		44986A95184B421700B3278D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44986A93184B421700B3278D /* LICENSE.txt */; };
 		44986A96184B421700B3278D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 44986A94184B421700B3278D /* README.md */; };
 		44AEBC7521F569FD00344375 /* key_bindings.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 44AEBC7221F569CF00344375 /* key_bindings.yaml */; };
@@ -36,6 +74,22 @@
 		44CD640C15E2646B0021234E /* librime.1.dylib in Copy 3rd-party Frameworks */ = {isa = PBXBuildFile; fileRef = 44CD640915E2633D0021234E /* librime.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44E21A9016A653E700C2B08F /* rime_deployer in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8E16A653E700C2B08F /* rime_deployer */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44E21A9116A653E700C2B08F /* rime_dict_manager in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8F16A653E700C2B08F /* rime_dict_manager */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		45634F5BA40287157BFFD18C /* emoji_t.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 58B54AB38D230CD130E62745 /* emoji_t.json */; };
+		565C4B5394E9524A297B6468 /* space_f.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 5043492B94B3EE23C582B878 /* space_f.dict.yaml */; };
+		566440F186A6EFC0BFB168FB /* VoicePrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303B470AB82F986C9F22F58E /* VoicePrompts.swift */; };
+		56C44AA98619544B89E34CDE /* lua in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = FD6E4F5D90C9E2198D00BD9E /* lua */; };
+		593A46A2815E9AF41D073583 /* bopomo_onionplus.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 07494616A4516185FFDC6A20 /* bopomo_onionplus.extended.dict.yaml */; };
+		598B438DB0205705573C55CB /* fullshape.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7F294E53959DB14EF9F06A4B /* fullshape.dict.yaml */; };
+		59C143D38E66EFA8EFDFFD3B /* latinin1.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 87144737B2E7B777734BDE29 /* latinin1.schema.yaml */; };
+		5AA44A2EAA736E7DDE2308EB /* terra_pinyin_onion_add.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7503402BA5A71B14D31CF8F5 /* terra_pinyin_onion_add.dict.yaml */; };
+		5D9641198DB25E78272C5435 /* easy_en_upper.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */; };
+		5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */; };
+		67444D5DBD084F458D9FC30D /* essay-kr-hanja.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */; };
+		6BE74EECA22641841A5784CA /* phrases.fs_all.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 11264E6AA82C788740C19474 /* phrases.fs_all.dict.yaml */; };
+		6CE94084A4F8705DC3C5848F /* easy_en_lcomment.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B39E4F14B17E47B4DDAA510B /* easy_en_lcomment.dict.yaml */; };
+		6DCA4616B04991A975500544 /* cyrillic.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6B1C441BA4A6A7C4A3E775FA /* cyrillic.extended.dict.yaml */; };
+		6E32463F84A91DCE2443DE8B /* easy_en_lower.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 8A25459FA2F2896E0014E98F /* easy_en_lower.schema.yaml */; };
+		73EB45C982818B011CB1D531 /* allbpm.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F30442019B33705CF5FF19C7 /* allbpm.dict.yaml */; };
 		77AA68142588916F00A592E2 /* hk2s.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67E22588916300A592E2 /* hk2s.json */; };
 		77AA68152588916F00A592E2 /* HKVariants.ocd2 in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67DC2588916300A592E2 /* HKVariants.ocd2 */; };
 		77AA68162588916F00A592E2 /* HKVariantsRev.ocd2 in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67E02588916300A592E2 /* HKVariantsRev.ocd2 */; };
@@ -64,6 +118,7 @@
 		77AA682D2588916F00A592E2 /* TWVariants.ocd2 in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67F12588916300A592E2 /* TWVariants.ocd2 */; };
 		77AA682E2588916F00A592E2 /* TWVariantsRev.ocd2 in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67F42588916400A592E2 /* TWVariantsRev.ocd2 */; };
 		77AA682F2588916F00A592E2 /* TWVariantsRevPhrases.ocd2 in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 77AA67F22588916300A592E2 /* TWVariantsRevPhrases.ocd2 */; };
+		798048F59AF1211C423A7F08 /* default.custom.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = BDD74DBEB1B10C376368DD68 /* default.custom.yaml */; };
 		7B5488AF1D2DACDF0056A1BE /* default.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B5488211D2DAAD10056A1BE /* default.yaml */; };
 		7B5488B71D2DACDF0056A1BE /* essay.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B5488291D2DAAD10056A1BE /* essay.txt */; };
 		7B5488BC1D2DACDF0056A1BE /* luna_pinyin_fluency.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B54882E1D2DAAD10056A1BE /* luna_pinyin_fluency.schema.yaml */; };
@@ -73,6 +128,26 @@
 		7B5488C01D2DACDF0056A1BE /* luna_pinyin.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B5488321D2DAAD10056A1BE /* luna_pinyin.schema.yaml */; };
 		7B5488C11D2DACDF0056A1BE /* luna_quanpin.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B5488331D2DAAD10056A1BE /* luna_quanpin.schema.yaml */; };
 		7B5488C91D2DACDF0056A1BE /* symbols.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B54883B1D2DAAD10056A1BE /* symbols.yaml */; };
+		7F0F448FB0F226275DC30A88 /* KeyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0645189CD3C91F95F26EDC /* KeyFormatter.swift */; };
+		849041B8B7834B8219223C99 /* ocm_moedict_big5e_hkscs_jis.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 673948AE96CEF706DB6855AE /* ocm_moedict_big5e_hkscs_jis.txt */; };
+		85ED425AA9AC6180B6D649D0 /* rime.lua in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 07B34322B4432235C37AFD19 /* rime.lua */; };
+		86F64347AEFAC7DADCEE20F3 /* allbpm.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 2464427A85E5847B4865D753 /* allbpm.schema.yaml */; };
+		876C46A6B1F4F2F11BBD5BD2 /* jpnin1.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = AF2A4518B53B05669BE30D43 /* jpnin1.extended.dict.yaml */; };
+		8AF64982AFC17600E66297DD /* SpeechProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B874FEDA5090DFC2A562CF4 /* SpeechProvider.swift */; };
+		8CDB4B7DADFA650F0610034C /* phrases.cyr_all.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 3F96405BBE6C35069B1089BE /* phrases.cyr_all.dict.yaml */; };
+		91994F8FB6D88CF6106F14C1 /* bpm_moedict_big5e_hkscs_jis.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = A3964EC69608F26FFDD3CBFA /* bpm_moedict_big5e_hkscs_jis.json */; };
+		94E8490FB3B0D81761AFC316 /* VoiceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A714AD6BABCCC27014D35A1 /* VoiceSettingsView.swift */; };
+		950C43A9A2C11185D32F5D0A /* mixin_bpmf.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = E5114D479C7E7653FA5116F1 /* mixin_bpmf.dict.yaml */; };
+		95D449F184030E050D02B162 /* hangeul_hnc.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 1BC345A196DB41355745B634 /* hangeul_hnc.extended.dict.yaml */; };
+		9C654EFDB7A30BB5EABE5C82 /* CookieLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC45999EE228E7D01D3CED /* CookieLoader.swift */; };
+		9D2D4FABAF4F1A9124085899 /* phrases.la_eu_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B7E341A3BB38D9E891778E69 /* phrases.la_eu_w.dict.yaml */; };
+		9D564A5ABB7B5744DC7A24A9 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2874CC49287AE2D21359496 /* PermissionsManager.swift */; };
+		9E9B4180A4969E0CF25293A8 /* latinin1.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */; };
+		9EC645DB8C12AE7876DAA4B4 /* bpm_moedict_big5e_hkscs_jis.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = AE7948599E554CAB44A88BB8 /* bpm_moedict_big5e_hkscs_jis.txt */; };
+		A1D84B7E82850053209EB106 /* easy_en_upper.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */; };
+		A2764CD597DB8165711EA744 /* zh-hant-t-essay-bgc.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 17A742DA9EDC412FD1B648B8 /* zh-hant-t-essay-bgc.gram */; };
+		A3904B21816D7C570A0F2668 /* phrases.jp_hk_more.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7FEB4A4DA1355ABAF7EC46AE /* phrases.jp_hk_more.dict.yaml */; };
+		A6D1492095E78E8D3E072FE4 /* grammar.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 167B48688DF450DF3A24E2F2 /* grammar.yaml */; };
 		B3216E5C2BF438F800E292D2 /* rime.pdf in Resources */ = {isa = PBXBuildFile; fileRef = B3216E5B2BF438F800E292D2 /* rime.pdf */; };
 		B35D2FE82BF00839009D156B /* BridgingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D2FE72BF00839009D156B /* BridgingFunctions.swift */; };
 		B38E9B912BE9AE1E0036ABEF /* SquirrelApplicationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38E9B902BE9AE1E0036ABEF /* SquirrelApplicationDelegate.swift */; };
@@ -87,8 +162,29 @@
 		B39771312BEEE4540093A49B /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B39771302BEEE4540093A49B /* InfoPlist.xcstrings */; };
 		B39771332BEEE4540093A49B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B39771322BEEE4540093A49B /* Localizable.xcstrings */; };
 		B3EF08EA2F17125E00433A45 /* Rime.icon in Resources */ = {isa = PBXBuildFile; fileRef = B3EF08E92F17125E00433A45 /* Rime.icon */; };
+		B574414C84259C7F72797BBF /* back_mark_ocm.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 8AAE421E83035CCC9119B25B /* back_mark_ocm.json */; };
+		B946450E88EE2F7316135A2F /* cyrillic.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */; };
+		CB234920BF034403F0D2FC10 /* ChatGPTBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */; };
+		CBF44FA792D89C9D48EAEB00 /* ocm_moedict_big5e_hkscs_jis.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */; };
+		CCE24EEFABE32AE24A71E3B7 /* back_mark_script.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 559044D7B1D50815DE77C7DB /* back_mark_script.txt */; };
+		D15744898F6F7D6DB57455D2 /* VoiceInputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */; };
 		D26434552706A15100857391 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26434542706A15100857391 /* QuartzCore.framework */; };
+		D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */; };
+		DB284708819F2FC96326E52A /* jpnin1.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D18D4EBCBB6D311D9F9C948B /* jpnin1.dict.yaml */; };
+		E2114A0BA0CEF8F924D1764E /* symbols_bpmf.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7BC648FFB7C7C1A802A01CCB /* symbols_bpmf.schema.yaml */; };
+		E2CA4CAF92FAB6A92581C41A /* greek.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 348D433881EDDE2C3ED0946D /* greek.extended.dict.yaml */; };
+		E42C44FA8E0DFFC59FEA3153 /* essay-zh-hant-mc.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F6034511AC99755906810455 /* essay-zh-hant-mc.txt */; };
+		E71D4CA2A982D320C12B8658 /* punct_mark_plus.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */; };
+		E7374B29B1EB683FDD4C9016 /* greek.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D41E4BC7AF1631302FA149BB /* greek.dict.yaml */; };
+		E770475DA5A1FF7A227E002F /* zh-hant-t-essay-bgw.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = E5994ED79A8A064CFFCDBA2C /* zh-hant-t-essay-bgw.gram */; };
+		E8F64E48B6A6333DC430EDBA /* emoji_t.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = A44C498D8B281C3B91506AF0 /* emoji_t.txt */; };
 		E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E93074B60A5C264700470842 /* InputMethodKit.framework */; };
+		E9A3450FBB4E58423014A245 /* fullshape.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B2CF48CF841BCEA0EFB24295 /* fullshape.extended.dict.yaml */; };
+		EA50498D84D029322A385C1B /* bopomo_onionplus.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 4388456CAAB774A7F5D803F6 /* bopomo_onionplus.schema.yaml */; };
+		EABB44D9AB0900C7A9B307E5 /* phrases.chtp.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 655E4DCEB6994759F7E19E5D /* phrases.chtp.dict.yaml */; };
+		EBE2447FB672574CC89BECA2 /* phrases.en_o_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6B174F359C9FD24A89E2A85C /* phrases.en_o_w.dict.yaml */; };
+		F1F84AECBDF03C01799E5387 /* bopomo_onionplus_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = E5BA4185887BE4837A80EFC4 /* bopomo_onionplus_phrase.txt */; };
+		F26E4C6E8DFA4487A656189F /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C6469BAF72257732722F35 /* AudioRecorder.swift */; };
 		F45E005F2B8CA81C00179B75 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45E005E2B8CA81C00179B75 /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
@@ -140,6 +236,22 @@
 				77AA682D2588916F00A592E2 /* TWVariants.ocd2 in Copy opencc Files */,
 				77AA682E2588916F00A592E2 /* TWVariantsRev.ocd2 in Copy opencc Files */,
 				77AA682F2588916F00A592E2 /* TWVariantsRevPhrases.ocd2 in Copy opencc Files */,
+				44844119BED88B0B1FC3B030 /* back_mark.json in Copy opencc Files */,
+				B574414C84259C7F72797BBF /* back_mark_ocm.json in Copy opencc Files */,
+				1C044ADF94DDC01592C0FFCE /* back_mark_ocm.txt in Copy opencc Files */,
+				CCE24EEFABE32AE24A71E3B7 /* back_mark_script.txt in Copy opencc Files */,
+				17F044C2A7BFB2FA74AB1C64 /* back_mark_series.json in Copy opencc Files */,
+				3F20446D983FD46BFEF28E98 /* back_mark_table.txt in Copy opencc Files */,
+				91994F8FB6D88CF6106F14C1 /* bpm_moedict_big5e_hkscs_jis.json in Copy opencc Files */,
+				9EC645DB8C12AE7876DAA4B4 /* bpm_moedict_big5e_hkscs_jis.txt in Copy opencc Files */,
+				45634F5BA40287157BFFD18C /* emoji_t.json in Copy opencc Files */,
+				E8F64E48B6A6333DC430EDBA /* emoji_t.txt in Copy opencc Files */,
+				CBF44FA792D89C9D48EAEB00 /* ocm_moedict_big5e_hkscs_jis.json in Copy opencc Files */,
+				849041B8B7834B8219223C99 /* ocm_moedict_big5e_hkscs_jis.txt in Copy opencc Files */,
+				158545E4AF8C74FF50E21533 /* punct_mark.json in Copy opencc Files */,
+				3CA845C6A6E093E119E54534 /* punct_mark.txt in Copy opencc Files */,
+				2C6B4B9B81F69A21BB43024C /* punct_mark_plus.json in Copy opencc Files */,
+				E71D4CA2A982D320C12B8658 /* punct_mark_plus.txt in Copy opencc Files */,
 			);
 			name = "Copy opencc Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,7 +274,17 @@
 				441E637E22B7E96F006DCCDD /* stroke.schema.yaml in Copy Shared Support Files */,
 				441E637F22B7E96F006DCCDD /* terra_pinyin.dict.yaml in Copy Shared Support Files */,
 				441E638022B7E96F006DCCDD /* terra_pinyin.schema.yaml in Copy Shared Support Files */,
-				441E638122B7E96F006DCCDD /* detenele.schema.yaml in Copy Shared Support Files */,
+441E638322B7E96F006DCCDD /* detenele.schema.yaml in Copy Shared Support Files */,
+441E638122B7E96F006DCCDD /* cangjie5.base.dict.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638722B7E96F006DCCDD /* cangjie5_char.dict.yaml in Copy Shared Support Files */,
+				441E638522B7E96F006DCCDD /* cangjie5.stem.dict.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				44AEBC7521F569FD00344375 /* key_bindings.yaml in Copy Shared Support Files */,
 				44AEBC7621F569FD00344375 /* punctuation.yaml in Copy Shared Support Files */,
@@ -176,6 +298,67 @@
 				7B5488C11D2DACDF0056A1BE /* luna_quanpin.schema.yaml in Copy Shared Support Files */,
 				7B5488C91D2DACDF0056A1BE /* symbols.yaml in Copy Shared Support Files */,
 				442B5B881570C37200370DEA /* squirrel.yaml in Copy Shared Support Files */,
+				73EB45C982818B011CB1D531 /* allbpm.dict.yaml in Copy Shared Support Files */,
+				86F64347AEFAC7DADCEE20F3 /* allbpm.schema.yaml in Copy Shared Support Files */,
+				593A46A2815E9AF41D073583 /* bopomo_onionplus.extended.dict.yaml in Copy Shared Support Files */,
+				EA50498D84D029322A385C1B /* bopomo_onionplus.schema.yaml in Copy Shared Support Files */,
+				F1F84AECBDF03C01799E5387 /* bopomo_onionplus_phrase.txt in Copy Shared Support Files */,
+				B946450E88EE2F7316135A2F /* cyrillic.dict.yaml in Copy Shared Support Files */,
+				6DCA4616B04991A975500544 /* cyrillic.extended.dict.yaml in Copy Shared Support Files */,
+				09E741CB930715BC42AD8B64 /* cyrillic.schema.yaml in Copy Shared Support Files */,
+				798048F59AF1211C423A7F08 /* default.custom.yaml in Copy Shared Support Files */,
+				6CE94084A4F8705DC3C5848F /* easy_en_lcomment.dict.yaml in Copy Shared Support Files */,
+				24BA4AC981B6A881996FEECA /* easy_en_lower.dict.yaml in Copy Shared Support Files */,
+				6E32463F84A91DCE2443DE8B /* easy_en_lower.schema.yaml in Copy Shared Support Files */,
+				5D9641198DB25E78272C5435 /* easy_en_upper.dict.yaml in Copy Shared Support Files */,
+				A1D84B7E82850053209EB106 /* easy_en_upper.schema.yaml in Copy Shared Support Files */,
+				29A44ACF8A4E4EABD0628616 /* element_bopomo.yaml in Copy Shared Support Files */,
+				3AB2427FBF0053210406992F /* essay-jp-onion.txt in Copy Shared Support Files */,
+				67444D5DBD084F458D9FC30D /* essay-kr-hanja.txt in Copy Shared Support Files */,
+				E42C44FA8E0DFFC59FEA3153 /* essay-zh-hant-mc.txt in Copy Shared Support Files */,
+				598B438DB0205705573C55CB /* fullshape.dict.yaml in Copy Shared Support Files */,
+				E9A3450FBB4E58423014A245 /* fullshape.extended.dict.yaml in Copy Shared Support Files */,
+				4494494E9D2E0912F29C0C90 /* fullshape.schema.yaml in Copy Shared Support Files */,
+				A6D1492095E78E8D3E072FE4 /* grammar.yaml in Copy Shared Support Files */,
+				E7374B29B1EB683FDD4C9016 /* greek.dict.yaml in Copy Shared Support Files */,
+				E2CA4CAF92FAB6A92581C41A /* greek.extended.dict.yaml in Copy Shared Support Files */,
+				09B2476C80F24B3C2453E5EC /* greek.schema.yaml in Copy Shared Support Files */,
+				19674064AE1C36C07E4D8FB6 /* hangeul_hnc.dict.yaml in Copy Shared Support Files */,
+				95D449F184030E050D02B162 /* hangeul_hnc.extended.dict.yaml in Copy Shared Support Files */,
+				41534EAE83B9411A0FAF1704 /* hangeul_hnc.schema.yaml in Copy Shared Support Files */,
+				0C3141C082E367B747A4ADD7 /* hangeul_hnc_hanja.dict.yaml in Copy Shared Support Files */,
+				DB284708819F2FC96326E52A /* jpnin1.dict.yaml in Copy Shared Support Files */,
+				876C46A6B1F4F2F11BBD5BD2 /* jpnin1.extended.dict.yaml in Copy Shared Support Files */,
+				07BC4C94AA20A4A0230969DE /* jpnin1.schema.yaml in Copy Shared Support Files */,
+				142B4F2CBFF5E49EDFCB9BCE /* latinin1.dict.yaml in Copy Shared Support Files */,
+				9E9B4180A4969E0CF25293A8 /* latinin1.extended.dict.yaml in Copy Shared Support Files */,
+				59C143D38E66EFA8EFDFFD3B /* latinin1.schema.yaml in Copy Shared Support Files */,
+				56C44AA98619544B89E34CDE /* lua in Copy Shared Support Files */,
+				35704CA58B5355AE5E88A905 /* lua_custom_phrase.txt in Copy Shared Support Files */,
+				950C43A9A2C11185D32F5D0A /* mixin_bpmf.dict.yaml in Copy Shared Support Files */,
+				EABB44D9AB0900C7A9B307E5 /* phrases.chtp.dict.yaml in Copy Shared Support Files */,
+				8CDB4B7DADFA650F0610034C /* phrases.cyr_all.dict.yaml in Copy Shared Support Files */,
+				31DD407D924F5CE31BDF711D /* phrases.en_l_w.dict.yaml in Copy Shared Support Files */,
+				EBE2447FB672574CC89BECA2 /* phrases.en_o_w.dict.yaml in Copy Shared Support Files */,
+				3A58475CB9CEF4F969D8806D /* phrases.en_u_w.dict.yaml in Copy Shared Support Files */,
+				6BE74EECA22641841A5784CA /* phrases.fs_all.dict.yaml in Copy Shared Support Files */,
+				1DA84EE880EA2B9B34C86EEC /* phrases.gr_all.dict.yaml in Copy Shared Support Files */,
+				A3904B21816D7C570A0F2668 /* phrases.jp_hk_more.dict.yaml in Copy Shared Support Files */,
+				120B422DA03653D2A5AE764C /* phrases.jp_hkkseg.dict.yaml in Copy Shared Support Files */,
+				9D2D4FABAF4F1A9124085899 /* phrases.la_eu_w.dict.yaml in Copy Shared Support Files */,
+				0D124B85B5B76F4CF379CFCB /* phrases.la_py_w.dict.yaml in Copy Shared Support Files */,
+				85ED425AA9AC6180B6D649D0 /* rime.lua in Copy Shared Support Files */,
+				19E540B6BA73E1F141E27BD5 /* space.dict.yaml in Copy Shared Support Files */,
+				565C4B5394E9524A297B6468 /* space_f.dict.yaml in Copy Shared Support Files */,
+				2C454321A7635788AE1EED2F /* symbols_bpmf.dict.yaml in Copy Shared Support Files */,
+				E2114A0BA0CEF8F924D1764E /* symbols_bpmf.schema.yaml in Copy Shared Support Files */,
+				037A47128059D7A8EE85D7D7 /* terra_pinyin_onion.dict.yaml in Copy Shared Support Files */,
+				5AA44A2EAA736E7DDE2308EB /* terra_pinyin_onion_add.dict.yaml in Copy Shared Support Files */,
+				11704504879C0222896ED489 /* zh-hans-t-essay-bgc.gram in Copy Shared Support Files */,
+				3620497F933F2007C79915D4 /* zh-hans-t-essay-bgw.gram in Copy Shared Support Files */,
+				A2764CD597DB8165711EA744 /* zh-hant-t-essay-bgc.gram in Copy Shared Support Files */,
+				E770475DA5A1FF7A227E002F /* zh-hant-t-essay-bgw.gram in Copy Shared Support Files */,
+				D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */,
 			);
 			name = "Copy Shared Support Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,24 +390,55 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00994244BA22936EB3062569 /* terra_pinyin_onion.dict.yaml */ = {isa = PBXFileReference; name = terra_pinyin_onion.dict.yaml; path = data/onion/terra_pinyin_onion.dict.yaml; sourceTree = SOURCE_ROOT; };
+		04CC45999EE228E7D01D3CED /* CookieLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CookieLoader.swift; path = sources/Voice/CookieLoader.swift; sourceTree = SOURCE_ROOT; };
+		060E4B0B949D1B9117A5A1D6 /* punct_mark_plus.json */ = {isa = PBXFileReference; name = punct_mark_plus.json; path = data/onion/opencc/punct_mark_plus.json; sourceTree = SOURCE_ROOT; };
+		07494616A4516185FFDC6A20 /* bopomo_onionplus.extended.dict.yaml */ = {isa = PBXFileReference; name = bopomo_onionplus.extended.dict.yaml; path = data/onion/bopomo_onionplus.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		07B34322B4432235C37AFD19 /* rime.lua */ = {isa = PBXFileReference; name = rime.lua; path = data/onion/rime.lua; sourceTree = SOURCE_ROOT; };
+		0A334EA39BDE90747673DFF9 /* essay-jp-onion.txt */ = {isa = PBXFileReference; name = "essay-jp-onion.txt"; path = "data/onion/essay-jp-onion.txt"; sourceTree = SOURCE_ROOT; };
+		0F5546AE8B7D4E5CA39E57F8 /* back_mark_table.txt */ = {isa = PBXFileReference; name = back_mark_table.txt; path = data/onion/opencc/back_mark_table.txt; sourceTree = SOURCE_ROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */ = {isa = PBXFileReference; name = easy_en_upper.dict.yaml; path = data/onion/easy_en_upper.dict.yaml; sourceTree = SOURCE_ROOT; };
+		11264E6AA82C788740C19474 /* phrases.fs_all.dict.yaml */ = {isa = PBXFileReference; name = phrases.fs_all.dict.yaml; path = data/onion/phrases.fs_all.dict.yaml; sourceTree = SOURCE_ROOT; };
+		167B48688DF450DF3A24E2F2 /* grammar.yaml */ = {isa = PBXFileReference; name = grammar.yaml; path = data/onion/grammar.yaml; sourceTree = SOURCE_ROOT; };
+		17A742DA9EDC412FD1B648B8 /* zh-hant-t-essay-bgc.gram */ = {isa = PBXFileReference; name = "zh-hant-t-essay-bgc.gram"; path = "data/onion/zh-hant-t-essay-bgc.gram"; sourceTree = SOURCE_ROOT; };
+		1BC345A196DB41355745B634 /* hangeul_hnc.extended.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.extended.dict.yaml; path = data/onion/hangeul_hnc.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_u_w.dict.yaml; path = data/onion/phrases.en_u_w.dict.yaml; sourceTree = SOURCE_ROOT; };
+		2207458AAD95A7D272D1359A /* latinin1.dict.yaml */ = {isa = PBXFileReference; name = latinin1.dict.yaml; path = data/onion/latinin1.dict.yaml; sourceTree = SOURCE_ROOT; };
+		2464427A85E5847B4865D753 /* allbpm.schema.yaml */ = {isa = PBXFileReference; name = allbpm.schema.yaml; path = data/onion/allbpm.schema.yaml; sourceTree = SOURCE_ROOT; };
+		25FB476A920C7D979238BB71 /* element_bopomo.yaml */ = {isa = PBXFileReference; name = element_bopomo.yaml; path = data/onion/element_bopomo.yaml; sourceTree = SOURCE_ROOT; };
+		285042898B2CC74445C3373C /* ChatGPTLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatGPTLoginView.swift; path = sources/Voice/ChatGPTLoginView.swift; sourceTree = SOURCE_ROOT; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2C6B9F9A2BCD086700E327DF /* librime-lua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "librime-lua.dylib"; path = "lib/rime-plugins/librime-lua.dylib"; sourceTree = "<group>"; };
 		2C6B9F9B2BCD086700E327DF /* librime-octagram.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "librime-octagram.dylib"; path = "lib/rime-plugins/librime-octagram.dylib"; sourceTree = "<group>"; };
 		2C6B9F9C2BCD086700E327DF /* librime-predict.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "librime-predict.dylib"; path = "lib/rime-plugins/librime-predict.dylib"; sourceTree = "<group>"; };
-		441E636322B7E90C006DCCDD /* cangjie5.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.schema.yaml; path = data/plum/cangjie5.schema.yaml; sourceTree = "<group>"; };
+		2E9C4CC4A29A2B07C9B42506 /* fullshape.schema.yaml */ = {isa = PBXFileReference; name = fullshape.schema.yaml; path = data/onion/fullshape.schema.yaml; sourceTree = SOURCE_ROOT; };
+		2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceSettingsWindow.swift; path = sources/Voice/VoiceSettingsWindow.swift; sourceTree = SOURCE_ROOT; };
+		2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatGPTBridge.swift; path = sources/Voice/ChatGPTBridge.swift; sourceTree = SOURCE_ROOT; };
+		303B470AB82F986C9F22F58E /* VoicePrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoicePrompts.swift; path = sources/Voice/VoicePrompts.swift; sourceTree = SOURCE_ROOT; };
+		324B49EBB8B079DDE7AEA954 /* hangeul_hnc_hanja.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc_hanja.dict.yaml; path = data/onion/hangeul_hnc_hanja.dict.yaml; sourceTree = SOURCE_ROOT; };
+		33FA475FB752159DB630BED8 /* punct_mark.txt */ = {isa = PBXFileReference; name = punct_mark.txt; path = data/onion/opencc/punct_mark.txt; sourceTree = SOURCE_ROOT; };
+		348D433881EDDE2C3ED0946D /* greek.extended.dict.yaml */ = {isa = PBXFileReference; name = greek.extended.dict.yaml; path = data/onion/greek.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		373549A1BFECACD0E6D3E751 /* back_mark_ocm.txt */ = {isa = PBXFileReference; name = back_mark_ocm.txt; path = data/onion/opencc/back_mark_ocm.txt; sourceTree = SOURCE_ROOT; };
+		3F96405BBE6C35069B1089BE /* phrases.cyr_all.dict.yaml */ = {isa = PBXFileReference; name = phrases.cyr_all.dict.yaml; path = data/onion/phrases.cyr_all.dict.yaml; sourceTree = SOURCE_ROOT; };
+		4388456CAAB774A7F5D803F6 /* bopomo_onionplus.schema.yaml */ = {isa = PBXFileReference; name = bopomo_onionplus.schema.yaml; path = data/onion/bopomo_onionplus.schema.yaml; sourceTree = SOURCE_ROOT; };
+		441E636322B7E90C006DCCDD /* cangjie5.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.schema.yaml; path = data/onion/cangjie5.schema.yaml; sourceTree = "<group>"; };
 		441E636422B7E90C006DCCDD /* terra_pinyin.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = terra_pinyin.dict.yaml; path = data/plum/terra_pinyin.dict.yaml; sourceTree = "<group>"; };
 		441E636522B7E90C006DCCDD /* terra_pinyin.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = terra_pinyin.schema.yaml; path = data/plum/terra_pinyin.schema.yaml; sourceTree = "<group>"; };
-		441E638222B7E90C006DCCDD /* detenele.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = detenele.schema.yaml; path = data/plum/detenele.schema.yaml; sourceTree = "<group>"; };
-		441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = terra_pinyin_12345.schema.yaml; path = data/plum/terra_pinyin_12345.schema.yaml; sourceTree = "<group>"; };
+441E638422B7E90C006DCCDD /* detenele.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = detenele.schema.yaml; path = data/plum/detenele.schema.yaml; sourceTree = "<group>"; };
+441E638222B7E90C006DCCDD /* cangjie5.base.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.base.dict.yaml; path = data/plum/cangjie5.base.dict.yaml; sourceTree = "<group>"; };
 		441E636622B7E90C006DCCDD /* cangjie5_express.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5_express.schema.yaml; path = data/plum/cangjie5_express.schema.yaml; sourceTree = "<group>"; };
 		441E636722B7E90D006DCCDD /* bopomofo_tw.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bopomofo_tw.schema.yaml; path = data/plum/bopomofo_tw.schema.yaml; sourceTree = "<group>"; };
 		441E636822B7E90D006DCCDD /* bopomofo.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bopomofo.schema.yaml; path = data/plum/bopomofo.schema.yaml; sourceTree = "<group>"; };
 		441E636922B7E90D006DCCDD /* stroke.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stroke.dict.yaml; path = data/plum/stroke.dict.yaml; sourceTree = "<group>"; };
-		441E636A22B7E90D006DCCDD /* cangjie5.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.dict.yaml; path = data/plum/cangjie5.dict.yaml; sourceTree = "<group>"; };
+		441E636A22B7E90D006DCCDD /* cangjie5.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.dict.yaml; path = data/onion/cangjie5.dict.yaml; sourceTree = "<group>"; };
 		441E636B22B7E90D006DCCDD /* stroke.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stroke.schema.yaml; path = data/plum/stroke.schema.yaml; sourceTree = "<group>"; };
 		441E636C22B7E90D006DCCDD /* bopomofo_express.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bopomofo_express.schema.yaml; path = data/plum/bopomofo_express.schema.yaml; sourceTree = "<group>"; };
+		441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = terra_pinyin_12345.schema.yaml; path = data/plum/terra_pinyin_12345.schema.yaml; sourceTree = "<group>"; };
+		441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.extended.dict.yaml; path = data/plum/cangjie5.extended.dict.yaml; sourceTree = "<group>"; };
+		441E638622B7E90C006DCCDD /* cangjie5.stem.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5.stem.dict.yaml; path = data/plum/cangjie5.stem.dict.yaml; sourceTree = "<group>"; };
+		441E638822B7E90C006DCCDD /* cangjie5_char.dict.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cangjie5_char.dict.yaml; path = data/plum/cangjie5_char.dict.yaml; sourceTree = "<group>"; };
 		442B5B871570C37200370DEA /* squirrel.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = squirrel.yaml; path = data/squirrel.yaml; sourceTree = "<group>"; };
 		442C64901F7A404A0027EFBE /* rime-install */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "rime-install"; path = "bin/rime-install"; sourceTree = "<group>"; };
 		446C01D61F767BD400A6C23E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -239,6 +453,23 @@
 		44E21A8E16A653E700C2B08F /* rime_deployer */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = rime_deployer; path = bin/rime_deployer; sourceTree = "<group>"; };
 		44E21A8F16A653E700C2B08F /* rime_dict_manager */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = rime_dict_manager; path = bin/rime_dict_manager; sourceTree = "<group>"; };
 		44F1EB381431F8270015FD04 /* Squirrel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squirrel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */ = {isa = PBXFileReference; name = punct_mark_plus.txt; path = data/onion/opencc/punct_mark_plus.txt; sourceTree = SOURCE_ROOT; };
+		5043492B94B3EE23C582B878 /* space_f.dict.yaml */ = {isa = PBXFileReference; name = space_f.dict.yaml; path = data/onion/space_f.dict.yaml; sourceTree = SOURCE_ROOT; };
+		559044D7B1D50815DE77C7DB /* back_mark_script.txt */ = {isa = PBXFileReference; name = back_mark_script.txt; path = data/onion/opencc/back_mark_script.txt; sourceTree = SOURCE_ROOT; };
+		56C6469BAF72257732722F35 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioRecorder.swift; path = sources/Voice/AudioRecorder.swift; sourceTree = SOURCE_ROOT; };
+		58B54AB38D230CD130E62745 /* emoji_t.json */ = {isa = PBXFileReference; name = emoji_t.json; path = data/onion/opencc/emoji_t.json; sourceTree = SOURCE_ROOT; };
+		5A714AD6BABCCC27014D35A1 /* VoiceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceSettingsView.swift; path = sources/Voice/VoiceSettingsView.swift; sourceTree = SOURCE_ROOT; };
+		5B874FEDA5090DFC2A562CF4 /* SpeechProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpeechProvider.swift; path = sources/Voice/SpeechProvider.swift; sourceTree = SOURCE_ROOT; };
+		5D5348769E8C9534A567466C /* phrases.la_py_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.la_py_w.dict.yaml; path = data/onion/phrases.la_py_w.dict.yaml; sourceTree = SOURCE_ROOT; };
+		614D49C488906EE5685928C9 /* phrases.jp_hkkseg.dict.yaml */ = {isa = PBXFileReference; name = phrases.jp_hkkseg.dict.yaml; path = data/onion/phrases.jp_hkkseg.dict.yaml; sourceTree = SOURCE_ROOT; };
+		63154CCFA71DFC2599DB836B /* space.dict.yaml */ = {isa = PBXFileReference; name = space.dict.yaml; path = data/onion/space.dict.yaml; sourceTree = SOURCE_ROOT; };
+		6554432A81A34F5F38AA8F32 /* zh-hans-t-essay-bgc.gram */ = {isa = PBXFileReference; name = "zh-hans-t-essay-bgc.gram"; path = "data/onion/zh-hans-t-essay-bgc.gram"; sourceTree = SOURCE_ROOT; };
+		655E4DCEB6994759F7E19E5D /* phrases.chtp.dict.yaml */ = {isa = PBXFileReference; name = phrases.chtp.dict.yaml; path = data/onion/phrases.chtp.dict.yaml; sourceTree = SOURCE_ROOT; };
+		673948AE96CEF706DB6855AE /* ocm_moedict_big5e_hkscs_jis.txt */ = {isa = PBXFileReference; name = ocm_moedict_big5e_hkscs_jis.txt; path = data/onion/opencc/ocm_moedict_big5e_hkscs_jis.txt; sourceTree = SOURCE_ROOT; };
+		6B174F359C9FD24A89E2A85C /* phrases.en_o_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_o_w.dict.yaml; path = data/onion/phrases.en_o_w.dict.yaml; sourceTree = SOURCE_ROOT; };
+		6B1C441BA4A6A7C4A3E775FA /* cyrillic.extended.dict.yaml */ = {isa = PBXFileReference; name = cyrillic.extended.dict.yaml; path = data/onion/cyrillic.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */ = {isa = PBXFileReference; name = "zh-hans-t-essay-bgw.gram"; path = "data/onion/zh-hans-t-essay-bgw.gram"; sourceTree = SOURCE_ROOT; };
+		7503402BA5A71B14D31CF8F5 /* terra_pinyin_onion_add.dict.yaml */ = {isa = PBXFileReference; name = terra_pinyin_onion_add.dict.yaml; path = data/onion/terra_pinyin_onion_add.dict.yaml; sourceTree = SOURCE_ROOT; };
 		77AA67DC2588916300A592E2 /* HKVariants.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = HKVariants.ocd2; sourceTree = "<group>"; };
 		77AA67DD2588916300A592E2 /* t2s.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = t2s.json; sourceTree = "<group>"; };
 		77AA67DE2588916300A592E2 /* t2tw.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = t2tw.json; sourceTree = "<group>"; };
@@ -267,6 +498,7 @@
 		77AA67F52588916400A592E2 /* s2tw.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = s2tw.json; sourceTree = "<group>"; };
 		77AA67F62588916400A592E2 /* TSPhrases.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = TSPhrases.ocd2; sourceTree = "<group>"; };
 		77AA67F72588916400A592E2 /* STPhrases.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = STPhrases.ocd2; sourceTree = "<group>"; };
+		77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */ = {isa = PBXFileReference; name = punct_bopomo.yaml; path = data/onion/punct_bopomo.yaml; sourceTree = SOURCE_ROOT; };
 		7B5488211D2DAAD10056A1BE /* default.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = default.yaml; path = data/plum/default.yaml; sourceTree = "<group>"; };
 		7B5488291D2DAAD10056A1BE /* essay.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = essay.txt; path = data/plum/essay.txt; sourceTree = "<group>"; };
 		7B54882E1D2DAAD10056A1BE /* luna_pinyin_fluency.schema.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = luna_pinyin_fluency.schema.yaml; path = data/plum/luna_pinyin_fluency.schema.yaml; sourceTree = "<group>"; };
@@ -276,8 +508,31 @@
 		7B5488321D2DAAD10056A1BE /* luna_pinyin.schema.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = luna_pinyin.schema.yaml; path = data/plum/luna_pinyin.schema.yaml; sourceTree = "<group>"; };
 		7B5488331D2DAAD10056A1BE /* luna_quanpin.schema.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = luna_quanpin.schema.yaml; path = data/plum/luna_quanpin.schema.yaml; sourceTree = "<group>"; };
 		7B54883B1D2DAAD10056A1BE /* symbols.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = symbols.yaml; path = data/plum/symbols.yaml; sourceTree = "<group>"; };
+		7BC648FFB7C7C1A802A01CCB /* symbols_bpmf.schema.yaml */ = {isa = PBXFileReference; name = symbols_bpmf.schema.yaml; path = data/onion/symbols_bpmf.schema.yaml; sourceTree = SOURCE_ROOT; };
+		7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */ = {isa = PBXFileReference; name = "essay-kr-hanja.txt"; path = "data/onion/essay-kr-hanja.txt"; sourceTree = SOURCE_ROOT; };
+		7F294E53959DB14EF9F06A4B /* fullshape.dict.yaml */ = {isa = PBXFileReference; name = fullshape.dict.yaml; path = data/onion/fullshape.dict.yaml; sourceTree = SOURCE_ROOT; };
+		7FEB4A4DA1355ABAF7EC46AE /* phrases.jp_hk_more.dict.yaml */ = {isa = PBXFileReference; name = phrases.jp_hk_more.dict.yaml; path = data/onion/phrases.jp_hk_more.dict.yaml; sourceTree = SOURCE_ROOT; };
+		814D46AEAA72085E33DA5545 /* GroqClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqClient.swift; path = sources/Voice/GroqClient.swift; sourceTree = SOURCE_ROOT; };
+		87144737B2E7B777734BDE29 /* latinin1.schema.yaml */ = {isa = PBXFileReference; name = latinin1.schema.yaml; path = data/onion/latinin1.schema.yaml; sourceTree = SOURCE_ROOT; };
+		87314EDCB1DB95132154D9EC /* VoiceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceConfig.swift; path = sources/Voice/VoiceConfig.swift; sourceTree = SOURCE_ROOT; };
+		8A25459FA2F2896E0014E98F /* easy_en_lower.schema.yaml */ = {isa = PBXFileReference; name = easy_en_lower.schema.yaml; path = data/onion/easy_en_lower.schema.yaml; sourceTree = SOURCE_ROOT; };
+		8AAE421E83035CCC9119B25B /* back_mark_ocm.json */ = {isa = PBXFileReference; name = back_mark_ocm.json; path = data/onion/opencc/back_mark_ocm.json; sourceTree = SOURCE_ROOT; };
+		8B0645189CD3C91F95F26EDC /* KeyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyFormatter.swift; path = sources/Voice/KeyFormatter.swift; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = "<group>"; };
+		8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */ = {isa = PBXFileReference; name = easy_en_upper.schema.yaml; path = data/onion/easy_en_upper.schema.yaml; sourceTree = SOURCE_ROOT; };
+		92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.dict.yaml; path = data/onion/hangeul_hnc.dict.yaml; sourceTree = SOURCE_ROOT; };
+		99F24101930C39FED468124D /* GroqSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqSecrets.swift; path = sources/Voice/GroqSecrets.swift; sourceTree = SOURCE_ROOT; };
+		9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */ = {isa = PBXFileReference; name = latinin1.extended.dict.yaml; path = data/onion/latinin1.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		A3964EC69608F26FFDD3CBFA /* bpm_moedict_big5e_hkscs_jis.json */ = {isa = PBXFileReference; name = bpm_moedict_big5e_hkscs_jis.json; path = data/onion/opencc/bpm_moedict_big5e_hkscs_jis.json; sourceTree = SOURCE_ROOT; };
+		A44C498D8B281C3B91506AF0 /* emoji_t.txt */ = {isa = PBXFileReference; name = emoji_t.txt; path = data/onion/opencc/emoji_t.txt; sourceTree = SOURCE_ROOT; };
 		A4B8E1B20F645B870094E08B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		A7E84D2AA8C9195D91E092C2 /* hangeul_hnc.schema.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.schema.yaml; path = data/onion/hangeul_hnc.schema.yaml; sourceTree = SOURCE_ROOT; };
+		ACCA49639C6897AC9AF4057B /* easy_en_lower.dict.yaml */ = {isa = PBXFileReference; name = easy_en_lower.dict.yaml; path = data/onion/easy_en_lower.dict.yaml; sourceTree = SOURCE_ROOT; };
+		AD9E410392CF62B9714894AA /* back_mark_series.json */ = {isa = PBXFileReference; name = back_mark_series.json; path = data/onion/opencc/back_mark_series.json; sourceTree = SOURCE_ROOT; };
+		AE7948599E554CAB44A88BB8 /* bpm_moedict_big5e_hkscs_jis.txt */ = {isa = PBXFileReference; name = bpm_moedict_big5e_hkscs_jis.txt; path = data/onion/opencc/bpm_moedict_big5e_hkscs_jis.txt; sourceTree = SOURCE_ROOT; };
+		AF14400C81E6D43F4A7F02BC /* back_mark.json */ = {isa = PBXFileReference; name = back_mark.json; path = data/onion/opencc/back_mark.json; sourceTree = SOURCE_ROOT; };
+		AF2A4518B53B05669BE30D43 /* jpnin1.extended.dict.yaml */ = {isa = PBXFileReference; name = jpnin1.extended.dict.yaml; path = data/onion/jpnin1.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		B2CF48CF841BCEA0EFB24295 /* fullshape.extended.dict.yaml */ = {isa = PBXFileReference; name = fullshape.extended.dict.yaml; path = data/onion/fullshape.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
 		B3216E5B2BF438F800E292D2 /* rime.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = rime.pdf; path = resources/rime.pdf; sourceTree = "<group>"; };
 		B32B80772BE7FAA200FCF3BC /* Squirrel.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = Squirrel.entitlements; path = resources/Squirrel.entitlements; sourceTree = "<group>"; };
 		B35D2FE72BF00839009D156B /* BridgingFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BridgingFunctions.swift; path = sources/BridgingFunctions.swift; sourceTree = "<group>"; };
@@ -293,10 +548,34 @@
 		B397712E2BEECBED0093A49B /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Main.swift; path = sources/Main.swift; sourceTree = "<group>"; };
 		B39771302BEEE4540093A49B /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = InfoPlist.xcstrings; path = resources/InfoPlist.xcstrings; sourceTree = "<group>"; };
 		B39771322BEEE4540093A49B /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = resources/Localizable.xcstrings; sourceTree = "<group>"; };
+		B39E4F14B17E47B4DDAA510B /* easy_en_lcomment.dict.yaml */ = {isa = PBXFileReference; name = easy_en_lcomment.dict.yaml; path = data/onion/easy_en_lcomment.dict.yaml; sourceTree = SOURCE_ROOT; };
 		B3EF08E92F17125E00433A45 /* Rime.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Rime.icon; sourceTree = "<group>"; };
+		B7E341A3BB38D9E891778E69 /* phrases.la_eu_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.la_eu_w.dict.yaml; path = data/onion/phrases.la_eu_w.dict.yaml; sourceTree = SOURCE_ROOT; };
+		B9354E9BBF8218938968704D /* jpnin1.schema.yaml */ = {isa = PBXFileReference; name = jpnin1.schema.yaml; path = data/onion/jpnin1.schema.yaml; sourceTree = SOURCE_ROOT; };
+		BDD74DBEB1B10C376368DD68 /* default.custom.yaml */ = {isa = PBXFileReference; name = default.custom.yaml; path = data/onion/default.custom.yaml; sourceTree = SOURCE_ROOT; };
+		C38142BBB284A4B05834FD90 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HotkeyManager.swift; path = sources/Voice/HotkeyManager.swift; sourceTree = SOURCE_ROOT; };
+		C44F4DD593CFD26ED5953F30 /* greek.schema.yaml */ = {isa = PBXFileReference; name = greek.schema.yaml; path = data/onion/greek.schema.yaml; sourceTree = SOURCE_ROOT; };
+		C7B145C09EC7969C62BFB3C3 /* lua_custom_phrase.txt */ = {isa = PBXFileReference; name = lua_custom_phrase.txt; path = data/onion/lua_custom_phrase.txt; sourceTree = SOURCE_ROOT; };
+		CD07489A8FC365EA043EF4EE /* phrases.gr_all.dict.yaml */ = {isa = PBXFileReference; name = phrases.gr_all.dict.yaml; path = data/onion/phrases.gr_all.dict.yaml; sourceTree = SOURCE_ROOT; };
+		D1654A9AB87982DD0FF8D853 /* cyrillic.schema.yaml */ = {isa = PBXFileReference; name = cyrillic.schema.yaml; path = data/onion/cyrillic.schema.yaml; sourceTree = SOURCE_ROOT; };
+		D18D4EBCBB6D311D9F9C948B /* jpnin1.dict.yaml */ = {isa = PBXFileReference; name = jpnin1.dict.yaml; path = data/onion/jpnin1.dict.yaml; sourceTree = SOURCE_ROOT; };
 		D26434542706A15100857391 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D30646C695AC9335801976C9 /* symbols_bpmf.dict.yaml */ = {isa = PBXFileReference; name = symbols_bpmf.dict.yaml; path = data/onion/symbols_bpmf.dict.yaml; sourceTree = SOURCE_ROOT; };
+		D41E4BC7AF1631302FA149BB /* greek.dict.yaml */ = {isa = PBXFileReference; name = greek.dict.yaml; path = data/onion/greek.dict.yaml; sourceTree = SOURCE_ROOT; };
+		E2874CC49287AE2D21359496 /* PermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PermissionsManager.swift; path = sources/Voice/PermissionsManager.swift; sourceTree = SOURCE_ROOT; };
+		E5114D479C7E7653FA5116F1 /* mixin_bpmf.dict.yaml */ = {isa = PBXFileReference; name = mixin_bpmf.dict.yaml; path = data/onion/mixin_bpmf.dict.yaml; sourceTree = SOURCE_ROOT; };
+		E5994ED79A8A064CFFCDBA2C /* zh-hant-t-essay-bgw.gram */ = {isa = PBXFileReference; name = "zh-hant-t-essay-bgw.gram"; path = "data/onion/zh-hant-t-essay-bgw.gram"; sourceTree = SOURCE_ROOT; };
+		E5BA4185887BE4837A80EFC4 /* bopomo_onionplus_phrase.txt */ = {isa = PBXFileReference; name = bopomo_onionplus_phrase.txt; path = data/onion/bopomo_onionplus_phrase.txt; sourceTree = SOURCE_ROOT; };
 		E93074B60A5C264700470842 /* InputMethodKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InputMethodKit.framework; path = /System/Library/Frameworks/InputMethodKit.framework; sourceTree = "<absolute>"; };
+		E932433BAB077EE4A8B2101E /* punct_mark.json */ = {isa = PBXFileReference; name = punct_mark.json; path = data/onion/opencc/punct_mark.json; sourceTree = SOURCE_ROOT; };
+		F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */ = {isa = PBXFileReference; name = cyrillic.dict.yaml; path = data/onion/cyrillic.dict.yaml; sourceTree = SOURCE_ROOT; };
+		F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceInputController.swift; path = sources/Voice/VoiceInputController.swift; sourceTree = SOURCE_ROOT; };
+		F30442019B33705CF5FF19C7 /* allbpm.dict.yaml */ = {isa = PBXFileReference; name = allbpm.dict.yaml; path = data/onion/allbpm.dict.yaml; sourceTree = SOURCE_ROOT; };
 		F45E005E2B8CA81C00179B75 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		F6034511AC99755906810455 /* essay-zh-hant-mc.txt */ = {isa = PBXFileReference; name = "essay-zh-hant-mc.txt"; path = "data/onion/essay-zh-hant-mc.txt"; sourceTree = SOURCE_ROOT; };
+		F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_l_w.dict.yaml; path = data/onion/phrases.en_l_w.dict.yaml; sourceTree = SOURCE_ROOT; };
+		F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */ = {isa = PBXFileReference; name = ocm_moedict_big5e_hkscs_jis.json; path = data/onion/opencc/ocm_moedict_big5e_hkscs_jis.json; sourceTree = SOURCE_ROOT; };
+		FD6E4F5D90C9E2198D00BD9E /* lua */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lua; path = data/onion/lua; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -328,6 +607,7 @@
 				B39771242BED899F0093A49B /* SquirrelConfig.swift */,
 				B35D2FE72BF00839009D156B /* BridgingFunctions.swift */,
 				B38E9B8F2BE9AE1E0036ABEF /* Squirrel-Bridging-Header.h */,
+				E0034254ADFF1B8A516E3FBD /* Voice */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -373,6 +653,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				324A459E983EDBFC47300E7A /* OnionData */,
 			);
 			indentWidth = 2;
 			name = Squirrel;
@@ -404,6 +685,90 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		324A459E983EDBFC47300E7A /* OnionData */ = {
+			isa = PBXGroup;
+			children = (
+				F30442019B33705CF5FF19C7 /* allbpm.dict.yaml */,
+				2464427A85E5847B4865D753 /* allbpm.schema.yaml */,
+				07494616A4516185FFDC6A20 /* bopomo_onionplus.extended.dict.yaml */,
+				4388456CAAB774A7F5D803F6 /* bopomo_onionplus.schema.yaml */,
+				E5BA4185887BE4837A80EFC4 /* bopomo_onionplus_phrase.txt */,
+				F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */,
+				6B1C441BA4A6A7C4A3E775FA /* cyrillic.extended.dict.yaml */,
+				D1654A9AB87982DD0FF8D853 /* cyrillic.schema.yaml */,
+				BDD74DBEB1B10C376368DD68 /* default.custom.yaml */,
+				B39E4F14B17E47B4DDAA510B /* easy_en_lcomment.dict.yaml */,
+				ACCA49639C6897AC9AF4057B /* easy_en_lower.dict.yaml */,
+				8A25459FA2F2896E0014E98F /* easy_en_lower.schema.yaml */,
+				10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */,
+				8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */,
+				25FB476A920C7D979238BB71 /* element_bopomo.yaml */,
+				0A334EA39BDE90747673DFF9 /* essay-jp-onion.txt */,
+				7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */,
+				F6034511AC99755906810455 /* essay-zh-hant-mc.txt */,
+				7F294E53959DB14EF9F06A4B /* fullshape.dict.yaml */,
+				B2CF48CF841BCEA0EFB24295 /* fullshape.extended.dict.yaml */,
+				2E9C4CC4A29A2B07C9B42506 /* fullshape.schema.yaml */,
+				167B48688DF450DF3A24E2F2 /* grammar.yaml */,
+				D41E4BC7AF1631302FA149BB /* greek.dict.yaml */,
+				348D433881EDDE2C3ED0946D /* greek.extended.dict.yaml */,
+				C44F4DD593CFD26ED5953F30 /* greek.schema.yaml */,
+				92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */,
+				1BC345A196DB41355745B634 /* hangeul_hnc.extended.dict.yaml */,
+				A7E84D2AA8C9195D91E092C2 /* hangeul_hnc.schema.yaml */,
+				324B49EBB8B079DDE7AEA954 /* hangeul_hnc_hanja.dict.yaml */,
+				D18D4EBCBB6D311D9F9C948B /* jpnin1.dict.yaml */,
+				AF2A4518B53B05669BE30D43 /* jpnin1.extended.dict.yaml */,
+				B9354E9BBF8218938968704D /* jpnin1.schema.yaml */,
+				2207458AAD95A7D272D1359A /* latinin1.dict.yaml */,
+				9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */,
+				87144737B2E7B777734BDE29 /* latinin1.schema.yaml */,
+				FD6E4F5D90C9E2198D00BD9E /* lua */,
+				C7B145C09EC7969C62BFB3C3 /* lua_custom_phrase.txt */,
+				E5114D479C7E7653FA5116F1 /* mixin_bpmf.dict.yaml */,
+				655E4DCEB6994759F7E19E5D /* phrases.chtp.dict.yaml */,
+				3F96405BBE6C35069B1089BE /* phrases.cyr_all.dict.yaml */,
+				F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */,
+				6B174F359C9FD24A89E2A85C /* phrases.en_o_w.dict.yaml */,
+				1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */,
+				11264E6AA82C788740C19474 /* phrases.fs_all.dict.yaml */,
+				CD07489A8FC365EA043EF4EE /* phrases.gr_all.dict.yaml */,
+				7FEB4A4DA1355ABAF7EC46AE /* phrases.jp_hk_more.dict.yaml */,
+				614D49C488906EE5685928C9 /* phrases.jp_hkkseg.dict.yaml */,
+				B7E341A3BB38D9E891778E69 /* phrases.la_eu_w.dict.yaml */,
+				5D5348769E8C9534A567466C /* phrases.la_py_w.dict.yaml */,
+				07B34322B4432235C37AFD19 /* rime.lua */,
+				63154CCFA71DFC2599DB836B /* space.dict.yaml */,
+				5043492B94B3EE23C582B878 /* space_f.dict.yaml */,
+				D30646C695AC9335801976C9 /* symbols_bpmf.dict.yaml */,
+				7BC648FFB7C7C1A802A01CCB /* symbols_bpmf.schema.yaml */,
+				00994244BA22936EB3062569 /* terra_pinyin_onion.dict.yaml */,
+				7503402BA5A71B14D31CF8F5 /* terra_pinyin_onion_add.dict.yaml */,
+				6554432A81A34F5F38AA8F32 /* zh-hans-t-essay-bgc.gram */,
+				6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */,
+				17A742DA9EDC412FD1B648B8 /* zh-hant-t-essay-bgc.gram */,
+				E5994ED79A8A064CFFCDBA2C /* zh-hant-t-essay-bgw.gram */,
+				AF14400C81E6D43F4A7F02BC /* back_mark.json */,
+				8AAE421E83035CCC9119B25B /* back_mark_ocm.json */,
+				373549A1BFECACD0E6D3E751 /* back_mark_ocm.txt */,
+				559044D7B1D50815DE77C7DB /* back_mark_script.txt */,
+				AD9E410392CF62B9714894AA /* back_mark_series.json */,
+				0F5546AE8B7D4E5CA39E57F8 /* back_mark_table.txt */,
+				A3964EC69608F26FFDD3CBFA /* bpm_moedict_big5e_hkscs_jis.json */,
+				AE7948599E554CAB44A88BB8 /* bpm_moedict_big5e_hkscs_jis.txt */,
+				58B54AB38D230CD130E62745 /* emoji_t.json */,
+				A44C498D8B281C3B91506AF0 /* emoji_t.txt */,
+				F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */,
+				673948AE96CEF706DB6855AE /* ocm_moedict_big5e_hkscs_jis.txt */,
+				E932433BAB077EE4A8B2101E /* punct_mark.json */,
+				33FA475FB752159DB630BED8 /* punct_mark.txt */,
+				060E4B0B949D1B9117A5A1D6 /* punct_mark_plus.json */,
+				48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */,
+				77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */,
+			);
+			name = OnionData;
 			sourceTree = "<group>";
 		};
 		4407F39D14EC071E001329FE /* opencc */ = {
@@ -477,7 +842,17 @@
 				441E636B22B7E90D006DCCDD /* stroke.schema.yaml */,
 				441E636422B7E90C006DCCDD /* terra_pinyin.dict.yaml */,
 				441E636522B7E90C006DCCDD /* terra_pinyin.schema.yaml */,
-				441E638222B7E90C006DCCDD /* detenele.schema.yaml */,
+441E638422B7E90C006DCCDD /* detenele.schema.yaml */,
+441E638222B7E90C006DCCDD /* cangjie5.base.dict.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
+				441E638822B7E90C006DCCDD /* cangjie5_char.dict.yaml */,
+				441E638622B7E90C006DCCDD /* cangjie5.stem.dict.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				7B5488211D2DAAD10056A1BE /* default.yaml */,
 				7B5488291D2DAAD10056A1BE /* essay.txt */,
@@ -492,6 +867,28 @@
 				7B54883B1D2DAAD10056A1BE /* symbols.yaml */,
 			);
 			name = plum;
+			sourceTree = "<group>";
+		};
+		E0034254ADFF1B8A516E3FBD /* Voice */ = {
+			isa = PBXGroup;
+			children = (
+				56C6469BAF72257732722F35 /* AudioRecorder.swift */,
+				2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */,
+				285042898B2CC74445C3373C /* ChatGPTLoginView.swift */,
+				04CC45999EE228E7D01D3CED /* CookieLoader.swift */,
+				814D46AEAA72085E33DA5545 /* GroqClient.swift */,
+				99F24101930C39FED468124D /* GroqSecrets.swift */,
+				C38142BBB284A4B05834FD90 /* HotkeyManager.swift */,
+				8B0645189CD3C91F95F26EDC /* KeyFormatter.swift */,
+				E2874CC49287AE2D21359496 /* PermissionsManager.swift */,
+				5B874FEDA5090DFC2A562CF4 /* SpeechProvider.swift */,
+				87314EDCB1DB95132154D9EC /* VoiceConfig.swift */,
+				F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */,
+				303B470AB82F986C9F22F58E /* VoicePrompts.swift */,
+				5A714AD6BABCCC27014D35A1 /* VoiceSettingsView.swift */,
+				2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */,
+			);
+			name = Voice;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -589,6 +986,21 @@
 				B38E9B912BE9AE1E0036ABEF /* SquirrelApplicationDelegate.swift in Sources */,
 				B39771272BED9B250093A49B /* SquirrelTheme.swift in Sources */,
 				B35D2FE82BF00839009D156B /* BridgingFunctions.swift in Sources */,
+				F26E4C6E8DFA4487A656189F /* AudioRecorder.swift in Sources */,
+				CB234920BF034403F0D2FC10 /* ChatGPTBridge.swift in Sources */,
+				2F094E7FA80138EAD36A72BE /* ChatGPTLoginView.swift in Sources */,
+				9C654EFDB7A30BB5EABE5C82 /* CookieLoader.swift in Sources */,
+				1FE14F2D93B30F87258481F7 /* GroqClient.swift in Sources */,
+				42254DA2BF42DC8883C9580D /* GroqSecrets.swift in Sources */,
+				07714BAFBA16B7A3AC30FD41 /* HotkeyManager.swift in Sources */,
+				7F0F448FB0F226275DC30A88 /* KeyFormatter.swift in Sources */,
+				9D564A5ABB7B5744DC7A24A9 /* PermissionsManager.swift in Sources */,
+				8AF64982AFC17600E66297DD /* SpeechProvider.swift in Sources */,
+				0AAB4E979B19C18124EF9878 /* VoiceConfig.swift in Sources */,
+				D15744898F6F7D6DB57455D2 /* VoiceInputController.swift in Sources */,
+				566440F186A6EFC0BFB168FB /* VoicePrompts.swift in Sources */,
+				94E8490FB3B0D81761AFC316 /* VoiceSettingsView.swift in Sources */,
+				5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

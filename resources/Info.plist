@@ -99,6 +99,8 @@
 	<false/>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Squirrel uses the microphone for push-to-talk voice input. 鼠鬚管使用麥克風進行語音輸入（按住熱鍵講話）。</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUEnableAutomaticChecks</key>

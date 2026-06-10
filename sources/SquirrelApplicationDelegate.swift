@@ -21,6 +21,8 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   var enableNotifications = false
   var showStatusIcon: Bool = true
   var statusItem: NSStatusItem?
+  var voiceController: VoiceInputController?
+  var voiceSettingsWindow: VoiceSettingsWindowController?
   let updateController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
   var supportsGentleScheduledUpdateReminders: Bool {
     true
@@ -65,6 +67,10 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     // swiftlint:disable:next notification_center_detachment
     NotificationCenter.default.removeObserver(self)
     DistributedNotificationCenter.default().removeObserver(self)
+    if let controller = voiceController {
+      voiceController = nil
+      Task { @MainActor in controller.stop() }
+    }
     panel?.hide()
     if let item = statusItem {
       NSStatusBar.system.removeStatusItem(item)
@@ -182,6 +188,39 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
       panel.load(config: config, forDarkMode: false)
       panel.load(config: config, forDarkMode: true)
     }
+    refreshVoiceInput()
+  }
+
+  /// Start / reload / stop the voice input controller to match the merged
+  /// settings (UserDefaults > squirrel.yaml). Idempotent: called at launch,
+  /// after deploy, and when the Settings UI saves a change.
+  func refreshVoiceInput() {
+    let settings = VoiceConfig.load(config: config)
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+      if settings.enabled {
+        if let controller = self.voiceController {
+          controller.reload(settings: settings)
+        } else {
+          let controller = VoiceInputController(settings: settings)
+          self.voiceController = controller
+          controller.start()
+        }
+      } else if let controller = self.voiceController {
+        controller.stop()
+        self.voiceController = nil
+      }
+    }
+  }
+
+  func openVoiceSettings() {
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+      if self.voiceSettingsWindow == nil {
+        self.voiceSettingsWindow = VoiceSettingsWindowController()
+      }
+      self.voiceSettingsWindow?.show()
+    }
   }
 
   func loadSettings(for schemaID: String) {
@@ -237,6 +276,10 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   func addObservers() {
     let center = NSWorkspace.shared.notificationCenter
     center.addObserver(forName: NSWorkspace.willPowerOffNotification, object: nil, queue: nil, using: workspaceWillPowerOff)
+
+    NotificationCenter.default.addObserver(forName: VoiceConfig.settingsChanged, object: nil, queue: .main) { [weak self] _ in
+      self?.refreshVoiceInput()
+    }
 
     let notifCenter = DistributedNotificationCenter.default()
     notifCenter.addObserver(forName: .init("SquirrelReloadNotification"), object: nil, queue: nil, using: rimeNeedsReload)

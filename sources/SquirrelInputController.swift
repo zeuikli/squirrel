@@ -10,6 +10,10 @@ import InputMethodKit
 final class SquirrelInputController: IMKInputController {
   private static let keyRollOver = 50
   private static var unknownAppCnt: UInt = 0
+  /// The controller owning the focused input session — the voice commit target.
+  private static weak var current: SquirrelInputController?
+  /// True when voice text can go out through the native IMK commit channel.
+  static var canCommitVoiceText: Bool { current?.client != nil }
 
   private weak var client: IMKTextInput?
   private let rimeAPI: RimeApi_stdbool = rime_get_api_stdbool().pointee
@@ -182,6 +186,7 @@ final class SquirrelInputController: IMKInputController {
 
   override func activateServer(_ sender: Any!) {
     self.client ?= sender as? IMKTextInput
+    Self.current = self
     // print("[DEBUG] activateServer:")
     var keyboardLayout = NSApp.squirrelAppDelegate.config?.getString("keyboard_layout") ?? ""
     if keyboardLayout == "last" || keyboardLayout == "" {
@@ -226,8 +231,18 @@ final class SquirrelInputController: IMKInputController {
     ) { [weak self] notification in
       self?.reportASCIIMode(notification)
     }
-    
 
+    // Voice input: commit recognized text through the native IMK channel.
+    // Only the controller owning the focused session handles it.
+    NotificationCenter.default.addObserver(
+      forName: .squirrelVoiceCommit,
+      object: nil,
+      queue: .main
+    ) { [weak self] notification in
+      guard let self = self, self === Self.current,
+            let text = notification.object as? String, !text.isEmpty else { return }
+      self.commit(string: text)
+    }
   }
 
   override func deactivateServer(_ sender: Any!) {
@@ -235,6 +250,9 @@ final class SquirrelInputController: IMKInputController {
     hidePalettes()
     commitComposition(sender)
     client = nil
+    if Self.current === self {
+      Self.current = nil
+    }
   }
 
   override func hidePalettes() {
@@ -274,6 +292,8 @@ final class SquirrelInputController: IMKInputController {
     logDir.target = self
     let setting = NSMenuItem(title: NSLocalizedString("Settings...", comment: "Menu item"), action: #selector(openRimeFolder), keyEquivalent: "")
     setting.target = self
+    let voiceSetting = NSMenuItem(title: NSLocalizedString("Voice Input Settings...", comment: "Menu item"), action: #selector(openVoiceSettings), keyEquivalent: "")
+    voiceSetting.target = self
     let wiki = NSMenuItem(title: NSLocalizedString("Rime Wiki...", comment: "Menu item"), action: #selector(openWiki), keyEquivalent: "")
     wiki.target = self
     let update = NSMenuItem(title: NSLocalizedString("Check for updates...", comment: "Menu item"), action: #selector(checkForUpdates), keyEquivalent: "")
@@ -284,6 +304,7 @@ final class SquirrelInputController: IMKInputController {
     menu.addItem(sync)
     menu.addItem(logDir)
     menu.addItem(setting)
+    menu.addItem(voiceSetting)
     menu.addItem(wiki)
     menu.addItem(update)
 
@@ -304,6 +325,10 @@ final class SquirrelInputController: IMKInputController {
 
   @objc func openRimeFolder() {
     NSApp.squirrelAppDelegate.openRimeFolder()
+  }
+
+  @objc func openVoiceSettings() {
+    NSApp.squirrelAppDelegate.openVoiceSettings()
   }
 
   @objc func checkForUpdates() {
