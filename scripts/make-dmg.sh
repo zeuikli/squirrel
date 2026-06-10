@@ -1,9 +1,11 @@
 #!/bin/bash
 # Assemble a distributable DMG of the customized Squirrel (SPEC §17).
 #
-# Pipeline: copy the Release build → prebuild schemas inside the bundle →
-# RE-SIGN (the prebuild writes into the bundle and would break the seal,
-# SPEC §15.9) → verify → stage app + INSTALL.md + install.sh → hdiutil.
+# Pipeline: copy the Release build → verify the seal → stage app +
+# INSTALL.md + install.sh → hdiutil. No prebuild inside the bundle
+# (SPEC §17.3): schemas compile into ~/Library/Rime/build on the user's
+# first deploy (one-time, 1–2 min), keeping the bundle read-only and the
+# signature seal intact forever.
 #
 # Usage: scripts/make-dmg.sh [output.dmg]
 #   SIGN_IDENTITY env var overrides the signing identity
@@ -32,15 +34,15 @@ test -f INSTALL-zh.md || { echo "error: INSTALL-zh.md not found at repo root" >&
 echo "[1/5] staging app…"
 cp -R "$APP_SRC" "$STAGING/Squirrel.app"
 
-echo "[2/5] prebuilding schemas inside the bundle (first deploy becomes instant)…"
-( cd "$STAGING/Squirrel.app/Contents/SharedSupport" \
-  && "$STAGING/Squirrel.app/Contents/MacOS/Squirrel" --build ) > /dev/null 2>&1
-test -d "$STAGING/Squirrel.app/Contents/SharedSupport/build" \
-  || { echo "error: prebuild produced no build/ directory" >&2; exit 1; }
+echo "[2/5] ensuring no prebuild artifacts in the bundle (SPEC §17.3)…"
+rm -rf "$STAGING/Squirrel.app/Contents/SharedSupport/build"
 
-echo "[3/5] re-signing (prebuild invalidated the seal)…"
-codesign --force --deep -s "$IDENTITY" "$STAGING/Squirrel.app"
-codesign --verify --deep "$STAGING/Squirrel.app" || { echo "error: seal verification failed" >&2; exit 1; }
+echo "[3/5] verifying signature seal…"
+codesign --verify --deep "$STAGING/Squirrel.app" 2>/dev/null || {
+  echo "  seal invalid (stale build?) — re-signing…"
+  codesign --force --deep -s "$IDENTITY" "$STAGING/Squirrel.app"
+  codesign --verify --deep "$STAGING/Squirrel.app" || { echo "error: seal verification failed" >&2; exit 1; }
+}
 
 echo "[4/5] staging docs + installer…"
 cp INSTALL-zh.md "$STAGING/安裝說明 INSTALL.md"
