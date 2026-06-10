@@ -82,7 +82,10 @@ final class VoiceInputController {
   /// Apply new settings in place (idempotent; called on deploy / UI change).
   func reload(settings: VoiceSettings) {
     self.settings = settings
-    hotkey.updateTrigger(currentTrigger())
+    if currentEngine() == .cgtap, !PermissionsManager.inputMonitoringTrusted {
+      PermissionsManager.requestInputMonitoring()
+    }
+    hotkey.updateTrigger(currentTrigger(), engine: currentEngine())
     Task { await warmBackend() }
     NSLog("[SquirrelVoice] settings reloaded (backend=%@)", settings.backend.rawValue)
   }
@@ -136,6 +139,16 @@ final class VoiceInputController {
     return .modifier(settings.trigger)
   }
 
+  private func currentEngine() -> HotkeyManager.Engine {
+    HotkeyManager.Engine(rawValue: settings.hotkeyEngine) ?? .nsevent
+  }
+
+  /// True when every permission the selected engine needs is granted.
+  private func hotkeyPermissionsGranted() -> Bool {
+    let ax = PermissionsManager.accessibilityTrusted
+    return currentEngine() == .cgtap ? ax && PermissionsManager.inputMonitoringTrusted : ax
+  }
+
   static func cgFlags(_ raw: UInt) -> CGEventFlags {
     let m = NSEvent.ModifierFlags(rawValue: raw)
     var f: CGEventFlags = []
@@ -149,29 +162,31 @@ final class VoiceInputController {
   private func wireHotkey() {
     hotkey.onStart = { [weak self] in self?.beginRecording() }
     hotkey.onStop = { [weak self] in self?.finishRecording() }
-    // NSEvent global monitors only need Accessibility — Input Monitoring is
-    // no longer involved (SPEC §15.9: macOS auto-revokes ListenEvent grants
-    // for self-signed builds, so the CGEventTap approach was abandoned).
-    let ok = hotkey.start(trigger: currentTrigger())
+    // The cgtap engine additionally needs Input Monitoring (SPEC §15.9);
+    // nsevent only needs Accessibility.
+    if currentEngine() == .cgtap, !PermissionsManager.inputMonitoringTrusted {
+      PermissionsManager.requestInputMonitoring()
+    }
+    let ok = hotkey.start(trigger: currentTrigger(), engine: currentEngine())
     NSLog("[SquirrelVoice] hotkey installed=%@ axTrusted=%@",
           ok ? "YES" : "NO",
           PermissionsManager.accessibilityTrusted ? "YES" : "NO")
   }
 
-  /// Global monitors deliver nothing until Accessibility is granted — poll
-  /// and reinstall the moment it flips to granted.
+  /// Monitors/taps deliver nothing until their permissions are granted —
+  /// poll and reinstall the moment they flip to granted.
   private func startPermissionPoll() {
     permPoll?.invalidate()
-    var lastTrusted = PermissionsManager.accessibilityTrusted
+    var lastGranted = hotkeyPermissionsGranted()
     permPoll = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
       Task { @MainActor in
         guard let self else { return }
-        let trusted = PermissionsManager.accessibilityTrusted
-        if trusted && (!self.hotkey.isInstalled || !lastTrusted) {
-          _ = self.hotkey.start(trigger: self.currentTrigger())
+        let granted = self.hotkeyPermissionsGranted()
+        if granted && (!self.hotkey.isInstalled || !lastGranted) {
+          _ = self.hotkey.start(trigger: self.currentTrigger(), engine: self.currentEngine())
           NSLog("[SquirrelVoice] hotkey (re)installed after permission grant")
         }
-        lastTrusted = trusted
+        lastGranted = granted
       }
     }
   }

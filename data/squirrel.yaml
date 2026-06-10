@@ -445,6 +445,7 @@ voice_input:
     cookies_path: ""                  # backend=chatgpt 時必填（Cookie-Editor 匯出的 cookies.json）
   hotkey:
     mode: hold_modifier               # hold_modifier | custom_combo
+    engine: nsevent                   # nsevent（僅需輔助使用）| cgtap（另需輸入監控）
     modifier: right_option            # right_option | right_command | right_control | fn
     # custom_combo 模式時：
     # key_code: 49                    # macOS keycode（49 = Space）

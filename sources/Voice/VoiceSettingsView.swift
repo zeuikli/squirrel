@@ -25,8 +25,10 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var groqKeyField: String = ""
   @Published var groqKeyStatus: String = ""
   @Published var chatgptLoginStatus: String = ""
+  @Published var hotkeyEngine: String
   @Published var micAuthorized = PermissionsManager.micAuthorized
   @Published var accessibilityTrusted = PermissionsManager.accessibilityTrusted
+  @Published var inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
 
   private var permTimer: Timer?
 
@@ -34,6 +36,7 @@ final class VoiceSettingsModel: ObservableObject {
     let s = VoiceConfig.load(config: NSApp.squirrelAppDelegate.config)
     enabled = s.enabled
     backend = s.backend
+    hotkeyEngine = s.hotkeyEngine
     trigger = s.trigger
     transcribeLanguage = s.transcribeLanguage
     cleanupEnabled = s.cleanupEnabled
@@ -54,6 +57,17 @@ final class VoiceSettingsModel: ObservableObject {
   func refreshPermissions() {
     micAuthorized = PermissionsManager.micAuthorized
     accessibilityTrusted = PermissionsManager.accessibilityTrusted
+    inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
+  }
+
+  /// Trigger the system Input Monitoring prompt; if it doesn't appear
+  /// (already denied / stale record), open System Settings — remove (−) and
+  /// re-add (+) the entry there if the toggle keeps switching itself off.
+  func requestInputMonitoring() {
+    if !PermissionsManager.requestInputMonitoring() {
+      PermissionsManager.openInputMonitoringSettings()
+    }
+    refreshPermissions()
   }
 
   /// Trigger the system mic prompt while it is still available
@@ -72,6 +86,7 @@ final class VoiceSettingsModel: ObservableObject {
   func save() {
     VoiceConfig.set(.enabled, enabled)
     VoiceConfig.set(.backend, backend.rawValue)
+    VoiceConfig.set(.hotkeyEngine, hotkeyEngine)
     VoiceConfig.set(.trigger, trigger.rawValue)
     VoiceConfig.set(.transcribeLanguage, transcribeLanguage)
     VoiceConfig.set(.cleanupEnabled, cleanupEnabled)
@@ -135,6 +150,23 @@ struct VoiceSettingsView: View {
           Text(model.accessibilityTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
             .foregroundColor(model.accessibilityTrusted ? .green : .red)
         }
+        if model.hotkeyEngine == "cgtap" {
+          LabeledContent(NSLocalizedString("Input Monitoring (CGEventTap engine)", comment: "Voice settings")) {
+            Text(model.inputMonitoringTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
+              .foregroundColor(model.inputMonitoringTrusted ? .green : .red)
+          }
+          if !model.inputMonitoringTrusted {
+            HStack {
+              Text(NSLocalizedString("If the toggle keeps switching itself off, remove (−) and re-add (+) Squirrel in the list.", comment: "Voice settings"))
+                .font(.footnote)
+                .foregroundColor(.orange)
+              Spacer()
+              Button(NSLocalizedString("Grant input monitoring…", comment: "Voice settings")) {
+                model.requestInputMonitoring()
+              }
+            }
+          }
+        }
         if !model.micAuthorized {
           HStack {
             Text(NSLocalizedString("Microphone access is required for recording.", comment: "Voice settings"))
@@ -166,6 +198,10 @@ struct VoiceSettingsView: View {
         }
         Picker(NSLocalizedString("Push-to-talk key", comment: "Voice settings"), selection: $model.trigger) {
           ForEach(VoiceTriggerKind.allCases, id: \.self) { Text($0.label).tag($0) }
+        }
+        Picker(NSLocalizedString("Hotkey engine", comment: "Voice settings"), selection: $model.hotkeyEngine) {
+          Text(NSLocalizedString("NSEvent (Accessibility only)", comment: "Voice settings")).tag("nsevent")
+          Text(NSLocalizedString("CGEventTap (+ Input Monitoring)", comment: "Voice settings")).tag("cgtap")
         }
         TextField(NSLocalizedString("Language (Whisper code)", comment: "Voice settings"),
                   text: $model.transcribeLanguage)
@@ -217,6 +253,7 @@ struct VoiceSettingsView: View {
     .frame(minWidth: 520, minHeight: 480)
     .onChange(of: model.enabled) { _ in model.save() }
     .onChange(of: model.backend) { _ in model.save() }
+    .onChange(of: model.hotkeyEngine) { _ in model.save() }
     .onChange(of: model.trigger) { _ in model.save() }
     .onChange(of: model.transcribeLanguage) { _ in model.save() }
     .onChange(of: model.cleanupEnabled) { _ in model.save() }

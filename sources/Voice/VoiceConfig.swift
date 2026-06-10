@@ -51,6 +51,7 @@ struct VoiceSettings {
   var backend: VoiceBackend = .groq
   var cookiesPath: String = ""
   var hotkeyMode: String = "hold_modifier"   // hold_modifier | custom_combo
+  var hotkeyEngine: String = "nsevent"       // nsevent (AX only) | cgtap (AX + Input Monitoring)
   var trigger: VoiceTriggerKind = .rightOption
   var customKeyCode: Int = 49                // Space
   var customModifiers: UInt = NSEvent.ModifierFlags([.control, .option]).rawValue
@@ -76,6 +77,7 @@ enum VoiceConfig {
     case backend = "voice.backend"
     case cookiesPath = "voice.cookiesPath"
     case hotkeyMode = "voice.hotkeyMode"
+    case hotkeyEngine = "voice.hotkeyEngine"
     case trigger = "voice.trigger"
     case customKeyCode = "voice.customKeyCode"
     case customModifiers = "voice.customModifiers"
@@ -115,6 +117,7 @@ enum VoiceConfig {
     s.backend = VoiceBackend(rawValue: str(.backend, "voice_input/backend", s.backend.rawValue)) ?? .groq
     s.cookiesPath = str(.cookiesPath, "voice_input/chatgpt/cookies_path", s.cookiesPath)
     s.hotkeyMode = str(.hotkeyMode, "voice_input/hotkey/mode", s.hotkeyMode)
+    s.hotkeyEngine = str(.hotkeyEngine, "voice_input/hotkey/engine", s.hotkeyEngine)
     s.trigger = VoiceTriggerKind(rawValue: str(.trigger, "voice_input/hotkey/modifier", s.trigger.rawValue)) ?? .rightOption
     s.customKeyCode = int(.customKeyCode, "voice_input/hotkey/key_code", s.customKeyCode)
     s.transcribeLanguage = str(.transcribeLanguage, "voice_input/transcribe/language", s.transcribeLanguage)
