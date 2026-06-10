@@ -33,7 +33,7 @@ private struct SettingsRootView: View {
         .tag(SettingsTab.voice)
     }
     .padding(.top, 4)
-    .frame(minWidth: 520, minHeight: 460)
+    .frame(minWidth: 560, minHeight: 560)
   }
 }
 

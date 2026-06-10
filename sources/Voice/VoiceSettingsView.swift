@@ -116,30 +116,42 @@ struct VoiceSettingsView: View {
 
       if model.backend == .groq {
         Section(NSLocalizedString("Groq API key", comment: "Voice settings")) {
-          SecureField(NSLocalizedString("Paste API key", comment: "Voice settings"), text: $model.groqKeyField)
+          LabeledContent(NSLocalizedString("Status", comment: "Voice settings")) {
+            Text(model.groqKeyStatus.isEmpty
+                 ? NSLocalizedString("Not checked —", comment: "Voice settings")
+                 : model.groqKeyStatus)
+              .foregroundColor(.secondary)
+          }
+          SecureField(NSLocalizedString("API key", comment: "Voice settings"), text: $model.groqKeyField,
+                      prompt: Text(NSLocalizedString("Paste your Groq API key", comment: "Voice settings")))
           HStack {
             Button(NSLocalizedString("Save key", comment: "Voice settings")) { model.saveGroqKey() }
               .disabled(model.groqKeyField.isEmpty)
             Button(NSLocalizedString("Clear", comment: "Voice settings")) { model.clearGroqKey() }
-            Text(model.groqKeyStatus).foregroundColor(.secondary)
           }
         }
       }
 
       if model.backend == .chatgpt {
         Section(NSLocalizedString("ChatGPT session", comment: "Voice settings")) {
+          LabeledContent(NSLocalizedString("Status", comment: "Voice settings")) {
+            Text(model.chatgptLoginStatus.isEmpty
+                 ? NSLocalizedString("Not checked —", comment: "Voice settings")
+                 : model.chatgptLoginStatus)
+              .foregroundColor(.secondary)
+          }
           HStack {
             Button(NSLocalizedString("Sign in to ChatGPT…", comment: "Voice settings")) { openLogin() }
             Button(NSLocalizedString("Check status", comment: "Voice settings")) { model.refreshChatGPTStatus() }
-            Text(model.chatgptLoginStatus).foregroundColor(.secondary)
           }
-          TextField(NSLocalizedString("cookies.json path (optional, legacy)", comment: "Voice settings"),
-                    text: $model.cookiesPath)
+          TextField(NSLocalizedString("cookies.json path", comment: "Voice settings"),
+                    text: $model.cookiesPath,
+                    prompt: Text(NSLocalizedString("Optional, legacy — UI sign-in is preferred", comment: "Voice settings")))
         }
       }
     }
     .formStyle(.grouped)
-    .frame(minWidth: 480, minHeight: 360)
+    .frame(minWidth: 520, minHeight: 480)
     .onChange(of: model.enabled) { _ in model.save() }
     .onChange(of: model.backend) { _ in model.save() }
     .onChange(of: model.trigger) { _ in model.save() }

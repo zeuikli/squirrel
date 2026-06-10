@@ -19,9 +19,11 @@ enum RimeCustomPatcher {
   static let beginMarker = "# >>> Squirrel Settings UI managed block — do not edit between markers <<<"
   static let endMarker = "# <<< end Squirrel Settings UI managed block >>>"
 
-  /// Render a value as a YAML scalar.
+  /// Render a value as a YAML scalar. NSNull → `~` (YAML null), which Rime's
+  /// patch mechanism interprets as "delete this node".
   static func yamlScalar(_ value: Any) -> String {
     switch value {
+    case is NSNull: return "~"
     case let b as Bool: return b ? "true" : "false"
     case let i as Int: return String(i)
     case let d as Double: return String(d)

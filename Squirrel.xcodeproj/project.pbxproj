@@ -84,6 +84,7 @@
 		598B438DB0205705573C55CB /* fullshape.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7F294E53959DB14EF9F06A4B /* fullshape.dict.yaml */; };
 		59C143D38E66EFA8EFDFFD3B /* latinin1.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 87144737B2E7B777734BDE29 /* latinin1.schema.yaml */; };
 		5AA44A2EAA736E7DDE2308EB /* terra_pinyin_onion_add.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7503402BA5A71B14D31CF8F5 /* terra_pinyin_onion_add.dict.yaml */; };
+		5AFE4BDD96A3F29F3452FA9F /* bopomo_onionplus_space.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7B104C169CFC64DB8F193FEF /* bopomo_onionplus_space.schema.yaml */; };
 		5D9641198DB25E78272C5435 /* easy_en_upper.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */; };
 		5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */; };
 		67444D5DBD084F458D9FC30D /* essay-kr-hanja.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */; };
@@ -285,6 +286,8 @@
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638722B7E96F006DCCDD /* cangjie5_char.dict.yaml in Copy Shared Support Files */,
 				441E638522B7E96F006DCCDD /* cangjie5.stem.dict.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
@@ -364,6 +367,7 @@
 				A2764CD597DB8165711EA744 /* zh-hant-t-essay-bgc.gram in Copy Shared Support Files */,
 				E770475DA5A1FF7A227E002F /* zh-hant-t-essay-bgw.gram in Copy Shared Support Files */,
 				D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */,
+				5AFE4BDD96A3F29F3452FA9F /* bopomo_onionplus_space.schema.yaml in Copy Shared Support Files */,
 			);
 			name = "Copy Shared Support Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,6 +509,7 @@
 		77AA67F62588916400A592E2 /* TSPhrases.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = TSPhrases.ocd2; sourceTree = "<group>"; };
 		77AA67F72588916400A592E2 /* STPhrases.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = STPhrases.ocd2; sourceTree = "<group>"; };
 		77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */ = {isa = PBXFileReference; name = punct_bopomo.yaml; path = data/onion/punct_bopomo.yaml; sourceTree = SOURCE_ROOT; };
+		7B104C169CFC64DB8F193FEF /* bopomo_onionplus_space.schema.yaml */ = {isa = PBXFileReference; name = bopomo_onionplus_space.schema.yaml; path = data/onion/bopomo_onionplus_space.schema.yaml; sourceTree = SOURCE_ROOT; };
 		7B5488211D2DAAD10056A1BE /* default.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = default.yaml; path = data/plum/default.yaml; sourceTree = "<group>"; };
 		7B5488291D2DAAD10056A1BE /* essay.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = essay.txt; path = data/plum/essay.txt; sourceTree = "<group>"; };
 		7B54882E1D2DAAD10056A1BE /* luna_pinyin_fluency.schema.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = luna_pinyin_fluency.schema.yaml; path = data/plum/luna_pinyin_fluency.schema.yaml; sourceTree = "<group>"; };
@@ -776,6 +781,7 @@
 				060E4B0B949D1B9117A5A1D6 /* punct_mark_plus.json */,
 				48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */,
 				77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */,
+				7B104C169CFC64DB8F193FEF /* bopomo_onionplus_space.schema.yaml */,
 			);
 			name = OnionData;
 			sourceTree = "<group>";
@@ -863,6 +869,8 @@
 				441E636522B7E90C006DCCDD /* terra_pinyin.schema.yaml */,
 441E638422B7E90C006DCCDD /* detenele.schema.yaml */,
 441E638222B7E90C006DCCDD /* cangjie5.base.dict.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
 				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,

@@ -22,16 +22,24 @@ final class SquirrelSettingsModel: ObservableObject {
   @Published var inlinePreedit: Bool = true
   @Published var showNotifications: String = "appropriate" // never | appropriate | always
   @Published var showStatusIcon: Bool = true
-  // default.custom.yaml key
-  @Published var pageSize: Int = 5
+  // Onion schema patch keys (bopomo_onionplus + _space, SPEC §15.7)
+  @Published var defaultAsciiMode: Bool = false      // switches/@0/reset: false=中文 true=英文
+  @Published var defaultFullShape: Bool = false      // switches/@1/reset: false=半形 true=全形
+  @Published var pageSize: Int = 8                   // menu/page_size (effective in-schema)
+  @Published var onionSelectLabels: Bool = true      // menu/alternative_select_labels keep/remove
 
   @Published var colorSchemes: [String] = []
   @Published var applying = false
   @Published var statusText = ""
 
+  /// Schemas receiving the schema-level managed patch.
+  private let onionSchemas = ["bopomo_onionplus", "bopomo_onionplus_space"]
+
   private var userDir: URL { SquirrelApp.userDir }
   private var squirrelCustomURL: URL { userDir.appendingPathComponent("squirrel.custom.yaml") }
-  private var defaultCustomURL: URL { userDir.appendingPathComponent("default.custom.yaml") }
+  private func schemaCustomURL(_ schemaID: String) -> URL {
+    userDir.appendingPathComponent("\(schemaID).custom.yaml")
+  }
 
   init() {
     loadEffectiveValues()
@@ -49,12 +57,14 @@ final class SquirrelSettingsModel: ObservableObject {
     if let v = config?.getBool("style/inline_preedit") { inlinePreedit = v }
     if let v = config?.getString("show_notifications_when") { showNotifications = v }
     if let v = config?.getBool("status_icon/show") { showStatusIcon = v }
-    // page_size lives in the schema/default config, not the squirrel config;
-    // read the managed block as the source of truth for the UI, else default.
-    if let content = try? String(contentsOf: defaultCustomURL, encoding: .utf8),
-       let v = RimeCustomPatcher.managedSettings(in: content)["menu/page_size"],
-       let n = Int(v) {
-      pageSize = n
+    // Schema-level values live in the compiled schema config, which isn't
+    // reachable through the base config — read the managed block instead.
+    if let content = try? String(contentsOf: schemaCustomURL(onionSchemas[0]), encoding: .utf8) {
+      let managed = RimeCustomPatcher.managedSettings(in: content)
+      if let v = managed["switches/@0/reset"] { defaultAsciiMode = v == "1" }
+      if let v = managed["switches/@1/reset"] { defaultFullShape = v == "1" }
+      if let v = managed["menu/page_size"], let n = Int(v) { pageSize = n }
+      if managed["menu/alternative_select_labels"] != nil { onionSelectLabels = false }
     }
   }
 
@@ -74,15 +84,24 @@ final class SquirrelSettingsModel: ObservableObject {
       "show_notifications_when": showNotifications,
       "status_icon/show": showStatusIcon
     ]
-    let defaultSettings: [String: Any] = [
+    // Schema-level patch: switch defaults + candidate menu (SPEC §15.7).
+    // page_size goes here (not default.custom.yaml) — the schema's own menu
+    // (included from element_bopomo) would shadow a default.yaml value.
+    var schemaSettings: [String: Any] = [
+      "switches/@0/reset": defaultAsciiMode ? 1 : 0,
+      "switches/@1/reset": defaultFullShape ? 1 : 0,
       "menu/page_size": pageSize
     ]
+    if !onionSelectLabels {
+      // YAML null deletes the node → falls back to plain numeric labels.
+      schemaSettings["menu/alternative_select_labels"] = NSNull()
+    }
 
     do {
       try writePatch(url: squirrelCustomURL, settings: squirrelSettings, template: nil)
-      // default.custom.yaml: when creating it fresh, seed from the shared
-      // (bundled) copy so schema_list keeps bopomo_onionplus (SPEC §15.2).
-      try writePatch(url: defaultCustomURL, settings: defaultSettings, template: sharedDefaultCustomTemplate())
+      for schema in onionSchemas {
+        try writePatch(url: schemaCustomURL(schema), settings: schemaSettings, template: nil)
+      }
     } catch {
       applying = false
       statusText = error.localizedDescription
@@ -104,11 +123,6 @@ final class SquirrelSettingsModel: ObservableObject {
     let current = try? String(contentsOf: url, encoding: .utf8)
     let updated = RimeCustomPatcher.updating(content: current, settings: settings, template: template)
     try updated.write(to: url, atomically: true, encoding: .utf8)
-  }
-
-  private func sharedDefaultCustomTemplate() -> String? {
-    guard let shared = Bundle.main.sharedSupportPath else { return nil }
-    return try? String(contentsOfFile: shared + "/default.custom.yaml", encoding: .utf8)
   }
 
   /// Open the Rime folder (the classic way — kept available from the UI too).

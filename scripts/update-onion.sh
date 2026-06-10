@@ -28,6 +28,7 @@ FILES=(
   # main schema (deps: symbols_bpmf cangjie5 easy_en_lower easy_en_upper
   # latinin1 jpnin1 hangeul_hnc greek cyrillic allbpm fullshape)
   bopomo_onionplus.schema.yaml
+  bopomo_onionplus_space.schema.yaml
   bopomo_onionplus.extended.dict.yaml
   bopomo_onionplus_phrase.txt
   element_bopomo.yaml
@@ -114,10 +115,11 @@ cp "$SHARED"/*.gram "$SHARED/grammar.yaml" "$DST/"
 # default schema list (ours, not upstream's all-schemas variant).
 if [[ ! -f "$DST/default.custom.yaml" ]]; then
   cat > "$DST/default.custom.yaml" <<'YAML'
-# 洋蔥 plus 注音預設方案（本客製版內建，SPEC §13.5）
+# 洋蔥 plus 注音預設方案（本客製版內建，SPEC §13.5 / §15.7）
 patch:
   schema_list:
     - schema: bopomo_onionplus
+    - schema: bopomo_onionplus_space
 YAML
 fi
 
