@@ -149,33 +149,29 @@ final class VoiceInputController {
   private func wireHotkey() {
     hotkey.onStart = { [weak self] in self?.beginRecording() }
     hotkey.onStop = { [weak self] in self?.finishRecording() }
-    // Listen-only CGEventTaps need Input Monitoring on macOS 10.15+ for BOTH
-    // trigger modes — flagsChanged (hold_modifier) included (SPEC §8, §15.9).
-    if !PermissionsManager.inputMonitoringTrusted {
-      PermissionsManager.requestInputMonitoring()
-    }
+    // NSEvent global monitors only need Accessibility — Input Monitoring is
+    // no longer involved (SPEC §15.9: macOS auto-revokes ListenEvent grants
+    // for self-signed builds, so the CGEventTap approach was abandoned).
     let ok = hotkey.start(trigger: currentTrigger())
-    NSLog("[SquirrelVoice] hotkey installed=%@ axTrusted=%@ inputMonitoring=%@",
+    NSLog("[SquirrelVoice] hotkey installed=%@ axTrusted=%@",
           ok ? "YES" : "NO",
-          PermissionsManager.accessibilityTrusted ? "YES" : "NO",
-          PermissionsManager.inputMonitoringTrusted ? "YES" : "NO")
+          PermissionsManager.accessibilityTrusted ? "YES" : "NO")
   }
 
-  /// The tap silently fails until the user grants permissions in System
-  /// Settings — poll Accessibility AND Input Monitoring, and (re)install the
-  /// moment either flips to granted.
+  /// Global monitors deliver nothing until Accessibility is granted — poll
+  /// and reinstall the moment it flips to granted.
   private func startPermissionPoll() {
     permPoll?.invalidate()
-    var lastGranted = PermissionsManager.accessibilityTrusted && PermissionsManager.inputMonitoringTrusted
+    var lastTrusted = PermissionsManager.accessibilityTrusted
     permPoll = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
       Task { @MainActor in
         guard let self else { return }
-        let granted = PermissionsManager.accessibilityTrusted && PermissionsManager.inputMonitoringTrusted
-        if granted && (!self.hotkey.isInstalled || !lastGranted) {
+        let trusted = PermissionsManager.accessibilityTrusted
+        if trusted && (!self.hotkey.isInstalled || !lastTrusted) {
           _ = self.hotkey.start(trigger: self.currentTrigger())
           NSLog("[SquirrelVoice] hotkey (re)installed after permission grant")
         }
-        lastGranted = granted
+        lastTrusted = trusted
       }
     }
   }

@@ -2,11 +2,17 @@
 //  HotkeyManager.swift
 //  Squirrel
 //
-//  Ported from LizardType (Sources/Input/HotkeyManager.swift).
-//  Global push-to-talk via a CGEventTap. Two trigger styles:
-//   - `.modifier`: hold a single modifier key (e.g. Right ⌥). listen-only.
+//  Global push-to-talk. Two trigger styles:
+//   - `.modifier`: hold a single modifier key (e.g. Right ⌥).
 //   - `.keyCombo`: hold an arbitrary key + modifiers (e.g. ⌃⌥Space).
 //  Press-and-hold → `onStart`; release → `onStop`.
+//
+//  Implementation note (SPEC §15.9): originally a CGEventTap port from
+//  LizardType, but listen-only taps require Input Monitoring, whose TCC
+//  grant macOS auto-revokes for self-signed builds. NSEvent global monitors
+//  only need Accessibility, and we never consume events, so they are fully
+//  equivalent here. A local monitor covers the moments our own Preferences
+//  window has focus (global monitors skip events delivered to our process).
 //
 
 import Foundation
@@ -20,19 +26,19 @@ final class HotkeyManager {
     case keyCombo(keyCode: Int64, mods: CGEventFlags)
   }
 
-  static let stdMask: CGEventFlags = [.maskCommand, .maskAlternate, .maskControl, .maskShift]
+  static let stdMask: NSEvent.ModifierFlags = [.command, .option, .control, .shift]
 
   var onStart: (() -> Void)?
   var onStop: (() -> Void)?
 
-  private var tap: CFMachPort?
-  private var runLoopSource: CFRunLoopSource?
+  private var globalMonitor: Any?
+  private var localMonitor: Any?
   private var active = false
   private var trigger: Trigger = .modifier(.rightOption)
 
-  var isInstalled: Bool { tap != nil }
+  var isInstalled: Bool { globalMonitor != nil }
 
-  private func modKeyCode(_ t: VoiceTriggerKind) -> Int64 {
+  private func modKeyCode(_ t: VoiceTriggerKind) -> UInt16 {
     switch t {
     case .rightOption:  return 61
     case .rightCommand: return 54
@@ -40,13 +46,23 @@ final class HotkeyManager {
     case .fn:           return 63
     }
   }
-  private func modMask(_ t: VoiceTriggerKind) -> CGEventFlags {
+  private func modFlag(_ t: VoiceTriggerKind) -> NSEvent.ModifierFlags {
     switch t {
-    case .rightOption:  return .maskAlternate
-    case .rightCommand: return .maskCommand
-    case .rightControl: return .maskControl
-    case .fn:           return .maskSecondaryFn
+    case .rightOption:  return .option
+    case .rightCommand: return .command
+    case .rightControl: return .control
+    case .fn:           return .function
     }
+  }
+
+  /// Convert legacy CGEventFlags (stored in settings) to NSEvent flags.
+  private static func nsFlags(_ cg: CGEventFlags) -> NSEvent.ModifierFlags {
+    var f: NSEvent.ModifierFlags = []
+    if cg.contains(.maskCommand) { f.insert(.command) }
+    if cg.contains(.maskAlternate) { f.insert(.option) }
+    if cg.contains(.maskControl) { f.insert(.control) }
+    if cg.contains(.maskShift) { f.insert(.shift) }
+    return f
   }
 
   @discardableResult
@@ -54,77 +70,54 @@ final class HotkeyManager {
     self.trigger = trigger
     stop()
 
-    let mask: CGEventMask
+    let mask: NSEvent.EventTypeMask
     switch trigger {
     case .modifier:
-      mask = CGEventMask(1 << CGEventType.flagsChanged.rawValue)
+      mask = [.flagsChanged]
     case .keyCombo:
-      mask = CGEventMask((1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue))
+      mask = [.keyDown, .keyUp]
     }
 
-    let refcon = Unmanaged.passUnretained(self).toOpaque()
-    // listen-only: active taps that can alter the stream are gated far more
-    // strictly by macOS and silently receive nothing; observing is reliable.
-    guard let tap = CGEvent.tapCreate(
-      tap: .cgSessionEventTap, place: .headInsertEventTap,
-      options: .listenOnly, eventsOfInterest: mask,
-      callback: { _, type, event, refcon in
-        guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
-        let mgr = Unmanaged<HotkeyManager>.fromOpaque(refcon).takeUnretainedValue()
-        _ = mgr.handle(type: type, event: event)
-        return Unmanaged.passUnretained(event)
-      },
-      userInfo: refcon
-    ) else {
-      return false
+    // Global monitors deliver nothing without Accessibility trust — same
+    // failure mode as a CGEventTap, surfaced by the permission poll/UI.
+    globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
+      self?.handle(event)
     }
-    self.tap = tap
-    let src = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
-    runLoopSource = src
-    CFRunLoopAddSource(CFRunLoopGetMain(), src, .commonModes)
-    CGEvent.tapEnable(tap: tap, enable: true)
-    NSLog("[SquirrelVoice] hotkey tap installed")
-    return true
+    localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
+      self?.handle(event)
+      return event   // never consume
+    }
+    NSLog("[SquirrelVoice] hotkey monitors installed (global=%@)", globalMonitor != nil ? "YES" : "NO")
+    return globalMonitor != nil
   }
 
   func updateTrigger(_ t: Trigger) {
-    if tap != nil { start(trigger: t) } else { trigger = t }
+    if globalMonitor != nil { start(trigger: t) } else { trigger = t }
   }
 
   func stop() {
-    if let tap { CGEvent.tapEnable(tap: tap, enable: false) }
-    if let src = runLoopSource { CFRunLoopRemoveSource(CFRunLoopGetMain(), src, .commonModes) }
-    tap = nil
-    runLoopSource = nil
+    if let m = globalMonitor { NSEvent.removeMonitor(m) }
+    if let m = localMonitor { NSEvent.removeMonitor(m) }
+    globalMonitor = nil
+    localMonitor = nil
     active = false
   }
 
-  /// Returns true if the event matched the trigger.
-  private func handle(type: CGEventType, event: CGEvent) -> Bool {
-    if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-      // macOS disables taps under load — re-enable so push-to-talk keeps working.
-      if let tap { CGEvent.tapEnable(tap: tap, enable: true) }
-      return false
-    }
+  private func handle(_ event: NSEvent) {
     switch trigger {
     case .modifier(let t):
-      guard type == .flagsChanged else { return false }
-      let kc = event.getIntegerValueField(.keyboardEventKeycode)
-      guard kc == modKeyCode(t) else { return false }
-      setActive(event.flags.contains(modMask(t)))
-      return true
+      guard event.type == .flagsChanged, event.keyCode == modKeyCode(t) else { return }
+      setActive(event.modifierFlags.contains(modFlag(t)))
 
     case .keyCombo(let keyCode, let mods):
-      let kc = event.getIntegerValueField(.keyboardEventKeycode)
-      let want = mods.intersection(HotkeyManager.stdMask)
-      let have = event.flags.intersection(HotkeyManager.stdMask)
-      guard kc == keyCode else { return false }
-      if type == .keyDown {
+      guard event.keyCode == UInt16(keyCode) else { return }
+      let want = Self.nsFlags(mods).intersection(Self.stdMask)
+      let have = event.modifierFlags.intersection(Self.stdMask)
+      if event.type == .keyDown {
         if have == want, !active { setActive(true) }
-      } else if type == .keyUp {
+      } else if event.type == .keyUp {
         if active { setActive(false) }
       }
-      return true
     }
   }
 

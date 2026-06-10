@@ -27,7 +27,6 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var chatgptLoginStatus: String = ""
   @Published var micAuthorized = PermissionsManager.micAuthorized
   @Published var accessibilityTrusted = PermissionsManager.accessibilityTrusted
-  @Published var inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
 
   private var permTimer: Timer?
 
@@ -55,16 +54,6 @@ final class VoiceSettingsModel: ObservableObject {
   func refreshPermissions() {
     micAuthorized = PermissionsManager.micAuthorized
     accessibilityTrusted = PermissionsManager.accessibilityTrusted
-    inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
-  }
-
-  /// Trigger the system Input Monitoring prompt; if it doesn't appear
-  /// (already denied), fall back to System Settings.
-  func requestInputMonitoring() {
-    if !PermissionsManager.requestInputMonitoring() {
-      PermissionsManager.openInputMonitoringSettings()
-    }
-    refreshPermissions()
   }
 
   /// Trigger the system mic prompt while it is still available
@@ -146,10 +135,6 @@ struct VoiceSettingsView: View {
           Text(model.accessibilityTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
             .foregroundColor(model.accessibilityTrusted ? .green : .red)
         }
-        LabeledContent(NSLocalizedString("Input Monitoring (key events)", comment: "Voice settings")) {
-          Text(model.inputMonitoringTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
-            .foregroundColor(model.inputMonitoringTrusted ? .green : .red)
-        }
         if !model.micAuthorized {
           HStack {
             Text(NSLocalizedString("Microphone access is required for recording.", comment: "Voice settings"))
@@ -169,17 +154,6 @@ struct VoiceSettingsView: View {
             Spacer()
             Button(NSLocalizedString("Open System Settings", comment: "Voice settings")) {
               PermissionsManager.openAccessibilitySettings()
-            }
-          }
-        }
-        if !model.inputMonitoringTrusted {
-          HStack {
-            Text(NSLocalizedString("Input Monitoring is required to receive the key events.", comment: "Voice settings"))
-              .font(.footnote)
-              .foregroundColor(.orange)
-            Spacer()
-            Button(NSLocalizedString("Grant input monitoring…", comment: "Voice settings")) {
-              model.requestInputMonitoring()
             }
           }
         }
