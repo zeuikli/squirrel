@@ -51,6 +51,14 @@ final class VoiceInputController {
     wireHotkey()
     Task { await warmBackend() }
     startPermissionPoll()
+    if !PermissionsManager.accessibilityTrusted {
+      // Ad-hoc builds get a fresh code signature on every reinstall, which
+      // invalidates the previous TCC grant — surface it instead of failing
+      // silently (SPEC §15.9).
+      SquirrelApplicationDelegate.showMessage(
+        msgText: NSLocalizedString("Voice input needs Accessibility — re-grant Squirrel in System Settings", comment: "Voice"))
+      PermissionsManager.promptAccessibility()
+    }
     NSLog("[SquirrelVoice] started (backend=%@ trigger=%@)",
           settings.backend.rawValue, settings.trigger.rawValue)
   }

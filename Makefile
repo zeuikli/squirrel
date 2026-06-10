@@ -99,6 +99,12 @@ endif
 
 BUILD_SETTINGS += COMPILER_INDEX_STORE_ENABLE=YES
 
+# Stable signing identity (see scripts/setup-signing.sh) keeps TCC grants
+# across rebuilds; default remains ad-hoc when unset.
+ifdef SIGN_IDENTITY
+BUILD_SETTINGS += CODE_SIGN_IDENTITY="$(SIGN_IDENTITY)"
+endif
+
 release: $(DEPS_CHECK)
 	mkdir -p $(DERIVED_DATA_PATH)
 	bash package/add_data_files

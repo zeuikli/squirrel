@@ -25,6 +25,10 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var groqKeyField: String = ""
   @Published var groqKeyStatus: String = ""
   @Published var chatgptLoginStatus: String = ""
+  @Published var micAuthorized = PermissionsManager.micAuthorized
+  @Published var accessibilityTrusted = PermissionsManager.accessibilityTrusted
+
+  private var permTimer: Timer?
 
   init() {
     let s = VoiceConfig.load(config: NSApp.squirrelAppDelegate.config)
@@ -37,6 +41,19 @@ final class VoiceSettingsModel: ObservableObject {
     playSounds = s.playSounds
     cookiesPath = s.cookiesPath
     refreshGroqKeyStatus()
+    // Live permission readout: TCC grants flip while System Settings is open.
+    permTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+      Task { @MainActor in self?.refreshPermissions() }
+    }
+  }
+
+  deinit {
+    permTimer?.invalidate()
+  }
+
+  func refreshPermissions() {
+    micAuthorized = PermissionsManager.micAuthorized
+    accessibilityTrusted = PermissionsManager.accessibilityTrusted
   }
 
   func save() {
@@ -96,6 +113,32 @@ struct VoiceSettingsView: View {
 
   var body: some View {
     Form {
+      Section(NSLocalizedString("Permissions", comment: "Voice settings")) {
+        LabeledContent(NSLocalizedString("Microphone", comment: "Voice settings")) {
+          Text(model.micAuthorized ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
+            .foregroundColor(model.micAuthorized ? .green : .red)
+        }
+        LabeledContent(NSLocalizedString("Accessibility (push-to-talk key)", comment: "Voice settings")) {
+          Text(model.accessibilityTrusted ? "✓" : NSLocalizedString("✗ not granted", comment: "Voice settings"))
+            .foregroundColor(model.accessibilityTrusted ? .green : .red)
+        }
+        if !model.micAuthorized || !model.accessibilityTrusted {
+          HStack {
+            Text(NSLocalizedString("Voice input cannot work without these. Re-grant after every reinstall (ad-hoc build).", comment: "Voice settings"))
+              .font(.footnote)
+              .foregroundColor(.orange)
+            Spacer()
+            Button(NSLocalizedString("Open System Settings", comment: "Voice settings")) {
+              if !model.accessibilityTrusted {
+                PermissionsManager.openAccessibilitySettings()
+              } else {
+                PermissionsManager.openMicSettings()
+              }
+            }
+          }
+        }
+      }
+
       Section {
         Toggle(NSLocalizedString("Enable voice input", comment: "Voice settings"), isOn: $model.enabled)
         Picker(NSLocalizedString("Backend", comment: "Voice settings"), selection: $model.backend) {
