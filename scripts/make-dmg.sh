@@ -78,9 +78,13 @@ echo "→ 註冊並啟用輸入法…"
 "$DST/Contents/MacOS/Squirrel" --register-input-source || true
 "$DST/Contents/MacOS/Squirrel" --enable-input-source || true
 
+echo "→ 切回鼠鬚管並重整選單列圖示…"
+"$DST/Contents/MacOS/Squirrel" --select-input-source || true
+killall TextInputMenuAgent 2>/dev/null || true
+
 echo ""
-echo "✅ 安裝完成。請【登出再登入】，然後："
-echo "   1. 選單列輸入法選「鼠鬚管」（沒有的話：系統設定 → 鍵盤 → 輸入方式 → + 加入）"
+echo "✅ 安裝完成。"
+echo "   1. 若選單列圖示未出現或輸入法清單沒有「鼠鬚管」→ 登出再登入一次"
 echo "   2. 首次使用語音：按住右 ⌥ 講話 → 允許麥克風；系統設定開啟「輔助使用」的 Squirrel"
 echo "   3. 右鍵輸入法選單 → Preferences… 設定 Groq API key 或登入 ChatGPT"
 INSTALLER

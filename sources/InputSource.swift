@@ -10,7 +10,9 @@ import InputMethodKit
 
 final class SquirrelInstaller {
   enum InputMode: String, CaseIterable {
-    static let primary = Self.hans
+    // This distribution ships Taiwan-Traditional schemas (洋蔥注音) — the
+    // Hant variant is the one users actually enable (SPEC §21).
+    static let primary = Self.hant
     case hans = "im.rime.inputmethod.Squirrel.Hans"
     case hant = "im.rime.inputmethod.Squirrel.Hant"
   }
@@ -69,20 +71,25 @@ final class SquirrelInstaller {
 
   func select(mode: InputMode? = nil) {
     let enabledInputModes = enabledModes()
-    let modeToSelect = mode ?? .primary
+    var modeToSelect = mode ?? .primary
     if !enabledInputModes.contains(modeToSelect) {
       if mode != nil {
         enable(modes: [modeToSelect])
+      } else if let fallback = enabledInputModes.first {
+        // No explicit mode requested and the primary isn't enabled — select
+        // whichever variant the user has enabled instead of bailing out.
+        modeToSelect = fallback
       } else {
         print("Default method not enabled yet: \(modeToSelect.rawValue)")
         return
       }
     }
     for (mode, inputSource) in getInputSource(modes: [modeToSelect]) {
-      if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled),
+      if let selected = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelected), selected {
+        print("Already selected: \(mode.rawValue)")
+      } else if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled),
          let selectable = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelectCapable),
-         let selected = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelected),
-         enabled && selectable && !selected {
+         enabled && selectable {
         let error = TISSelectInputSource(inputSource)
         print("Selection \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
       } else {
