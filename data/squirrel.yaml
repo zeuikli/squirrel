@@ -451,14 +451,15 @@ voice_input:
     # key_code: 49                    # macOS keycode（49 = Space）
     # modifiers: control+option
   transcribe:
-    language: zh                      # Whisper 語言碼（zh 無繁簡之分，靠 prompt 引導正體）
+    language: zh                      # Whisper 語言碼：zh | en | ja | ko | de | fr | it | es | pt …（UI 提供九種，SPEC §19）
     model: whisper-large-v3-turbo
-    # prompt: 自訂 Whisper initial prompt；預設為台灣正體引導句（見 VoicePrompts.transcribeZhTW）
+    # prompt: 自訂 Whisper initial prompt；zh 預設台灣正體引導句、其他語言預設空（見 VoicePrompts）
   cleanup:
     enabled: true
     model: llama-3.3-70b-versatile    # Groq cleanup 模型
     # chatgpt_model: gpt-5-5          # ChatGPT 後端 cleanup 模型
-    language: zh-TW
+    # prompt: 自訂 cleanup system prompt；zh 預設台灣正體整理規則、其他語言預設語言中立版（SPEC §20）
+    # language: 省略時依 transcribe/language 派生（zh → zh-TW）
   max_recording_seconds: 60
   play_sounds: true
   no_active_client: clipboard         # 無文字框焦點時：clipboard | discard

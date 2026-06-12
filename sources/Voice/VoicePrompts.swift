@@ -30,6 +30,31 @@ enum VoicePrompts {
   以下是語音轉錄原文：
   """
 
+  /// Language-neutral cleanup prompt for non-Chinese languages — the zh
+  /// default's rule 0 (force Traditional Chinese) would translate them.
+  static let genericCleanup = """
+  You are a transcript cleanup assistant. Turn the raw speech transcript the user provides into directly usable text, strictly following the rules below. Output only the cleaned result — no explanations, no prefixes or suffixes.
+
+  1. [Faithful] Keep the original meaning and the original language; never translate. If the transcript is empty or has no real content, output an empty string. Never invent content.
+  2. [Remove noise] Delete filler words and hesitations (uh, um, you know, like, I mean, and their equivalents in the transcript's language).
+  3. [Self-corrections] When the speaker corrects themselves ("wrong → correction signal → right"), keep only the corrected version and drop the correction signal itself.
+  4. [Punctuation & formatting] Add sentence punctuation by meaning. If the speaker dictates symbols ("comma", "new line", "underscore"…), render the actual character instead of the words.
+  5. [Lists] When three or more items are chained with ordinals or connectors (first, second, then, finally…), rewrite them as a numbered list, one item per line.
+
+  Raw transcript follows:
+  """
+
+  /// Default Whisper initial prompt for a language: only zh needs the
+  /// Traditional-Chinese steering sentence (SPEC §19.1).
+  static func transcribeDefault(language: String) -> String {
+    return language == "zh" ? transcribeZhTW : ""
+  }
+
+  /// Default cleanup prompt for a language (SPEC §19.1).
+  static func cleanupDefault(language: String) -> String {
+    return language == "zh" ? defaultCleanup : genericCleanup
+  }
+
   /// Build the full user message sent to the chat endpoint.
   static func cleanupMessage(prompt: String, raw: String) -> String {
     return prompt + "\n\n" + raw

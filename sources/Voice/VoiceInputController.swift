@@ -255,7 +255,7 @@ final class VoiceInputController {
         status = .cleaning
         let cleanupModel = settings.backend == .groq ? settings.cleanupModel : settings.cleanupChatGPTModel
         do {
-          final = try await provider.cleanup(raw: raw, prompt: VoicePrompts.defaultCleanup,
+          final = try await provider.cleanup(raw: raw, prompt: settings.cleanupPrompt,
                                              model: cleanupModel, language: settings.cleanupLanguage)
         } catch {
           // Cleanup failed — fall back to the raw transcript so text is never lost.

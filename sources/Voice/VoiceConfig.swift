@@ -45,6 +45,22 @@ enum VoiceNoClientFallback: String {
   case discard
 }
 
+/// Whisper languages offered in the UI (SPEC §19.1). Other ISO-639-1 codes
+/// set via yaml still work — the picker shows them as a custom entry.
+enum VoiceLanguages {
+  static let supported: [(code: String, label: String)] = [
+    ("zh", "繁體中文"),
+    ("en", "English"),
+    ("ja", "日本語"),
+    ("ko", "한국어"),
+    ("de", "Deutsch"),
+    ("fr", "Français"),
+    ("it", "Italiano"),
+    ("es", "Español"),
+    ("pt", "Português")
+  ]
+}
+
 /// Immutable snapshot consumed by `VoiceInputController`.
 struct VoiceSettings {
   var enabled: Bool = true
@@ -61,6 +77,7 @@ struct VoiceSettings {
   var cleanupEnabled: Bool = true
   var cleanupModel: String = "llama-3.3-70b-versatile"
   var cleanupChatGPTModel: String = "gpt-5-5"
+  var cleanupPrompt: String = VoicePrompts.defaultCleanup
   var cleanupLanguage: String = "zh-TW"
   var maxRecordingSeconds: Int = 60
   var playSounds: Bool = true
@@ -87,6 +104,7 @@ enum VoiceConfig {
     case cleanupEnabled = "voice.cleanupEnabled"
     case cleanupModel = "voice.cleanupModel"
     case cleanupChatGPTModel = "voice.cleanupChatGPTModel"
+    case cleanupPrompt = "voice.cleanupPrompt"
     case cleanupLanguage = "voice.cleanupLanguage"
     case maxRecordingSeconds = "voice.maxRecordingSeconds"
     case playSounds = "voice.playSounds"
@@ -122,11 +140,17 @@ enum VoiceConfig {
     s.customKeyCode = int(.customKeyCode, "voice_input/hotkey/key_code", s.customKeyCode)
     s.transcribeLanguage = str(.transcribeLanguage, "voice_input/transcribe/language", s.transcribeLanguage)
     s.transcribeModel = str(.transcribeModel, "voice_input/transcribe/model", s.transcribeModel)
-    s.transcribePrompt = str(.transcribePrompt, "voice_input/transcribe/prompt", s.transcribePrompt)
+    // Prompt and cleanup-language defaults follow the selected language
+    // (SPEC §19.1); user/yaml overrides win as usual.
+    s.transcribePrompt = str(.transcribePrompt, "voice_input/transcribe/prompt",
+                             VoicePrompts.transcribeDefault(language: s.transcribeLanguage))
     s.cleanupEnabled = bool(.cleanupEnabled, "voice_input/cleanup/enabled", s.cleanupEnabled)
     s.cleanupModel = str(.cleanupModel, "voice_input/cleanup/model", s.cleanupModel)
     s.cleanupChatGPTModel = str(.cleanupChatGPTModel, "voice_input/cleanup/chatgpt_model", s.cleanupChatGPTModel)
-    s.cleanupLanguage = str(.cleanupLanguage, "voice_input/cleanup/language", s.cleanupLanguage)
+    s.cleanupPrompt = str(.cleanupPrompt, "voice_input/cleanup/prompt",
+                          VoicePrompts.cleanupDefault(language: s.transcribeLanguage))
+    s.cleanupLanguage = str(.cleanupLanguage, "voice_input/cleanup/language",
+                            s.transcribeLanguage == "zh" ? "zh-TW" : s.transcribeLanguage)
     s.maxRecordingSeconds = int(.maxRecordingSeconds, "voice_input/max_recording_seconds", s.maxRecordingSeconds)
     s.playSounds = bool(.playSounds, "voice_input/play_sounds", s.playSounds)
     s.noActiveClient = VoiceNoClientFallback(rawValue: str(.noActiveClient, "voice_input/no_active_client", s.noActiveClient.rawValue)) ?? .clipboard

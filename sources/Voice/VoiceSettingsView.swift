@@ -17,6 +17,8 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var backend: VoiceBackend
   @Published var trigger: VoiceTriggerKind
   @Published var transcribeLanguage: String
+  @Published var transcribePromptText: String
+  @Published var cleanupPromptText: String
   @Published var cleanupEnabled: Bool
   @Published var maxRecordingSeconds: Int
   @Published var playSounds: Bool
@@ -31,6 +33,8 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
 
   private var permTimer: Timer?
+  private var lastLanguage: String = "zh"
+  private var promptSaveTask: Task<Void, Never>?
 
   init() {
     let s = VoiceConfig.load(config: NSApp.squirrelAppDelegate.config)
@@ -39,10 +43,13 @@ final class VoiceSettingsModel: ObservableObject {
     hotkeyEngine = s.hotkeyEngine
     trigger = s.trigger
     transcribeLanguage = s.transcribeLanguage
+    transcribePromptText = s.transcribePrompt
+    cleanupPromptText = s.cleanupPrompt
     cleanupEnabled = s.cleanupEnabled
     maxRecordingSeconds = s.maxRecordingSeconds
     playSounds = s.playSounds
     cookiesPath = s.cookiesPath
+    lastLanguage = s.transcribeLanguage
     refreshGroqKeyStatus()
     // Live permission readout: TCC grants flip while System Settings is open.
     permTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
@@ -52,6 +59,7 @@ final class VoiceSettingsModel: ObservableObject {
 
   deinit {
     permTimer?.invalidate()
+    promptSaveTask?.cancel()
   }
 
   func refreshPermissions() {
@@ -93,7 +101,53 @@ final class VoiceSettingsModel: ObservableObject {
     VoiceConfig.set(.maxRecordingSeconds, maxRecordingSeconds)
     VoiceConfig.set(.playSounds, playSounds)
     VoiceConfig.set(.cookiesPath, cookiesPath)
+    persistPrompts()
     VoiceConfig.notifyChanged()
+  }
+
+  // MARK: - Prompts (SPEC §20)
+
+  /// Store a prompt override only when it differs from the language default,
+  /// so un-customized prompts follow the language selection.
+  private func persistPrompts() {
+    let tDefault = VoicePrompts.transcribeDefault(language: transcribeLanguage)
+    let cDefault = VoicePrompts.cleanupDefault(language: transcribeLanguage)
+    VoiceConfig.set(.transcribePrompt, transcribePromptText == tDefault ? nil : transcribePromptText)
+    VoiceConfig.set(.cleanupPrompt, cleanupPromptText == cDefault ? nil : cleanupPromptText)
+  }
+
+  /// Debounced save for the prompt editors — a per-keystroke notify would
+  /// re-warm the backend (and reload the ChatGPT WebView) on every key.
+  func savePromptsDebounced() {
+    promptSaveTask?.cancel()
+    promptSaveTask = Task { @MainActor [weak self] in
+      try? await Task.sleep(nanoseconds: 800_000_000)
+      guard !Task.isCancelled, let self else { return }
+      self.persistPrompts()
+      VoiceConfig.notifyChanged()
+    }
+  }
+
+  /// Swap un-customized prompts to the new language's defaults.
+  func languageChanged() {
+    if transcribePromptText == VoicePrompts.transcribeDefault(language: lastLanguage) {
+      transcribePromptText = VoicePrompts.transcribeDefault(language: transcribeLanguage)
+    }
+    if cleanupPromptText == VoicePrompts.cleanupDefault(language: lastLanguage) {
+      cleanupPromptText = VoicePrompts.cleanupDefault(language: transcribeLanguage)
+    }
+    lastLanguage = transcribeLanguage
+    save()
+  }
+
+  func resetTranscribePrompt() {
+    transcribePromptText = VoicePrompts.transcribeDefault(language: transcribeLanguage)
+    save()
+  }
+
+  func resetCleanupPrompt() {
+    cleanupPromptText = VoicePrompts.cleanupDefault(language: transcribeLanguage)
+    save()
   }
 
   func saveGroqKey() {
@@ -203,14 +257,56 @@ struct VoiceSettingsView: View {
           Text(NSLocalizedString("NSEvent (Accessibility only)", comment: "Voice settings")).tag("nsevent")
           Text(NSLocalizedString("CGEventTap (+ Input Monitoring)", comment: "Voice settings")).tag("cgtap")
         }
-        TextField(NSLocalizedString("Language (Whisper code)", comment: "Voice settings"),
-                  text: $model.transcribeLanguage)
+        Picker(NSLocalizedString("Language", comment: "Voice settings"), selection: $model.transcribeLanguage) {
+          ForEach(VoiceLanguages.supported, id: \.code) { Text($0.label).tag($0.code) }
+          if !VoiceLanguages.supported.contains(where: { $0.code == model.transcribeLanguage }) {
+            // Keep a non-listed Whisper code set via yaml selectable.
+            Text("Custom (\(model.transcribeLanguage))").tag(model.transcribeLanguage)
+          }
+        }
         Toggle(NSLocalizedString("LLM cleanup pass", comment: "Voice settings"), isOn: $model.cleanupEnabled)
         Stepper(value: $model.maxRecordingSeconds, in: 5...300, step: 5) {
           Text(String(format: NSLocalizedString("Max recording: %d s", comment: "Voice settings"),
                       model.maxRecordingSeconds))
         }
         Toggle(NSLocalizedString("Play sounds", comment: "Voice settings"), isOn: $model.playSounds)
+      }
+
+      Section(NSLocalizedString("Prompts", comment: "Voice settings")) {
+        VStack(alignment: .leading, spacing: 4) {
+          HStack {
+            Text(NSLocalizedString("Transcribe prompt (Whisper initial prompt)", comment: "Voice settings"))
+            Spacer()
+            Button(NSLocalizedString("Reset to default", comment: "Voice settings")) {
+              model.resetTranscribePrompt()
+            }
+          }
+          TextEditor(text: $model.transcribePromptText)
+            .font(.system(.footnote))
+            .frame(minHeight: 48, maxHeight: 80)
+            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+          if model.backend == .chatgpt {
+            Text(NSLocalizedString("Not supported by the ChatGPT Web backend — Groq only.", comment: "Voice settings"))
+              .font(.footnote)
+              .foregroundColor(.orange)
+          }
+        }
+        VStack(alignment: .leading, spacing: 4) {
+          HStack {
+            Text(NSLocalizedString("Cleanup system prompt (LLM pass)", comment: "Voice settings"))
+            Spacer()
+            Button(NSLocalizedString("Reset to default", comment: "Voice settings")) {
+              model.resetCleanupPrompt()
+            }
+          }
+          TextEditor(text: $model.cleanupPromptText)
+            .font(.system(.footnote))
+            .frame(minHeight: 100, maxHeight: 180)
+            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+          Text(NSLocalizedString("Un-edited prompts follow the language selection; edited prompts apply to all languages until reset.", comment: "Voice settings"))
+            .font(.footnote)
+            .foregroundColor(.secondary)
+        }
       }
 
       if model.backend == .groq {
@@ -255,7 +351,9 @@ struct VoiceSettingsView: View {
     .onChange(of: model.backend) { _ in model.save() }
     .onChange(of: model.hotkeyEngine) { _ in model.save() }
     .onChange(of: model.trigger) { _ in model.save() }
-    .onChange(of: model.transcribeLanguage) { _ in model.save() }
+    .onChange(of: model.transcribeLanguage) { _ in model.languageChanged() }
+    .onChange(of: model.transcribePromptText) { _ in model.savePromptsDebounced() }
+    .onChange(of: model.cleanupPromptText) { _ in model.savePromptsDebounced() }
     .onChange(of: model.cleanupEnabled) { _ in model.save() }
     .onChange(of: model.maxRecordingSeconds) { _ in model.save() }
     .onChange(of: model.playSounds) { _ in model.save() }

@@ -31,18 +31,27 @@ final class SquirrelSettingsModel: ObservableObject {
   @Published var colorSchemes: [String] = []
   @Published var applying = false
   @Published var statusText = ""
+  // iCloud sync via Rime's native sync_dir (SPEC §18)
+  @Published var iCloudSyncEnabled = false
+  @Published var syncStatusText = ""
 
   /// Schemas receiving the schema-level managed patch.
   private let onionSchemas = ["bopomo_onionplus", "bopomo_onionplus_space"]
 
   private var userDir: URL { SquirrelApp.userDir }
   private var squirrelCustomURL: URL { userDir.appendingPathComponent("squirrel.custom.yaml") }
+  private var installationYamlURL: URL { userDir.appendingPathComponent("installation.yaml") }
   private func schemaCustomURL(_ schemaID: String) -> URL {
     userDir.appendingPathComponent("\(schemaID).custom.yaml")
   }
 
+  private static let cloudDocsURL = FileManager.default.homeDirectoryForCurrentUser
+    .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs")
+  static let iCloudSyncURL = cloudDocsURL.appendingPathComponent("RimeSync")
+
   init() {
     loadEffectiveValues()
+    loadSyncState()
   }
 
   /// Read current effective values from the compiled config.
@@ -128,5 +137,58 @@ final class SquirrelSettingsModel: ObservableObject {
   /// Open the Rime folder (the classic way — kept available from the UI too).
   func openRimeFolder() {
     NSWorkspace.shared.open(userDir)
+  }
+
+  // MARK: - iCloud sync (SPEC §18)
+
+  /// Reflect whether installation.yaml currently points sync_dir at iCloud.
+  func loadSyncState() {
+    let content = (try? String(contentsOf: installationYamlURL, encoding: .utf8)) ?? ""
+    iCloudSyncEnabled = content
+      .components(separatedBy: "\n")
+      .contains { $0.hasPrefix("sync_dir:") }
+  }
+
+  /// Toggle handler. Rewrites installation.yaml; takes effect on the next
+  /// sync (sync_user_data re-runs installation_update first) — no redeploy.
+  func setICloudSync(_ on: Bool) {
+    if on {
+      guard FileManager.default.fileExists(atPath: Self.cloudDocsURL.path) else {
+        iCloudSyncEnabled = false
+        syncStatusText = NSLocalizedString("iCloud Drive is not available on this Mac", comment: "Settings")
+        return
+      }
+      try? FileManager.default.createDirectory(at: Self.iCloudSyncURL, withIntermediateDirectories: true)
+    }
+    do {
+      try writeSyncDir(on ? Self.iCloudSyncURL.path : nil)
+      syncStatusText = on
+        ? NSLocalizedString("iCloud sync enabled", comment: "Settings")
+        : NSLocalizedString("iCloud sync disabled (local sync folder)", comment: "Settings")
+    } catch {
+      syncStatusText = error.localizedDescription
+      loadSyncState()
+    }
+  }
+
+  func syncNow() {
+    NSApp.squirrelAppDelegate.syncUserData()
+    syncStatusText = NSLocalizedString("Sync started — running in background", comment: "Settings")
+  }
+
+  /// Line-level edit of installation.yaml: drop any sync_dir line, append the
+  /// new one (quoted — the iCloud path contains spaces). Other keys
+  /// (installation_id…) are left untouched; librime preserves sync_dir when
+  /// it rewrites the file (deployment_tasks.cc InstallationUpdate).
+  private func writeSyncDir(_ path: String?) throws {
+    var lines = ((try? String(contentsOf: installationYamlURL, encoding: .utf8)) ?? "")
+      .components(separatedBy: "\n")
+      .filter { !$0.hasPrefix("sync_dir:") }
+    while lines.last?.isEmpty == true { lines.removeLast() }
+    if let path = path {
+      lines.append("sync_dir: \"\(path)\"")
+    }
+    try (lines.joined(separator: "\n") + "\n")
+      .write(to: installationYamlURL, atomically: true, encoding: .utf8)
   }
 }

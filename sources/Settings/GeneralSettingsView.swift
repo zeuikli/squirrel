@@ -63,6 +63,19 @@ struct GeneralSettingsView: View {
         Toggle(NSLocalizedString("Show menu bar icon", comment: "Settings"), isOn: $model.showStatusIcon)
       }
 
+      Section(NSLocalizedString("Sync", comment: "Settings")) {
+        Toggle(NSLocalizedString("iCloud sync (user dictionary & settings backup)", comment: "Settings"),
+               isOn: $model.iCloudSyncEnabled)
+          .onChange(of: model.iCloudSyncEnabled) { on in model.setICloudSync(on) }
+        HStack {
+          Button(NSLocalizedString("Sync now", comment: "Settings")) { model.syncNow() }
+          Text(model.syncStatusText).foregroundColor(.secondary)
+        }
+        Text(NSLocalizedString("Syncs Rime user data via iCloud Drive (RimeSync folder). Enable this on every Mac that should share the dictionary.", comment: "Settings"))
+          .font(.footnote)
+          .foregroundColor(.secondary)
+      }
+
       Section {
         HStack {
           Button(NSLocalizedString("Apply (redeploy)", comment: "Settings")) { model.apply() }
