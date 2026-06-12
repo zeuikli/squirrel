@@ -59,8 +59,12 @@ killall Squirrel 2>/dev/null || true
 sleep 1
 
 if [ -d "$DST" ]; then
-  echo "→ 備份既有版本到垃圾桶…"
-  mv "$DST" "$HOME/.Trash/Squirrel.app.$(date +%H%M%S)" 2>/dev/null || rm -rf "$DST"
+  if mv "$DST" "$HOME/.Trash/Squirrel.app.$(date +%H%M%S)" 2>/dev/null; then
+    echo "→ 已備份既有版本到垃圾桶"
+  else
+    echo "→ 無法移到垃圾桶（權限受限），直接移除既有版本"
+    rm -rf "$DST"
+  fi
 fi
 
 echo "→ 安裝到 ~/Library/Input Methods …"
