@@ -43,6 +43,14 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      # Quality gates folded in from the retired commit-ci/release-ci workflows.
+      # SwiftLint runs first so style failures stop before the heavy clone/build.
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Lint
+        run: swiftlint
+
       - name: Checkout Onion_Rime_Files (lexicon source)
         uses: actions/checkout@v6
         with:
@@ -96,6 +104,15 @@ jobs:
 
       - name: Build Squirrel (Release)
         run: make release SIGN_IDENTITY="$SIGN_IDENTITY"
+
+      # Dead-code check (from the retired workflows). Advisory: reported in the
+      # log but does not block packaging — flip continue-on-error to false to gate.
+      - name: Install periphery
+        run: brew install peripheryapp/periphery/periphery
+
+      - name: Check Unused Code
+        continue-on-error: true
+        run: periphery scan --relative-results --skip-build --index-store-path build/Index.noindex/DataStore
 
       - name: Determine version
         id: ver
