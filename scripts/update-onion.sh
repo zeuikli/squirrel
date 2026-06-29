@@ -146,6 +146,7 @@ patch:
     - schema: bo_mixin2
     - schema: bo_mixin3
     - schema: bo_mixin4
+    - schema: terra_pinyin
 YAML
 fi
 

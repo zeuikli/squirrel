@@ -45,7 +45,8 @@ final class SquirrelSettingsModel: ObservableObject {
     SchemaOption(id: "bo_mixin1", name: "洋蔥注音 mix-in 1〔拉日 ˇ ˋ 韓〕"),
     SchemaOption(id: "bo_mixin2", name: "洋蔥注音 mix-in 2〔小大平片韓〕"),
     SchemaOption(id: "bo_mixin3", name: "洋蔥注音 mix-in 3〔' [ ] →拉日韓〕"),
-    SchemaOption(id: "bo_mixin4", name: "洋蔥注音 mix-in 4〔全 ˊ ˇ ˋ ˙〕")
+    SchemaOption(id: "bo_mixin4", name: "洋蔥注音 mix-in 4〔全 ˊ ˇ ˋ ˙〕"),
+    SchemaOption(id: "terra_pinyin", name: "地球拼音")
   ]
 
   @Published var colorSchemes: [String] = []
