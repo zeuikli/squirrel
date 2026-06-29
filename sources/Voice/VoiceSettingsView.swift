@@ -23,10 +23,13 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var maxRecordingSeconds: Int
   @Published var playSounds: Bool
   @Published var cookiesPath: String
+  @Published var geminiCookiesPath: String
 
   @Published var groqKeyField: String = ""
   @Published var groqKeyStatus: String = ""
   @Published var chatgptLoginStatus: String = ""
+  @Published var geminiLoginStatus: String = ""
+  @Published var geminiWebDiagnostic: String = ""   // last StreamGenerate raw/result
   @Published var hotkeyEngine: String
   @Published var micAuthorized = PermissionsManager.micAuthorized
   @Published var accessibilityTrusted = PermissionsManager.accessibilityTrusted
@@ -49,6 +52,7 @@ final class VoiceSettingsModel: ObservableObject {
     maxRecordingSeconds = s.maxRecordingSeconds
     playSounds = s.playSounds
     cookiesPath = s.cookiesPath
+    geminiCookiesPath = s.geminiCookiesPath
     lastLanguage = s.transcribeLanguage
     refreshGroqKeyStatus()
     // Live permission readout: TCC grants flip while System Settings is open.
@@ -66,6 +70,11 @@ final class VoiceSettingsModel: ObservableObject {
     micAuthorized = PermissionsManager.micAuthorized
     accessibilityTrusted = PermissionsManager.accessibilityTrusted
     inputMonitoringTrusted = PermissionsManager.inputMonitoringTrusted
+    // Live-update diagnostics while the window is open: the web RPC result plus
+    // which delivery path the recognized text took (IMK vs clipboard paste).
+    geminiWebDiagnostic = [GeminiWebBridge.lastDiagnostic, VoiceInputController.lastCommitDiagnostic]
+      .filter { !$0.isEmpty }
+      .joined(separator: "\n———\n")
   }
 
   /// Trigger the system Input Monitoring prompt; if it doesn't appear
@@ -101,6 +110,7 @@ final class VoiceSettingsModel: ObservableObject {
     VoiceConfig.set(.maxRecordingSeconds, maxRecordingSeconds)
     VoiceConfig.set(.playSounds, playSounds)
     VoiceConfig.set(.cookiesPath, cookiesPath)
+    VoiceConfig.set(.geminiCookiesPath, geminiCookiesPath)
     persistPrompts()
     VoiceConfig.notifyChanged()
   }
@@ -151,15 +161,15 @@ final class VoiceSettingsModel: ObservableObject {
   }
 
   func saveGroqKey() {
-    GroqSecrets.setKeychainKey(groqKeyField)
+    GroqSecrets.setStoredKey(groqKeyField)
     groqKeyField = ""
     refreshGroqKeyStatus()
     VoiceConfig.notifyChanged()
   }
 
   func refreshGroqKeyStatus() {
-    if GroqSecrets.keychainKey()?.isEmpty == false {
-      groqKeyStatus = NSLocalizedString("Key saved in Keychain", comment: "Voice settings")
+    if GroqSecrets.storedKey()?.isEmpty == false {
+      groqKeyStatus = NSLocalizedString("Key saved", comment: "Voice settings")
     } else if GroqSecrets.hasEnvKey() {
       groqKeyStatus = NSLocalizedString("Key detected from environment / .env", comment: "Voice settings")
     } else {
@@ -168,7 +178,7 @@ final class VoiceSettingsModel: ObservableObject {
   }
 
   func clearGroqKey() {
-    GroqSecrets.setKeychainKey("")
+    GroqSecrets.setStoredKey("")
     refreshGroqKeyStatus()
   }
 
@@ -187,11 +197,37 @@ final class VoiceSettingsModel: ObservableObject {
       }
     }
   }
+
+  // MARK: - Gemini (web session)
+
+  /// Probe the persistent Gemini web session and report the login state.
+  func refreshGeminiStatus() {
+    geminiLoginStatus = NSLocalizedString("Checking…", comment: "Voice settings")
+    Task { @MainActor in
+      let bridge = GeminiWebBridge()
+      do {
+        try await bridge.start(cookiesPath: geminiCookiesPath)
+        await bridge.waitUntilReady()
+        _ = try await bridge.verifyLogin()
+        geminiLoginStatus = NSLocalizedString("Logged in ✓", comment: "Voice settings")
+      } catch {
+        geminiLoginStatus = NSLocalizedString("Not logged in", comment: "Voice settings")
+      }
+      refreshGeminiDiagnostic()
+    }
+  }
+
+  func refreshGeminiDiagnostic() {
+    geminiWebDiagnostic = GeminiWebBridge.lastDiagnostic
+  }
 }
 
 struct VoiceSettingsView: View {
   @ObservedObject var model: VoiceSettingsModel
   var openLogin: () -> Void
+  var openGeminiLogin: () -> Void
+  /// Diagnostics are hidden by default; users expand only when troubleshooting.
+  @State private var showDiagnostics = false
 
   var body: some View {
     Form {
@@ -344,6 +380,55 @@ struct VoiceSettingsView: View {
                     prompt: Text(NSLocalizedString("Optional, legacy — UI sign-in is preferred", comment: "Voice settings")))
         }
       }
+
+      if model.backend == .geminiWeb {
+        Section(NSLocalizedString("Gemini session", comment: "Voice settings")) {
+          LabeledContent(NSLocalizedString("Status", comment: "Voice settings")) {
+            Text(model.geminiLoginStatus.isEmpty
+                 ? NSLocalizedString("Not checked —", comment: "Voice settings")
+                 : model.geminiLoginStatus)
+              .foregroundColor(.secondary)
+          }
+          HStack {
+            Button(NSLocalizedString("Sign in to Gemini…", comment: "Voice settings")) { openGeminiLogin() }
+            Button(NSLocalizedString("Check status", comment: "Voice settings")) { model.refreshGeminiStatus() }
+          }
+          TextField(NSLocalizedString("google.com cookies.json path", comment: "Voice settings"),
+                    text: $model.geminiCookiesPath,
+                    prompt: Text(NSLocalizedString("Optional, legacy — UI sign-in is preferred", comment: "Voice settings")))
+          Text(NSLocalizedString("Experimental — drives gemini.google.com via a reverse-engineered RPC that can break without notice. Prefer the Gemini API backend.", comment: "Voice settings"))
+            .font(.footnote)
+            .foregroundColor(.orange)
+          // Diagnostics hidden by default — expand only when troubleshooting.
+          DisclosureGroup(isExpanded: $showDiagnostics) {
+            VStack(alignment: .leading, spacing: 4) {
+              HStack {
+                Spacer()
+                Button(NSLocalizedString("Refresh", comment: "Voice settings")) { model.refreshGeminiDiagnostic() }
+                Button(NSLocalizedString("Copy", comment: "Voice settings")) {
+                  NSPasteboard.general.clearContents()
+                  NSPasteboard.general.setString(model.geminiWebDiagnostic, forType: .string)
+                }.disabled(model.geminiWebDiagnostic.isEmpty)
+              }
+              ScrollView {
+                Text(model.geminiWebDiagnostic.isEmpty
+                     ? NSLocalizedString("No StreamGenerate call yet — sign in, then try a voice capture.", comment: "Voice settings")
+                     : model.geminiWebDiagnostic)
+                  .font(.system(.caption, design: .monospaced))
+                  .textSelection(.enabled)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+              }
+              .frame(maxHeight: 160)
+              .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+            }
+            .padding(.top, 4)
+          } label: {
+            Text(NSLocalizedString("Diagnostics (advanced)", comment: "Voice settings"))
+              .font(.footnote)
+              .foregroundColor(.secondary)
+          }
+        }
+      }
     }
     .formStyle(.grouped)
     .frame(minWidth: 520, minHeight: 480)
@@ -358,5 +443,6 @@ struct VoiceSettingsView: View {
     .onChange(of: model.maxRecordingSeconds) { _ in model.save() }
     .onChange(of: model.playSounds) { _ in model.save() }
     .onChange(of: model.cookiesPath) { _ in model.save() }
+    .onChange(of: model.geminiCookiesPath) { _ in model.save() }
   }
 }

@@ -13,12 +13,20 @@ import AppKit
 enum VoiceBackend: String, CaseIterable {
   case groq
   case chatgpt
+  case geminiWeb = "gemini_web"
 
   var label: String {
     switch self {
-    case .groq:    return "Groq API (key)"
-    case .chatgpt: return "ChatGPT Web (session)"
+    case .groq:      return "Groq API (key)"
+    case .chatgpt:   return "ChatGPT Web (session)"
+    case .geminiWeb: return "Gemini Web (session)"
     }
+  }
+
+  /// Web-session backends drive a logged-in WKWebView and must be warmed/awaited
+  /// before transcription; key-driven REST backends (groq, gemini_api) don't.
+  var isWebSession: Bool {
+    self == .chatgpt || self == .geminiWeb
   }
 }
 
@@ -66,6 +74,7 @@ struct VoiceSettings {
   var enabled: Bool = true
   var backend: VoiceBackend = .groq
   var cookiesPath: String = ""
+  var geminiCookiesPath: String = ""        // google.com cookies for gemini_web (legacy path)
   var hotkeyMode: String = "hold_modifier"   // hold_modifier | custom_combo
   var hotkeyEngine: String = "nsevent"       // nsevent (AX only) | cgtap (AX + Input Monitoring)
   var trigger: VoiceTriggerKind = .rightOption
@@ -93,6 +102,7 @@ enum VoiceConfig {
     case enabled = "voice.enabled"
     case backend = "voice.backend"
     case cookiesPath = "voice.cookiesPath"
+    case geminiCookiesPath = "voice.geminiCookiesPath"
     case hotkeyMode = "voice.hotkeyMode"
     case hotkeyEngine = "voice.hotkeyEngine"
     case trigger = "voice.trigger"
@@ -134,6 +144,7 @@ enum VoiceConfig {
     s.enabled = bool(.enabled, "voice_input/enabled", s.enabled)
     s.backend = VoiceBackend(rawValue: str(.backend, "voice_input/backend", s.backend.rawValue)) ?? .groq
     s.cookiesPath = str(.cookiesPath, "voice_input/chatgpt/cookies_path", s.cookiesPath)
+    s.geminiCookiesPath = str(.geminiCookiesPath, "voice_input/gemini/cookies_path", s.geminiCookiesPath)
     s.hotkeyMode = str(.hotkeyMode, "voice_input/hotkey/mode", s.hotkeyMode)
     s.hotkeyEngine = str(.hotkeyEngine, "voice_input/hotkey/engine", s.hotkeyEngine)
     s.trigger = VoiceTriggerKind(rawValue: str(.trigger, "voice_input/hotkey/modifier", s.trigger.rawValue)) ?? .rightOption

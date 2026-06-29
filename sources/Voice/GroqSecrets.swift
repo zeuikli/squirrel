@@ -6,7 +6,9 @@
 //  Resolves and persists the Groq API key.
 //
 //  Lookup order (first hit wins):
-//    1. Keychain — written from the Settings UI (survives reinstalls).
+//    1. SessionStore file — written from the Settings UI (SPEC §4.8). Stored
+//       outside the Keychain so re-signing on install never triggers a Keychain
+//       prompt. One-time migration imports a pre-existing Keychain key.
 //    2. `GROQ_API_KEY` process environment variable.
 //    3. `.env` file (`KEY=VALUE`) in `~/Library/Rime/`, then `$HOME`.
 //       Accepts `GROQ_API_KEY` or `GROQ_API`.
@@ -18,22 +20,41 @@ import Security
 enum GroqSecrets {
   private static let service = "rime.squirrel.groq"
   private static let account = "api-key"
+  private static let storeFile = "groq-api-key"
 
   /// The effective key from any source, or nil if none is available.
   static func apiKey() -> String? {
-    if let k = keychainKey(), !k.isEmpty { return k }
+    if let k = storedKey(), !k.isEmpty { return k }
     if let k = environmentKey(), !k.isEmpty { return k }
     return nil
   }
 
-  /// True if a key exists outside the Keychain (env / .env) — used by the UI to
-  /// tell the user a key was auto-detected even though the field is empty.
+  /// True if a key exists outside the managed store (env / .env) — used by the UI
+  /// to tell the user a key was auto-detected even though the field is empty.
   static func hasEnvKey() -> Bool {
     (environmentKey()?.isEmpty == false)
   }
 
-  /// The key currently stored in the Keychain (the editable Settings value).
-  static func keychainKey() -> String? {
+  /// The key currently in the self-managed store (the editable Settings value).
+  /// Migrates a legacy Keychain key into the store on first read, then drops the
+  /// Keychain item so it stops prompting.
+  static func storedKey() -> String? {
+    if let k = SessionStore.string(storeFile) { return k }
+    if let migrated = migrateKeychainKey() { return migrated }
+    return nil
+  }
+
+  /// Write (or clear, when empty) the key in the self-managed store.
+  static func setStoredKey(_ key: String) {
+    SessionStore.setString(key, name: storeFile)
+  }
+
+  // MARK: - Legacy Keychain migration
+
+  /// One-time import of a key written by an older build into the Keychain. Reads
+  /// it once (prompts once for users who had one), copies to the store, then
+  /// deletes the Keychain item so it never prompts again. No item → no prompt.
+  private static func migrateKeychainKey() -> String? {
     let query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: service,
@@ -44,24 +65,15 @@ enum GroqSecrets {
     var item: CFTypeRef?
     guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
           let data = item as? Data,
-          let s = String(data: data, encoding: .utf8) else { return nil }
-    return s
-  }
-
-  /// Write (or clear, when empty) the key in the Keychain.
-  static func setKeychainKey(_ key: String) {
-    let base: [String: Any] = [
+          let s = String(data: data, encoding: .utf8),
+          !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+    setStoredKey(s)
+    SecItemDelete([
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: service,
       kSecAttrAccount as String: account
-    ]
-    SecItemDelete(base as CFDictionary)
-    let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
-    guard !trimmed.isEmpty, let data = trimmed.data(using: .utf8) else { return }
-    var add = base
-    add[kSecValueData as String] = data
-    add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-    SecItemAdd(add as CFDictionary, nil)
+    ] as CFDictionary)
+    return s.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
   // MARK: - Environment / .env

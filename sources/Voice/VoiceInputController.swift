@@ -19,6 +19,10 @@ extension Notification.Name {
   /// Posted with the recognized text as `object`; the active
   /// SquirrelInputController commits it to the focused client.
   static let squirrelVoiceCommit = Notification.Name("SquirrelVoiceCommitNotification")
+  /// Posted with the new `VoiceInputController.Status` as `object` whenever the
+  /// pipeline state changes; the delegate shows a transient menu bar indicator
+  /// while voice input is in progress (SPEC §23).
+  static let squirrelVoiceStatusChanged = Notification.Name("SquirrelVoiceStatusChangedNotification")
 }
 
 @MainActor
@@ -29,17 +33,26 @@ final class VoiceInputController {
     case error(String)
   }
 
-  private(set) var status: Status = .warming
+  private(set) var status: Status = .warming {
+    didSet {
+      guard status != oldValue else { return }
+      NotificationCenter.default.post(name: .squirrelVoiceStatusChanged, object: status)
+    }
+  }
   private var settings: VoiceSettings
 
   private let recorder = AudioRecorder()
   private let groq = GroqClient()
-  private var bridge: ChatGPTBridge?      // created lazily: WKWebView is costly
+  private var bridge: ChatGPTBridge?            // created lazily: WKWebView is costly
+  private var geminiBridge: GeminiWebBridge?    // created lazily: WKWebView is costly
   private let hotkey = HotkeyManager()
   private var pipeline: Task<Void, Never>?
   private var busy = false
   private var permPoll: Timer?
   private var recTimeout: Timer?
+  /// The app that was frontmost when the hotkey was pressed — delivery targets
+  /// this, not whoever is frontmost seconds later when recognition finishes.
+  private var captureTargetApp: NSRunningApplication?
 
   init(settings: VoiceSettings) {
     self.settings = settings
@@ -99,6 +112,32 @@ final class VoiceInputController {
     case .chatgpt:
       if bridge == nil { bridge = ChatGPTBridge() }
       return bridge!
+    case .geminiWeb:
+      if geminiBridge == nil { geminiBridge = GeminiWebBridge() }
+      return geminiBridge!
+    }
+  }
+
+  /// Web-session backends warm a WKWebView; await it before transcribing so the
+  /// first hotkey press after launch doesn't race the page load.
+  private func awaitWebReadyIfNeeded() async {
+    switch settings.backend {
+    case .chatgpt:   await bridge?.waitUntilReady()
+    case .geminiWeb: await geminiBridge?.waitUntilReady()
+    default:         break
+    }
+  }
+
+  /// Transcribe model for the active backend (Whisper for Groq); the web
+  /// bridges (ChatGPT, Gemini) ignore it and pick their own.
+  private var activeTranscribeModel: String { settings.transcribeModel }
+
+  /// Cleanup LLM model for the active backend; web bridges ignore it.
+  private var activeCleanupModel: String {
+    switch settings.backend {
+    case .groq:      return settings.cleanupModel
+    case .chatgpt:   return settings.cleanupChatGPTModel
+    case .geminiWeb: return settings.cleanupModel   // ignored by the web bridge
     }
   }
 
@@ -125,6 +164,18 @@ final class VoiceInputController {
       } catch {
         status = .error(error.localizedDescription)
         NSLog("[SquirrelVoice] ChatGPT warm failed: %@", error.localizedDescription)
+      }
+    case .geminiWeb:
+      if geminiBridge == nil { geminiBridge = GeminiWebBridge() }
+      do {
+        try await geminiBridge!.start(cookiesPath: settings.geminiCookiesPath)
+        await geminiBridge!.waitUntilReady()
+        _ = try await geminiBridge!.verifyLogin()   // verify session
+        status = .ready
+        NSLog("[SquirrelVoice] Gemini web bridge ready — logged in")
+      } catch {
+        status = .error(error.localizedDescription)
+        NSLog("[SquirrelVoice] Gemini web warm failed: %@", error.localizedDescription)
       }
     }
   }
@@ -196,6 +247,12 @@ final class VoiceInputController {
   private func beginRecording() {
     guard !busy, !recorder.isRecording else { return }
     if case .warming = status { playErrorFeedback("voice backend still warming"); return }
+    // Pin the delivery target NOW (hotkey press), while the user's app is still
+    // frontmost — not at delivery time, which is seconds later after recognition.
+    let front = NSWorkspace.shared.frontmostApplication
+    if front?.bundleIdentifier != Bundle.main.bundleIdentifier {
+      captureTargetApp = front   // ignore the case where our own Settings window is front
+    }
     Task {
       guard await PermissionsManager.requestMic() else {
         status = .error("Microphone permission needed")
@@ -242,18 +299,32 @@ final class VoiceInputController {
     }
     do {
       let provider = activeProvider
-      if settings.backend == .chatgpt { await bridge?.waitUntilReady() }
+      await awaitWebReadyIfNeeded()
       status = .transcribing
+
+      // Fast path: Gemini Web is an LLM, so transcribe + cleanup run in ONE
+      // StreamGenerate call (halves network latency vs two round-trips).
+      if settings.cleanupEnabled, let gemini = provider as? GeminiWebBridge {
+        let final = try await gemini.transcribeAndClean(audioURL: url,
+                                                        language: settings.transcribeLanguage,
+                                                        transcribePrompt: settings.transcribePrompt,
+                                                        cleanupPrompt: settings.cleanupPrompt)
+        guard !final.isEmpty else { status = .ready; return }
+        deliver(final)
+        status = .ready
+        return
+      }
+
       let raw = try await provider.transcribe(audioURL: url,
                                               language: settings.transcribeLanguage,
-                                              model: settings.transcribeModel,
+                                              model: activeTranscribeModel,
                                               prompt: settings.transcribePrompt)
       guard !raw.isEmpty else { status = .ready; return }
 
       var final = raw
       if settings.cleanupEnabled {
         status = .cleaning
-        let cleanupModel = settings.backend == .groq ? settings.cleanupModel : settings.cleanupChatGPTModel
+        let cleanupModel = activeCleanupModel
         do {
           final = try await provider.cleanup(raw: raw, prompt: settings.cleanupPrompt,
                                              model: cleanupModel, language: settings.cleanupLanguage)
@@ -271,24 +342,93 @@ final class VoiceInputController {
     }
   }
 
-  /// Send text out through the IMK commit channel; fall back per config when
-  /// no input session has a focused client.
+  /// Process-wide diagnostic of the last delivery (which path took the text).
+  /// Surfaced in the Settings diagnostics area next to the web RPC log so a
+  /// failed "nothing was typed" can be told apart from a backend failure.
+  @MainActor static var lastCommitDiagnostic = ""
+
+  /// Bundle-id substrings of Chromium/Electron apps that silently drop an async
+  /// IMK `insertText` AND synthesized Unicode typing (both confirmed not to land
+  /// in VSCode). Voice text for these is delivered via clipboard + ⌘V paste, the
+  /// only method that works there. Every other app keeps the native IMK
+  /// auto-commit (SPEC §4.1) — confirmed working in Telegram / ChatGPT / native.
+  static let pasteDeliveryApps = [
+    "com.microsoft.vscode", "com.vscodium", "com.visualstudio.code",   // VS Code / VSCodium
+    "com.google.chrome", "com.microsoft.edgmac", "com.microsoft.edgemac",
+    "com.brave.browser", "org.chromium", "company.thebrowser.browser", // Chromium browsers / Arc
+    "com.tinyspeck.slackmacgap", "com.hnc.discord", "com.electron"
+  ]
+
+  static func needsPasteDelivery(_ bundleID: String) -> Bool {
+    let id = bundleID.lowercased()
+    return pasteDeliveryApps.contains { !$0.isEmpty && id.contains($0) }
+  }
+
+  /// Send text out. The native IMK `insertText` (SPEC §4.1) gives clean auto-commit
+  /// in most apps, so it's the default. But voice text arrives out-of-band (seconds
+  /// after the hotkey), and Chromium/Electron apps (VSCode, …) silently drop both
+  /// an async insertText and synthesized Unicode typing — for those, clipboard + ⌘V
+  /// paste is the only thing that lands. Choice is per frontmost app; all auto-type.
   private func deliver(_ text: String) {
-    if SquirrelInputController.canCommitVoiceText {
+    if settings.playSounds { NSSound(named: "Glass")?.play() }
+    // Decide by the app pinned at hotkey press, and re-front it so focus drift
+    // during recognition can't redirect the text to another window.
+    let target = captureTargetApp ?? NSWorkspace.shared.frontmostApplication
+    let bundleID = target?.bundleIdentifier ?? ""
+    let frontNow = NSWorkspace.shared.frontmostApplication
+    if let target = target, target != frontNow {
+      target.activate(options: [])   // bring the capture app back to front
+    }
+    if Self.needsPasteDelivery(bundleID) {
+      Self.lastCommitDiagnostic = "[commit] \(bundleID) → clipboard + ⌘V paste (\(text.count) chars)"
+      pasteViaClipboard(text)
+    } else if SquirrelInputController.canCommitVoiceText {
       NotificationCenter.default.post(name: .squirrelVoiceCommit, object: text)
-      if settings.playSounds { NSSound(named: "Glass")?.play() }
-      NSLog("[SquirrelVoice] committed %d chars", text.count)
+      Self.lastCommitDiagnostic = "[commit] \(bundleID) → IMK insertText (\(text.count) chars)"
+      NSLog("[SquirrelVoice] committed %d chars via IMK to %@", text.count, bundleID)
     } else {
-      switch settings.noActiveClient {
-      case .clipboard:
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(text, forType: .string)
-        SquirrelApplicationDelegate.showMessage(
-          msgText: NSLocalizedString("Voice text copied — press ⌘V to paste", comment: "Voice"))
-        NSLog("[SquirrelVoice] no active client — copied %d chars to clipboard", text.count)
-      case .discard:
-        NSLog("[SquirrelVoice] no active client — discarded %d chars", text.count)
-      }
+      // No active IMK client (some apps activate their IME only on first compose).
+      Self.lastCommitDiagnostic = "[commit] \(bundleID) → no IMK client, clipboard + ⌘V paste (\(text.count) chars)"
+      pasteViaClipboard(text)
+    }
+  }
+
+  /// Put `text` on the pasteboard and synthesize ⌘V into the focused app.
+  /// Matches LizardType's proven TextInserter: HID-level event, posted after a
+  /// short delay so the push-to-talk key-release events have drained first.
+  ///
+  /// IMPORTANT: we do NOT restore the previous clipboard. Electron apps (VSCode)
+  /// read the pasteboard *asynchronously* after the synthetic ⌘V — often >1s
+  /// later — so an early restore makes them paste the PREVIOUS clipboard content
+  /// (confirmed: "keeps last text"). The recognized text stays on the clipboard.
+  private func pasteViaClipboard(_ text: String) {
+    let pb = NSPasteboard.general
+    pb.clearContents()
+    pb.setString(text, forType: .string)
+
+    guard PermissionsManager.accessibilityTrusted else {
+      // Can't synthesize keys without Accessibility — leave text on the clipboard.
+      Self.lastCommitDiagnostic = "[commit] clipboard set, but Accessibility OFF → can't auto-paste; press ⌘V (\(text.count) chars)"
+      SquirrelApplicationDelegate.showMessage(
+        msgText: NSLocalizedString("Voice text copied — press ⌘V to paste", comment: "Voice"))
+      return
+    }
+
+    NSLog("[SquirrelVoice] delivered %d chars via clipboard paste", text.count)
+
+    // Synthesize ⌘V at HID level (most reliable; delivered to the frontmost app).
+    // The 0.15s delay lets the push-to-talk modifier key-up settle AND the target
+    // app's re-activation (in deliver) finish, so the ⌘V isn't merged with a stale
+    // Option flag and lands in the right window.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+      let src = CGEventSource(stateID: .hidSystemState)
+      let vKey = CGKeyCode(9)   // 'v'
+      let down = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: true)
+      down?.flags = .maskCommand
+      let up = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: false)
+      up?.flags = .maskCommand
+      down?.post(tap: .cghidEventTap)
+      up?.post(tap: .cghidEventTap)
     }
   }
 

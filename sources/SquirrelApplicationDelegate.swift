@@ -21,6 +21,9 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   var enableNotifications = false
   var showStatusIcon: Bool = true
   var statusItem: NSStatusItem?
+  /// Transient indicator shown only while voice input is in progress (SPEC
+  /// §23). Independent of `statusItem` (the 中/Ａ icon, which never changes).
+  var voiceStatusItem: NSStatusItem?
   var voiceController: VoiceInputController?
   var voiceSettingsWindow: VoiceSettingsWindowController?
   let updateController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
@@ -76,6 +79,36 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
       NSStatusBar.system.removeStatusItem(item)
       statusItem = nil
     }
+    if let item = voiceStatusItem {
+      NSStatusBar.system.removeStatusItem(item)
+      voiceStatusItem = nil
+    }
+  }
+
+  /// Show a transient mic indicator in the menu bar while the voice pipeline is
+  /// active (recording / transcribing / cleaning); remove it otherwise. Never
+  /// touches the 中/Ａ `statusItem` (SPEC §23).
+  func updateVoiceStatusItem(_ status: VoiceInputController.Status?) {
+    let tooltip: String?
+    switch status {
+    case .recording:    tooltip = NSLocalizedString("Voice: recording…", comment: "Voice")
+    case .transcribing: tooltip = NSLocalizedString("Voice: transcribing…", comment: "Voice")
+    case .cleaning:     tooltip = NSLocalizedString("Voice: cleaning up…", comment: "Voice")
+    default:            tooltip = nil   // warming / ready / error / nil → idle
+    }
+    guard let tooltip = tooltip else {
+      if let item = voiceStatusItem {
+        NSStatusBar.system.removeStatusItem(item)
+        voiceStatusItem = nil
+      }
+      return
+    }
+    let item = voiceStatusItem ?? NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+    if let button = item.button {
+      button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: tooltip)
+      button.toolTip = tooltip
+    }
+    voiceStatusItem = item
   }
 
   func updateStatusIcon(asciiMode: Bool, schemaLabel: String?) {
@@ -283,6 +316,10 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
 
     NotificationCenter.default.addObserver(forName: VoiceConfig.settingsChanged, object: nil, queue: .main) { [weak self] _ in
       self?.refreshVoiceInput()
+    }
+
+    NotificationCenter.default.addObserver(forName: .squirrelVoiceStatusChanged, object: nil, queue: .main) { [weak self] note in
+      self?.updateVoiceStatusItem(note.object as? VoiceInputController.Status)
     }
 
     let notifCenter = DistributedNotificationCenter.default()

@@ -440,9 +440,11 @@ app_options:
 # 按住熱鍵講話、放開上字；文字走 IMK commit，不經剪貼簿。
 voice_input:
   enabled: true
-  backend: groq                       # groq | chatgpt
+  backend: groq                       # groq | chatgpt | gemini_web
   chatgpt:
     cookies_path: ""                  # backend=chatgpt 時必填（Cookie-Editor 匯出的 cookies.json）
+  gemini:
+    cookies_path: ""                  # backend=gemini_web 的 google.com cookies.json（UI 登入為主，此為 legacy）
   hotkey:
     mode: hold_modifier               # hold_modifier | custom_combo
     engine: nsevent                   # nsevent（僅需輔助使用）| cgtap（另需輸入監控）

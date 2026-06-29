@@ -35,18 +35,22 @@ final class ChatGPTBridge: NSObject, WKNavigationDelegate, SpeechProvider {
     }
   }
 
-  /// Stable identifier for the persistent login session (macOS 14+).
-  private static let dataStoreID = UUID(uuidString: "8A2B7C64-90D1-4F3E-B6A5-52E3C19A7E10")!
+  static let domainSuffix = "chatgpt.com"
+  private static let sessionFile = "chatgpt-session.json"
 
-  /// The data store shared by the bridge and the Settings login WebView, so a
-  /// UI login is immediately visible to the bridge. Falls back to `.default()`
-  /// on macOS 13 (persisted per-app, shared with nothing else in an IME).
-  static func persistentDataStore() -> WKWebsiteDataStore {
-    if #available(macOS 14.0, *) {
-      return WKWebsiteDataStore(forIdentifier: dataStoreID)
-    } else {
-      return .default()
-    }
+  /// One in-memory data store shared by the bridge and the Settings login
+  /// WebView, so a UI login is immediately visible to the bridge within the
+  /// process. Persistence across restarts is handled by `SessionStore` (a
+  /// self-managed cookie file), NOT WebKit's Keychain-backed identifier store —
+  /// see SPEC §4.8 for why the latter caused Keychain prompts on every launch.
+  private static let sharedStore = WKWebsiteDataStore.nonPersistent()
+  static func sessionDataStore() -> WKWebsiteDataStore { sharedStore }
+
+  /// Snapshot the logged-in cookies from the shared store to disk. Callable
+  /// without a warmed WebView (e.g. right after the Settings login window closes).
+  static func persistSharedSession() async {
+    let cookies = await sharedStore.httpCookieStore.cookiesSnapshot()
+    SessionStore.saveCookies(cookies, domainSuffix: domainSuffix, file: sessionFile)
   }
 
   let webView: WKWebView
@@ -59,7 +63,7 @@ final class ChatGPTBridge: NSObject, WKNavigationDelegate, SpeechProvider {
 
   override init() {
     let cfg = WKWebViewConfiguration()
-    cfg.websiteDataStore = ChatGPTBridge.persistentDataStore()
+    cfg.websiteDataStore = ChatGPTBridge.sessionDataStore()
     webView = WKWebView(frame: .init(x: 0, y: 0, width: 1024, height: 768), configuration: cfg)
     super.init()
     webView.navigationDelegate = self
@@ -72,12 +76,24 @@ final class ChatGPTBridge: NSObject, WKNavigationDelegate, SpeechProvider {
   /// established via the Settings UI login. Safe to call again to re-warm.
   func start(cookiesPath: String) async throws {
     isReady = false
+    let store = webView.configuration.websiteDataStore.httpCookieStore
     if !cookiesPath.isEmpty {
       let cookies = try CookieLoader.load(from: cookiesPath)
-      let store = webView.configuration.websiteDataStore.httpCookieStore
       for c in cookies { await store.setCookie(c) }
+    } else {
+      await restoreSessionIfNeeded(into: store)
     }
     webView.load(URLRequest(url: URL(string: "https://chatgpt.com/")!))
+  }
+
+  /// Seed the shared store from the self-managed session file on a cold process
+  /// (the store starts empty each launch). No-op once a session is present —
+  /// e.g. after a UI login — so we never clobber fresher cookies with file ones.
+  private func restoreSessionIfNeeded(into store: WKHTTPCookieStore) async {
+    let existing = await store.cookiesSnapshot()
+    if existing.contains(where: { $0.domain.hasSuffix(Self.domainSuffix) }) { return }
+    guard let cookies = SessionStore.loadCookies(file: Self.sessionFile, domainSuffix: Self.domainSuffix) else { return }
+    for c in cookies { await store.setCookie(c) }
   }
 
   func waitUntilReady() async {
@@ -120,6 +136,7 @@ final class ChatGPTBridge: NSObject, WKNavigationDelegate, SpeechProvider {
     }
     cachedToken = token
     tokenFetchedAt = Date()
+    await Self.persistSharedSession()   // snapshot the verified session to disk
     return token
   }
 

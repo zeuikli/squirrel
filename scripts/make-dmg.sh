@@ -48,7 +48,7 @@ echo "[4/5] staging docs + installer…"
 cp INSTALL-zh.md "$STAGING/安裝說明 INSTALL.md"
 cat > "$STAGING/install.sh" <<'INSTALLER'
 #!/bin/bash
-# Squirrel（語音版）自動安裝：複製 → 清 quarantine → 註冊 → 啟用。
+# Squirrel（語音版）自動安裝：複製 → 清 quarantine → 註冊 → 全停用既有 → 重新啟用單一項目。
 set -e
 SRC="$(cd "$(dirname "$0")" && pwd)/Squirrel.app"
 DST="$HOME/Library/Input Methods/Squirrel.app"
@@ -74,17 +74,43 @@ cp -R "$SRC" "$DST"
 echo "→ 清除下載隔離屬性（quarantine）…"
 xattr -dr com.apple.quarantine "$DST" 2>/dev/null || true
 
-echo "→ 註冊並啟用輸入法…"
-"$DST/Contents/MacOS/Squirrel" --register-input-source || true
-"$DST/Contents/MacOS/Squirrel" --enable-input-source || true
+# 舊版剛被搬到垃圾桶，與新版同 bundle id；強制讓 LaunchServices 以新版路徑為準，
+# 否則 open/啟動可能誤抓垃圾桶裡的舊 binary（同 id 搶先），導致升級「沒生效」。
+echo "→ 更新 LaunchServices 註冊（鎖定新版路徑）…"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
+"$LSREGISTER" -f "$DST" 2>/dev/null || true
 
-echo "→ 切回鼠鬚管並重整選單列圖示…"
-"$DST/Contents/MacOS/Squirrel" --select-input-source || true
+echo "→ 註冊輸入法…"
+"$DST/Contents/MacOS/Squirrel" --register-input-source || true
+
+# 反覆安裝/重簽會在 macOS TIS 累積重複的「鼠鬚管」項目（選單列出現幾十個）。
+# 先把 Hans/Hant 全部停用，清掉既有（含重複殘留）的已啟用記錄，再加回單一乾淨項目。
+echo "→ 清除既有（含重複殘留）的鼠鬚管輸入來源…"
+"$DST/Contents/MacOS/Squirrel" --disable-input-source || true
+
+echo "→ 重新啟用輸入法（單一繁體項目）…"
+# 顯式指定 Hant：不帶參數時程式會因「偵測到已啟用」而跳過（緊接 disable 後的
+# cfprefsd 非同步競態會殘留 0 啟用），帶 ID 可繞過該守衛，確保確實加回單一項目。
+"$DST/Contents/MacOS/Squirrel" --enable-input-source im.rime.inputmethod.Squirrel.Hant || true
+
+echo "→ 切回鼠鬚管並重整輸入來源快取…"
+"$DST/Contents/MacOS/Squirrel" --select-input-source im.rime.inputmethod.Squirrel.Hant || true
+killall cfprefsd 2>/dev/null || true
 killall TextInputMenuAgent 2>/dev/null || true
+
+echo "→ 啟動鼠鬚管（顯示選單列圖示、就緒語音）…"
+open "$DST" || true
+sleep 1
 
 echo ""
 echo "✅ 安裝完成。"
-echo "   1. 若選單列圖示未出現或輸入法清單沒有「鼠鬚管」→ 登出再登入一次"
+echo ""
+echo "⚠️  重要：請務必【登出再登入】一次（或重開機）。"
+echo "    macOS 只在登入時重建輸入來源清單，這一步才會真正清掉先前重複的「鼠鬚管」項目；"
+echo "    未登出前選單列可能仍暫時顯示多個重複項，屬正常。"
+echo ""
+echo "   後續設定："
+echo "   1. 登出登入後若選單列圖示仍未出現或清單沒有「鼠鬚管」→ 再執行一次本安裝"
 echo "   2. 首次使用語音：按住右 ⌥ 講話 → 允許麥克風；系統設定開啟「輔助使用」的 Squirrel"
 echo "   3. 右鍵輸入法選單 → Preferences… 設定 Groq API key 或登入 ChatGPT"
 INSTALLER

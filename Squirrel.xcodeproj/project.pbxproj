@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		037A47128059D7A8EE85D7D7 /* terra_pinyin_onion.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 00994244BA22936EB3062569 /* terra_pinyin_onion.dict.yaml */; };
+		06A5449789094F13AD80AA36 /* phrases.jp_hkkreduce.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7DDE46ABB1B29BF5EB4C537E /* phrases.jp_hkkreduce.dict.yaml */; };
 		07714BAFBA16B7A3AC30FD41 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38142BBB284A4B05834FD90 /* HotkeyManager.swift */; };
 		07BC4C94AA20A4A0230969DE /* jpnin1.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B9354E9BBF8218938968704D /* jpnin1.schema.yaml */; };
 		09B2476C80F24B3C2453E5EC /* greek.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = C44F4DD593CFD26ED5953F30 /* greek.schema.yaml */; };
@@ -24,10 +25,17 @@
 		19674064AE1C36C07E4D8FB6 /* hangeul_hnc.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */; };
 		19E540B6BA73E1F141E27BD5 /* space.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 63154CCFA71DFC2599DB836B /* space.dict.yaml */; };
 		1C044ADF94DDC01592C0FFCE /* back_mark_ocm.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 373549A1BFECACD0E6D3E751 /* back_mark_ocm.txt */; };
+		1C8740C5A88646B5C4B4D1FE /* phrases.kr.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 8CA94CBC8782B6229FD2948E /* phrases.kr.dict.yaml */; };
 		1DA84EE880EA2B9B34C86EEC /* phrases.gr_all.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = CD07489A8FC365EA043EF4EE /* phrases.gr_all.dict.yaml */; };
 		1FE14F2D93B30F87258481F7 /* GroqClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814D46AEAA72085E33DA5545 /* GroqClient.swift */; };
+		AE03C1147A0000000000B003 /* GeminiWebBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE03C1147A0000000000F003 /* GeminiWebBridge.swift */; };
+		AE04C1147A0000000000B004 /* GeminiLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE04C1147A0000000000F004 /* GeminiLoginView.swift */; };
+		21BA4368B585079A81A07F08 /* bo_mixin4.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 71CA40A0BC2F888B20B5E3A3 /* bo_mixin4.schema.yaml */; };
+		235B49EAA075CD7048B0A378 /* bo_mixin2.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 11B54E0D91FDC46C88F5DD7F /* bo_mixin2.schema.yaml */; };
 		24BA4AC981B6A881996FEECA /* easy_en_lower.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = ACCA49639C6897AC9AF4057B /* easy_en_lower.dict.yaml */; };
 		29A44ACF8A4E4EABD0628616 /* element_bopomo.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 25FB476A920C7D979238BB71 /* element_bopomo.yaml */; };
+		2A704909BB246D22EFAA32BD /* bo_mixin3.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 22FD4673AA518F8215AAFB3D /* bo_mixin3.schema.yaml */; };
+		2A8E46DB95922C722985EF73 /* bo_mixin1.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 67CB4543985479442C740A36 /* bo_mixin1.schema.yaml */; };
 		2C454321A7635788AE1EED2F /* symbols_bpmf.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D30646C695AC9335801976C9 /* symbols_bpmf.dict.yaml */; };
 		2C6B4B9B81F69A21BB43024C /* punct_mark_plus.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 060E4B0B949D1B9117A5A1D6 /* punct_mark_plus.json */; };
 		2C6B9F9D2BCD086700E327DF /* librime-lua.dylib in Copy Rime plugins */ = {isa = PBXBuildFile; fileRef = 2C6B9F9A2BCD086700E327DF /* librime-lua.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -35,6 +43,7 @@
 		2C6B9F9F2BCD086700E327DF /* librime-predict.dylib in Copy Rime plugins */ = {isa = PBXBuildFile; fileRef = 2C6B9F9C2BCD086700E327DF /* librime-predict.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2F094E7FA80138EAD36A72BE /* ChatGPTLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285042898B2CC74445C3373C /* ChatGPTLoginView.swift */; };
 		31DD407D924F5CE31BDF711D /* phrases.en_l_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */; };
+		32FA4197A816B91629C0AD25 /* bo_mixin_kr_hnc.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = FB034202A8017C371493304C /* bo_mixin_kr_hnc.dict.yaml */; };
 		35704CA58B5355AE5E88A905 /* lua_custom_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = C7B145C09EC7969C62BFB3C3 /* lua_custom_phrase.txt */; };
 		3620497F933F2007C79915D4 /* zh-hans-t-essay-bgw.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */; };
 		369B41E898A8377206E2FC91 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24754E5AA1D7AD205361FE0A /* GeneralSettingsView.swift */; };
@@ -77,6 +86,9 @@
 		44E21A9016A653E700C2B08F /* rime_deployer in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8E16A653E700C2B08F /* rime_deployer */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44E21A9116A653E700C2B08F /* rime_dict_manager in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8F16A653E700C2B08F /* rime_dict_manager */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		45634F5BA40287157BFFD18C /* emoji_t.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 58B54AB38D230CD130E62745 /* emoji_t.json */; };
+		46394BE79326B9DD7B00A8F7 /* phrases.jp_hk.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 24D74228AE10078248EA985A /* phrases.jp_hk.dict.yaml */; };
+		48C74970BE509F463994AFC4 /* bo_mixin_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = BCBB4648B855188B13458D17 /* bo_mixin_phrase.txt */; };
+		55F34CC69F45254EB282C5BA /* phrases.cht_en_w.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 93D6447B8C8F1B077B625E8A /* phrases.cht_en_w.dict.yaml */; };
 		565C4B5394E9524A297B6468 /* space_f.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 5043492B94B3EE23C582B878 /* space_f.dict.yaml */; };
 		566440F186A6EFC0BFB168FB /* VoicePrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303B470AB82F986C9F22F58E /* VoicePrompts.swift */; };
 		56C44AA98619544B89E34CDE /* lua in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = FD6E4F5D90C9E2198D00BD9E /* lua */; };
@@ -88,6 +100,7 @@
 		5D9641198DB25E78272C5435 /* easy_en_upper.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */; };
 		5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */; };
 		67444D5DBD084F458D9FC30D /* essay-kr-hanja.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */; };
+		6A324B46B97248F416D63326 /* bo_mixin.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7C9F4396BB9A11447B61DF79 /* bo_mixin.extended.dict.yaml */; };
 		6BE74EECA22641841A5784CA /* phrases.fs_all.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 11264E6AA82C788740C19474 /* phrases.fs_all.dict.yaml */; };
 		6CE94084A4F8705DC3C5848F /* easy_en_lcomment.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B39E4F14B17E47B4DDAA510B /* easy_en_lcomment.dict.yaml */; };
 		6DCA4616B04991A975500544 /* cyrillic.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 6B1C441BA4A6A7C4A3E775FA /* cyrillic.extended.dict.yaml */; };
@@ -147,6 +160,7 @@
 		9D564A5ABB7B5744DC7A24A9 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2874CC49287AE2D21359496 /* PermissionsManager.swift */; };
 		9E9B4180A4969E0CF25293A8 /* latinin1.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */; };
 		9EC645DB8C12AE7876DAA4B4 /* bpm_moedict_big5e_hkscs_jis.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = AE7948599E554CAB44A88BB8 /* bpm_moedict_big5e_hkscs_jis.txt */; };
+		9FC24822B4B0250A2DFA5AB3 /* bo_mixin_la.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = B63342A08E61C98758BBDBFF /* bo_mixin_la.dict.yaml */; };
 		A1D84B7E82850053209EB106 /* easy_en_upper.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */; };
 		A2764CD597DB8165711EA744 /* zh-hant-t-essay-bgc.gram in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 17A742DA9EDC412FD1B648B8 /* zh-hant-t-essay-bgc.gram */; };
 		A3904B21816D7C570A0F2668 /* phrases.jp_hk_more.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7FEB4A4DA1355ABAF7EC46AE /* phrases.jp_hk_more.dict.yaml */; };
@@ -166,6 +180,7 @@
 		B39771332BEEE4540093A49B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B39771322BEEE4540093A49B /* Localizable.xcstrings */; };
 		B3EF08EA2F17125E00433A45 /* Rime.icon in Resources */ = {isa = PBXBuildFile; fileRef = B3EF08E92F17125E00433A45 /* Rime.icon */; };
 		B574414C84259C7F72797BBF /* back_mark_ocm.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 8AAE421E83035CCC9119B25B /* back_mark_ocm.json */; };
+		B8964F359018B11F87E58D1D /* bo_mixin_kr.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 0E46402496ED5BE83756BB68 /* bo_mixin_kr.dict.yaml */; };
 		B946450E88EE2F7316135A2F /* cyrillic.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */; };
 		C2C8409B91EBBF45BEB22117 /* RimeCustomPatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959F4EAEA951C13952468A0D /* RimeCustomPatcher.swift */; };
 		CB234920BF034403F0D2FC10 /* ChatGPTBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */; };
@@ -175,6 +190,8 @@
 		D26434552706A15100857391 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26434542706A15100857391 /* QuartzCore.framework */; };
 		D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */; };
 		DB284708819F2FC96326E52A /* jpnin1.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D18D4EBCBB6D311D9F9C948B /* jpnin1.dict.yaml */; };
+		DBAB4AF8B23F402A387F19E9 /* bo_mixin_jp.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 57884DAE9CACEE985908867E /* bo_mixin_jp.dict.yaml */; };
+		DC974789B59F31EC52CB3915 /* essay-zh-hant-mc-mixin.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 9DF04DC4841D13D3BF327F51 /* essay-zh-hant-mc-mixin.txt */; };
 		E2114A0BA0CEF8F924D1764E /* symbols_bpmf.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7BC648FFB7C7C1A802A01CCB /* symbols_bpmf.schema.yaml */; };
 		E2CA4CAF92FAB6A92581C41A /* greek.extended.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 348D433881EDDE2C3ED0946D /* greek.extended.dict.yaml */; };
 		E42C44FA8E0DFFC59FEA3153 /* essay-zh-hant-mc.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = F6034511AC99755906810455 /* essay-zh-hant-mc.txt */; };
@@ -190,6 +207,7 @@
 		F1F84AECBDF03C01799E5387 /* bopomo_onionplus_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = E5BA4185887BE4837A80EFC4 /* bopomo_onionplus_phrase.txt */; };
 		F26E4C6E8DFA4487A656189F /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C6469BAF72257732722F35 /* AudioRecorder.swift */; };
 		F45E005F2B8CA81C00179B75 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45E005E2B8CA81C00179B75 /* UserNotifications.framework */; };
+		FCF84D269ACC9AB6E39539DF /* bo_mixin_en.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = BD7E4CE18713E45DA835A761 /* bo_mixin_en.dict.yaml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -288,6 +306,10 @@
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
 				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
+				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
+				441E638122B7E96F006DCCDD /* terra_pinyin_12345.schema.yaml in Copy Shared Support Files */,
 				441E638722B7E96F006DCCDD /* cangjie5_char.dict.yaml in Copy Shared Support Files */,
 				441E638522B7E96F006DCCDD /* cangjie5.stem.dict.yaml in Copy Shared Support Files */,
 				441E638322B7E96F006DCCDD /* cangjie5.extended.dict.yaml in Copy Shared Support Files */,
@@ -368,6 +390,22 @@
 				E770475DA5A1FF7A227E002F /* zh-hant-t-essay-bgw.gram in Copy Shared Support Files */,
 				D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */,
 				5AFE4BDD96A3F29F3452FA9F /* bopomo_onionplus_space.schema.yaml in Copy Shared Support Files */,
+				6A324B46B97248F416D63326 /* bo_mixin.extended.dict.yaml in Copy Shared Support Files */,
+				2A8E46DB95922C722985EF73 /* bo_mixin1.schema.yaml in Copy Shared Support Files */,
+				235B49EAA075CD7048B0A378 /* bo_mixin2.schema.yaml in Copy Shared Support Files */,
+				2A704909BB246D22EFAA32BD /* bo_mixin3.schema.yaml in Copy Shared Support Files */,
+				21BA4368B585079A81A07F08 /* bo_mixin4.schema.yaml in Copy Shared Support Files */,
+				FCF84D269ACC9AB6E39539DF /* bo_mixin_en.dict.yaml in Copy Shared Support Files */,
+				DBAB4AF8B23F402A387F19E9 /* bo_mixin_jp.dict.yaml in Copy Shared Support Files */,
+				B8964F359018B11F87E58D1D /* bo_mixin_kr.dict.yaml in Copy Shared Support Files */,
+				32FA4197A816B91629C0AD25 /* bo_mixin_kr_hnc.dict.yaml in Copy Shared Support Files */,
+				9FC24822B4B0250A2DFA5AB3 /* bo_mixin_la.dict.yaml in Copy Shared Support Files */,
+				48C74970BE509F463994AFC4 /* bo_mixin_phrase.txt in Copy Shared Support Files */,
+				DC974789B59F31EC52CB3915 /* essay-zh-hant-mc-mixin.txt in Copy Shared Support Files */,
+				55F34CC69F45254EB282C5BA /* phrases.cht_en_w.dict.yaml in Copy Shared Support Files */,
+				46394BE79326B9DD7B00A8F7 /* phrases.jp_hk.dict.yaml in Copy Shared Support Files */,
+				06A5449789094F13AD80AA36 /* phrases.jp_hkkreduce.dict.yaml in Copy Shared Support Files */,
+				1C8740C5A88646B5C4B4D1FE /* phrases.kr.dict.yaml in Copy Shared Support Files */,
 			);
 			name = "Copy Shared Support Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,17 +443,21 @@
 		07494616A4516185FFDC6A20 /* bopomo_onionplus.extended.dict.yaml */ = {isa = PBXFileReference; name = bopomo_onionplus.extended.dict.yaml; path = data/onion/bopomo_onionplus.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
 		07B34322B4432235C37AFD19 /* rime.lua */ = {isa = PBXFileReference; name = rime.lua; path = data/onion/rime.lua; sourceTree = SOURCE_ROOT; };
 		0A334EA39BDE90747673DFF9 /* essay-jp-onion.txt */ = {isa = PBXFileReference; name = "essay-jp-onion.txt"; path = "data/onion/essay-jp-onion.txt"; sourceTree = SOURCE_ROOT; };
+		0E46402496ED5BE83756BB68 /* bo_mixin_kr.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin_kr.dict.yaml; path = data/onion/bo_mixin_kr.dict.yaml; sourceTree = SOURCE_ROOT; };
 		0F5546AE8B7D4E5CA39E57F8 /* back_mark_table.txt */ = {isa = PBXFileReference; name = back_mark_table.txt; path = data/onion/opencc/back_mark_table.txt; sourceTree = SOURCE_ROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		10634F1BBA20D66FFD50626A /* easy_en_upper.dict.yaml */ = {isa = PBXFileReference; name = easy_en_upper.dict.yaml; path = data/onion/easy_en_upper.dict.yaml; sourceTree = SOURCE_ROOT; };
 		11264E6AA82C788740C19474 /* phrases.fs_all.dict.yaml */ = {isa = PBXFileReference; name = phrases.fs_all.dict.yaml; path = data/onion/phrases.fs_all.dict.yaml; sourceTree = SOURCE_ROOT; };
+		11B54E0D91FDC46C88F5DD7F /* bo_mixin2.schema.yaml */ = {isa = PBXFileReference; name = bo_mixin2.schema.yaml; path = data/onion/bo_mixin2.schema.yaml; sourceTree = SOURCE_ROOT; };
 		167B48688DF450DF3A24E2F2 /* grammar.yaml */ = {isa = PBXFileReference; name = grammar.yaml; path = data/onion/grammar.yaml; sourceTree = SOURCE_ROOT; };
 		17A742DA9EDC412FD1B648B8 /* zh-hant-t-essay-bgc.gram */ = {isa = PBXFileReference; name = "zh-hant-t-essay-bgc.gram"; path = "data/onion/zh-hant-t-essay-bgc.gram"; sourceTree = SOURCE_ROOT; };
 		1BC345A196DB41355745B634 /* hangeul_hnc.extended.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.extended.dict.yaml; path = data/onion/hangeul_hnc.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
 		1C884C759C3884835E22781D /* phrases.en_u_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_u_w.dict.yaml; path = data/onion/phrases.en_u_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		2207458AAD95A7D272D1359A /* latinin1.dict.yaml */ = {isa = PBXFileReference; name = latinin1.dict.yaml; path = data/onion/latinin1.dict.yaml; sourceTree = SOURCE_ROOT; };
+		22FD4673AA518F8215AAFB3D /* bo_mixin3.schema.yaml */ = {isa = PBXFileReference; name = bo_mixin3.schema.yaml; path = data/onion/bo_mixin3.schema.yaml; sourceTree = SOURCE_ROOT; };
 		2464427A85E5847B4865D753 /* allbpm.schema.yaml */ = {isa = PBXFileReference; name = allbpm.schema.yaml; path = data/onion/allbpm.schema.yaml; sourceTree = SOURCE_ROOT; };
 		24754E5AA1D7AD205361FE0A /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralSettingsView.swift; path = sources/Settings/GeneralSettingsView.swift; sourceTree = SOURCE_ROOT; };
+		24D74228AE10078248EA985A /* phrases.jp_hk.dict.yaml */ = {isa = PBXFileReference; name = phrases.jp_hk.dict.yaml; path = data/onion/phrases.jp_hk.dict.yaml; sourceTree = SOURCE_ROOT; };
 		25FB476A920C7D979238BB71 /* element_bopomo.yaml */ = {isa = PBXFileReference; name = element_bopomo.yaml; path = data/onion/element_bopomo.yaml; sourceTree = SOURCE_ROOT; };
 		285042898B2CC74445C3373C /* ChatGPTLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatGPTLoginView.swift; path = sources/Voice/ChatGPTLoginView.swift; sourceTree = SOURCE_ROOT; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -467,6 +509,7 @@
 		5043492B94B3EE23C582B878 /* space_f.dict.yaml */ = {isa = PBXFileReference; name = space_f.dict.yaml; path = data/onion/space_f.dict.yaml; sourceTree = SOURCE_ROOT; };
 		559044D7B1D50815DE77C7DB /* back_mark_script.txt */ = {isa = PBXFileReference; name = back_mark_script.txt; path = data/onion/opencc/back_mark_script.txt; sourceTree = SOURCE_ROOT; };
 		56C6469BAF72257732722F35 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioRecorder.swift; path = sources/Voice/AudioRecorder.swift; sourceTree = SOURCE_ROOT; };
+		57884DAE9CACEE985908867E /* bo_mixin_jp.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin_jp.dict.yaml; path = data/onion/bo_mixin_jp.dict.yaml; sourceTree = SOURCE_ROOT; };
 		58B54AB38D230CD130E62745 /* emoji_t.json */ = {isa = PBXFileReference; name = emoji_t.json; path = data/onion/opencc/emoji_t.json; sourceTree = SOURCE_ROOT; };
 		5A714AD6BABCCC27014D35A1 /* VoiceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceSettingsView.swift; path = sources/Voice/VoiceSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		5B874FEDA5090DFC2A562CF4 /* SpeechProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpeechProvider.swift; path = sources/Voice/SpeechProvider.swift; sourceTree = SOURCE_ROOT; };
@@ -476,9 +519,11 @@
 		6554432A81A34F5F38AA8F32 /* zh-hans-t-essay-bgc.gram */ = {isa = PBXFileReference; name = "zh-hans-t-essay-bgc.gram"; path = "data/onion/zh-hans-t-essay-bgc.gram"; sourceTree = SOURCE_ROOT; };
 		655E4DCEB6994759F7E19E5D /* phrases.chtp.dict.yaml */ = {isa = PBXFileReference; name = phrases.chtp.dict.yaml; path = data/onion/phrases.chtp.dict.yaml; sourceTree = SOURCE_ROOT; };
 		673948AE96CEF706DB6855AE /* ocm_moedict_big5e_hkscs_jis.txt */ = {isa = PBXFileReference; name = ocm_moedict_big5e_hkscs_jis.txt; path = data/onion/opencc/ocm_moedict_big5e_hkscs_jis.txt; sourceTree = SOURCE_ROOT; };
+		67CB4543985479442C740A36 /* bo_mixin1.schema.yaml */ = {isa = PBXFileReference; name = bo_mixin1.schema.yaml; path = data/onion/bo_mixin1.schema.yaml; sourceTree = SOURCE_ROOT; };
 		6B174F359C9FD24A89E2A85C /* phrases.en_o_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_o_w.dict.yaml; path = data/onion/phrases.en_o_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		6B1C441BA4A6A7C4A3E775FA /* cyrillic.extended.dict.yaml */ = {isa = PBXFileReference; name = cyrillic.extended.dict.yaml; path = data/onion/cyrillic.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
 		6C394051BC4534568985FFB1 /* zh-hans-t-essay-bgw.gram */ = {isa = PBXFileReference; name = "zh-hans-t-essay-bgw.gram"; path = "data/onion/zh-hans-t-essay-bgw.gram"; sourceTree = SOURCE_ROOT; };
+		71CA40A0BC2F888B20B5E3A3 /* bo_mixin4.schema.yaml */ = {isa = PBXFileReference; name = bo_mixin4.schema.yaml; path = data/onion/bo_mixin4.schema.yaml; sourceTree = SOURCE_ROOT; };
 		7503402BA5A71B14D31CF8F5 /* terra_pinyin_onion_add.dict.yaml */ = {isa = PBXFileReference; name = terra_pinyin_onion_add.dict.yaml; path = data/onion/terra_pinyin_onion_add.dict.yaml; sourceTree = SOURCE_ROOT; };
 		77AA67DC2588916300A592E2 /* HKVariants.ocd2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = HKVariants.ocd2; sourceTree = "<group>"; };
 		77AA67DD2588916300A592E2 /* t2s.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = t2s.json; sourceTree = "<group>"; };
@@ -521,20 +566,27 @@
 		7B54883B1D2DAAD10056A1BE /* symbols.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = symbols.yaml; path = data/plum/symbols.yaml; sourceTree = "<group>"; };
 		7BC648FFB7C7C1A802A01CCB /* symbols_bpmf.schema.yaml */ = {isa = PBXFileReference; name = symbols_bpmf.schema.yaml; path = data/onion/symbols_bpmf.schema.yaml; sourceTree = SOURCE_ROOT; };
 		7C244B30BD7F6A600E5DBF02 /* essay-kr-hanja.txt */ = {isa = PBXFileReference; name = "essay-kr-hanja.txt"; path = "data/onion/essay-kr-hanja.txt"; sourceTree = SOURCE_ROOT; };
+		7C9F4396BB9A11447B61DF79 /* bo_mixin.extended.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin.extended.dict.yaml; path = data/onion/bo_mixin.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		7DDE46ABB1B29BF5EB4C537E /* phrases.jp_hkkreduce.dict.yaml */ = {isa = PBXFileReference; name = phrases.jp_hkkreduce.dict.yaml; path = data/onion/phrases.jp_hkkreduce.dict.yaml; sourceTree = SOURCE_ROOT; };
 		7F294E53959DB14EF9F06A4B /* fullshape.dict.yaml */ = {isa = PBXFileReference; name = fullshape.dict.yaml; path = data/onion/fullshape.dict.yaml; sourceTree = SOURCE_ROOT; };
 		7FEB4A4DA1355ABAF7EC46AE /* phrases.jp_hk_more.dict.yaml */ = {isa = PBXFileReference; name = phrases.jp_hk_more.dict.yaml; path = data/onion/phrases.jp_hk_more.dict.yaml; sourceTree = SOURCE_ROOT; };
 		814D46AEAA72085E33DA5545 /* GroqClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqClient.swift; path = sources/Voice/GroqClient.swift; sourceTree = SOURCE_ROOT; };
+		AE03C1147A0000000000F003 /* GeminiWebBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeminiWebBridge.swift; path = sources/Voice/GeminiWebBridge.swift; sourceTree = SOURCE_ROOT; };
+		AE04C1147A0000000000F004 /* GeminiLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeminiLoginView.swift; path = sources/Voice/GeminiLoginView.swift; sourceTree = SOURCE_ROOT; };
 		87144737B2E7B777734BDE29 /* latinin1.schema.yaml */ = {isa = PBXFileReference; name = latinin1.schema.yaml; path = data/onion/latinin1.schema.yaml; sourceTree = SOURCE_ROOT; };
 		87314EDCB1DB95132154D9EC /* VoiceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceConfig.swift; path = sources/Voice/VoiceConfig.swift; sourceTree = SOURCE_ROOT; };
 		8A25459FA2F2896E0014E98F /* easy_en_lower.schema.yaml */ = {isa = PBXFileReference; name = easy_en_lower.schema.yaml; path = data/onion/easy_en_lower.schema.yaml; sourceTree = SOURCE_ROOT; };
 		8AAE421E83035CCC9119B25B /* back_mark_ocm.json */ = {isa = PBXFileReference; name = back_mark_ocm.json; path = data/onion/opencc/back_mark_ocm.json; sourceTree = SOURCE_ROOT; };
 		8B0645189CD3C91F95F26EDC /* KeyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyFormatter.swift; path = sources/Voice/KeyFormatter.swift; sourceTree = SOURCE_ROOT; };
+		8CA94CBC8782B6229FD2948E /* phrases.kr.dict.yaml */ = {isa = PBXFileReference; name = phrases.kr.dict.yaml; path = data/onion/phrases.kr.dict.yaml; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = "<group>"; };
 		8E564556AB059D45908C13AA /* easy_en_upper.schema.yaml */ = {isa = PBXFileReference; name = easy_en_upper.schema.yaml; path = data/onion/easy_en_upper.schema.yaml; sourceTree = SOURCE_ROOT; };
 		92EF4B6E895118249527851C /* hangeul_hnc.dict.yaml */ = {isa = PBXFileReference; name = hangeul_hnc.dict.yaml; path = data/onion/hangeul_hnc.dict.yaml; sourceTree = SOURCE_ROOT; };
+		93D6447B8C8F1B077B625E8A /* phrases.cht_en_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.cht_en_w.dict.yaml; path = data/onion/phrases.cht_en_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		959F4EAEA951C13952468A0D /* RimeCustomPatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RimeCustomPatcher.swift; path = sources/Settings/RimeCustomPatcher.swift; sourceTree = SOURCE_ROOT; };
 		99F24101930C39FED468124D /* GroqSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqSecrets.swift; path = sources/Voice/GroqSecrets.swift; sourceTree = SOURCE_ROOT; };
 		9A0A411490E69182101F8704 /* latinin1.extended.dict.yaml */ = {isa = PBXFileReference; name = latinin1.extended.dict.yaml; path = data/onion/latinin1.extended.dict.yaml; sourceTree = SOURCE_ROOT; };
+		9DF04DC4841D13D3BF327F51 /* essay-zh-hant-mc-mixin.txt */ = {isa = PBXFileReference; name = "essay-zh-hant-mc-mixin.txt"; path = "data/onion/essay-zh-hant-mc-mixin.txt"; sourceTree = SOURCE_ROOT; };
 		A3964EC69608F26FFDD3CBFA /* bpm_moedict_big5e_hkscs_jis.json */ = {isa = PBXFileReference; name = bpm_moedict_big5e_hkscs_jis.json; path = data/onion/opencc/bpm_moedict_big5e_hkscs_jis.json; sourceTree = SOURCE_ROOT; };
 		A44C498D8B281C3B91506AF0 /* emoji_t.txt */ = {isa = PBXFileReference; name = emoji_t.txt; path = data/onion/opencc/emoji_t.txt; sourceTree = SOURCE_ROOT; };
 		A4B8E1B20F645B870094E08B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -562,8 +614,11 @@
 		B39771322BEEE4540093A49B /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = resources/Localizable.xcstrings; sourceTree = "<group>"; };
 		B39E4F14B17E47B4DDAA510B /* easy_en_lcomment.dict.yaml */ = {isa = PBXFileReference; name = easy_en_lcomment.dict.yaml; path = data/onion/easy_en_lcomment.dict.yaml; sourceTree = SOURCE_ROOT; };
 		B3EF08E92F17125E00433A45 /* Rime.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Rime.icon; sourceTree = "<group>"; };
+		B63342A08E61C98758BBDBFF /* bo_mixin_la.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin_la.dict.yaml; path = data/onion/bo_mixin_la.dict.yaml; sourceTree = SOURCE_ROOT; };
 		B7E341A3BB38D9E891778E69 /* phrases.la_eu_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.la_eu_w.dict.yaml; path = data/onion/phrases.la_eu_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		B9354E9BBF8218938968704D /* jpnin1.schema.yaml */ = {isa = PBXFileReference; name = jpnin1.schema.yaml; path = data/onion/jpnin1.schema.yaml; sourceTree = SOURCE_ROOT; };
+		BCBB4648B855188B13458D17 /* bo_mixin_phrase.txt */ = {isa = PBXFileReference; name = bo_mixin_phrase.txt; path = data/onion/bo_mixin_phrase.txt; sourceTree = SOURCE_ROOT; };
+		BD7E4CE18713E45DA835A761 /* bo_mixin_en.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin_en.dict.yaml; path = data/onion/bo_mixin_en.dict.yaml; sourceTree = SOURCE_ROOT; };
 		BDD74DBEB1B10C376368DD68 /* default.custom.yaml */ = {isa = PBXFileReference; name = default.custom.yaml; path = data/onion/default.custom.yaml; sourceTree = SOURCE_ROOT; };
 		C38142BBB284A4B05834FD90 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HotkeyManager.swift; path = sources/Voice/HotkeyManager.swift; sourceTree = SOURCE_ROOT; };
 		C44F4DD593CFD26ED5953F30 /* greek.schema.yaml */ = {isa = PBXFileReference; name = greek.schema.yaml; path = data/onion/greek.schema.yaml; sourceTree = SOURCE_ROOT; };
@@ -588,6 +643,7 @@
 		F6034511AC99755906810455 /* essay-zh-hant-mc.txt */ = {isa = PBXFileReference; name = "essay-zh-hant-mc.txt"; path = "data/onion/essay-zh-hant-mc.txt"; sourceTree = SOURCE_ROOT; };
 		F8AF4689A8AE291408E5BEA5 /* phrases.en_l_w.dict.yaml */ = {isa = PBXFileReference; name = phrases.en_l_w.dict.yaml; path = data/onion/phrases.en_l_w.dict.yaml; sourceTree = SOURCE_ROOT; };
 		F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */ = {isa = PBXFileReference; name = ocm_moedict_big5e_hkscs_jis.json; path = data/onion/opencc/ocm_moedict_big5e_hkscs_jis.json; sourceTree = SOURCE_ROOT; };
+		FB034202A8017C371493304C /* bo_mixin_kr_hnc.dict.yaml */ = {isa = PBXFileReference; name = bo_mixin_kr_hnc.dict.yaml; path = data/onion/bo_mixin_kr_hnc.dict.yaml; sourceTree = SOURCE_ROOT; };
 		FD6E4F5D90C9E2198D00BD9E /* lua */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lua; path = data/onion/lua; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -782,6 +838,22 @@
 				48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */,
 				77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */,
 				7B104C169CFC64DB8F193FEF /* bopomo_onionplus_space.schema.yaml */,
+				7C9F4396BB9A11447B61DF79 /* bo_mixin.extended.dict.yaml */,
+				67CB4543985479442C740A36 /* bo_mixin1.schema.yaml */,
+				11B54E0D91FDC46C88F5DD7F /* bo_mixin2.schema.yaml */,
+				22FD4673AA518F8215AAFB3D /* bo_mixin3.schema.yaml */,
+				71CA40A0BC2F888B20B5E3A3 /* bo_mixin4.schema.yaml */,
+				BD7E4CE18713E45DA835A761 /* bo_mixin_en.dict.yaml */,
+				57884DAE9CACEE985908867E /* bo_mixin_jp.dict.yaml */,
+				0E46402496ED5BE83756BB68 /* bo_mixin_kr.dict.yaml */,
+				FB034202A8017C371493304C /* bo_mixin_kr_hnc.dict.yaml */,
+				B63342A08E61C98758BBDBFF /* bo_mixin_la.dict.yaml */,
+				BCBB4648B855188B13458D17 /* bo_mixin_phrase.txt */,
+				9DF04DC4841D13D3BF327F51 /* essay-zh-hant-mc-mixin.txt */,
+				93D6447B8C8F1B077B625E8A /* phrases.cht_en_w.dict.yaml */,
+				24D74228AE10078248EA985A /* phrases.jp_hk.dict.yaml */,
+				7DDE46ABB1B29BF5EB4C537E /* phrases.jp_hkkreduce.dict.yaml */,
+				8CA94CBC8782B6229FD2948E /* phrases.kr.dict.yaml */,
 			);
 			name = OnionData;
 			sourceTree = "<group>";
@@ -877,6 +949,10 @@
 				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
 				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
+				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
+				441E638222B7E90C006DCCDD /* terra_pinyin_12345.schema.yaml */,
 				441E638822B7E90C006DCCDD /* cangjie5_char.dict.yaml */,
 				441E638622B7E90C006DCCDD /* cangjie5.stem.dict.yaml */,
 				441E638422B7E90C006DCCDD /* cangjie5.extended.dict.yaml */,
@@ -905,6 +981,8 @@
 				2FE7418080ED9BF03B26D167 /* ChatGPTBridge.swift */,
 				285042898B2CC74445C3373C /* ChatGPTLoginView.swift */,
 				04CC45999EE228E7D01D3CED /* CookieLoader.swift */,
+				AE04C1147A0000000000F004 /* GeminiLoginView.swift */,
+				AE03C1147A0000000000F003 /* GeminiWebBridge.swift */,
 				814D46AEAA72085E33DA5545 /* GroqClient.swift */,
 				99F24101930C39FED468124D /* GroqSecrets.swift */,
 				C38142BBB284A4B05834FD90 /* HotkeyManager.swift */,
@@ -1019,6 +1097,8 @@
 				CB234920BF034403F0D2FC10 /* ChatGPTBridge.swift in Sources */,
 				2F094E7FA80138EAD36A72BE /* ChatGPTLoginView.swift in Sources */,
 				9C654EFDB7A30BB5EABE5C82 /* CookieLoader.swift in Sources */,
+				AE04C1147A0000000000B004 /* GeminiLoginView.swift in Sources */,
+				AE03C1147A0000000000B003 /* GeminiWebBridge.swift in Sources */,
 				1FE14F2D93B30F87258481F7 /* GroqClient.swift in Sources */,
 				42254DA2BF42DC8883C9580D /* GroqSecrets.swift in Sources */,
 				07714BAFBA16B7A3AC30FD41 /* HotkeyManager.swift in Sources */,
@@ -1050,7 +1130,7 @@
 				CODE_SIGN_ENTITLEMENTS = resources/Squirrel.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.1.2;
+				CURRENT_PROJECT_VERSION = 1.1.6;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1106,7 +1186,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = resources/Squirrel.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.1.2;
+				CURRENT_PROJECT_VERSION = 1.1.6;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

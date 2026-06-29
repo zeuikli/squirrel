@@ -62,10 +62,15 @@ final class SquirrelInstaller {
     }
     let modesToEnable = modes.isEmpty ? [.primary] : modes
     for (mode, inputSource) in getInputSource(modes: modesToEnable) {
-      if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled), !enabled {
-        let error = TISEnableInputSource(inputSource)
-        print("Enable \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
-      }
+      // Enable unconditionally. We must NOT gate on the current isEnabled flag:
+      // when install.sh runs `--disable-input-source` then `--enable-input-source`
+      // as two separate short-lived processes, this process's TIS snapshot can
+      // still report the source as enabled (the disable hasn't propagated), so a
+      // `!enabled` guard would skip the enable and leave the IME disabled —
+      // forcing a manual re-add in System Settings. TISEnableInputSource is a
+      // no-op when already enabled, so calling it always is safe.
+      let error = TISEnableInputSource(inputSource)
+      print("Enable \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
     }
   }
 

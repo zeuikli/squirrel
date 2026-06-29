@@ -1,11 +1,13 @@
 #!/bin/bash
 # Refresh data/onion/ from the Onion_Rime_Files checkout (SPEC §13.6 / M-B2).
 #
-# Curation = the dependency closure of bopomo_onionplus (SPEC §13.3):
+# Curation = the dependency closure of bopomo_onionplus + the four bopomo
+# mix-in schemas (SPEC §13.3 / §22):
 #   main schema + 11 dependency schemas + their dicts / __include phrases
+#   + bo_mixin1–4 (+ their mix-in dicts/essay, deps shared with onionplus)
 #   + lua/ + opencc/ + essay .gram models + grammar.yaml
 # Excluded: easy_en_super* (disabled in the schema), *_original backups,
-# and every other onion family (terra/array/double/mixin…).
+# and the other onion families (terra/array/double, ocm_mixin shrimp/shape).
 #
 # Usage: scripts/update-onion.sh [path-to-Onion_Rime_Files]
 # After running, re-run scripts/add-onion-files.py to register new files.
@@ -31,6 +33,25 @@ FILES=(
   bopomo_onionplus_space.schema.yaml
   bopomo_onionplus.extended.dict.yaml
   bopomo_onionplus_phrase.txt
+  # bopomo mix-in schemas 1–4 (SPEC §22) — deps are the onionplus closure;
+  # increment is the schemas + bo_mixin.* dicts + mix-in essay.
+  bo_mixin1.schema.yaml
+  bo_mixin2.schema.yaml
+  bo_mixin3.schema.yaml
+  bo_mixin4.schema.yaml
+  bo_mixin.extended.dict.yaml
+  bo_mixin_la.dict.yaml
+  bo_mixin_jp.dict.yaml
+  bo_mixin_kr_hnc.dict.yaml
+  bo_mixin_en.dict.yaml
+  bo_mixin_kr.dict.yaml
+  bo_mixin_phrase.txt
+  essay-zh-hant-mc-mixin.txt
+  # extra import_tables bo_mixin.extended pulls in beyond the onionplus closure
+  phrases.cht_en_w.dict.yaml
+  phrases.jp_hk.dict.yaml
+  phrases.jp_hkkreduce.dict.yaml
+  phrases.kr.dict.yaml
   element_bopomo.yaml
   punct_bopomo.yaml
   phrases.chtp.dict.yaml
@@ -115,11 +136,16 @@ cp "$SHARED"/*.gram "$SHARED/grammar.yaml" "$DST/"
 # default schema list (ours, not upstream's all-schemas variant).
 if [[ ! -f "$DST/default.custom.yaml" ]]; then
   cat > "$DST/default.custom.yaml" <<'YAML'
-# 洋蔥 plus 注音預設方案（本客製版內建，SPEC §13.5 / §15.7）
+# 洋蔥注音預設方案清單（本客製版內建，SPEC §13.5 / §22）
+# 第一項為預設方案；偏好設定 UI 可改寫順序（選中者排第一）後重新部署。
 patch:
   schema_list:
     - schema: bopomo_onionplus
     - schema: bopomo_onionplus_space
+    - schema: bo_mixin1
+    - schema: bo_mixin2
+    - schema: bo_mixin3
+    - schema: bo_mixin4
 YAML
 fi
 

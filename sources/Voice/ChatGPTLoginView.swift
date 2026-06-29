@@ -3,8 +3,9 @@
 //  Squirrel
 //
 //  Embedded ChatGPT login (SPEC §14.5): a visible WKWebView backed by the
-//  same persistent WKWebsiteDataStore as ChatGPTBridge, so signing in here
-//  immediately authenticates the bridge — no cookies.json export needed.
+//  same in-memory WKWebsiteDataStore as ChatGPTBridge, so signing in here
+//  immediately authenticates the bridge — no cookies.json export needed. The
+//  session is snapshotted to the self-managed store on window close (SPEC §4.8).
 //
 
 import SwiftUI
@@ -13,7 +14,7 @@ import WebKit
 struct ChatGPTLoginView: NSViewRepresentable {
   func makeNSView(context: Context) -> WKWebView {
     let cfg = WKWebViewConfiguration()
-    cfg.websiteDataStore = ChatGPTBridge.persistentDataStore()
+    cfg.websiteDataStore = ChatGPTBridge.sessionDataStore()
     let webView = WKWebView(frame: .zero, configuration: cfg)
     webView.load(URLRequest(url: URL(string: "https://chatgpt.com/")!))
     return webView

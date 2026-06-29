@@ -27,6 +27,26 @@ final class SquirrelSettingsModel: ObservableObject {
   @Published var defaultFullShape: Bool = false      // switches/@1/reset: false=半形 true=全形
   @Published var pageSize: Int = 8                   // menu/page_size (effective in-schema)
   @Published var onionSelectLabels: Bool = true      // menu/alternative_select_labels keep/remove
+  // Default/active schema picker (SPEC §22): writes default.custom.yaml.
+  @Published var defaultSchema: String = "bopomo_onionplus"
+
+  /// A bundled schema option for the picker. A proper Identifiable type —
+  /// SwiftUI ForEach over a tuple array silently fails to render.
+  struct SchemaOption: Identifiable {
+    let id: String
+    let name: String
+  }
+
+  /// Schemas bundled by this distro (id → display name). Fixed list — avoids
+  /// reading each schema.yaml at runtime just for its name.
+  static let bundledSchemas: [SchemaOption] = [
+    SchemaOption(id: "bopomo_onionplus", name: "洋蔥注音 plus"),
+    SchemaOption(id: "bopomo_onionplus_space", name: "洋蔥注音 plus（空格選字）"),
+    SchemaOption(id: "bo_mixin1", name: "洋蔥注音 mix-in 1〔拉日 ˇ ˋ 韓〕"),
+    SchemaOption(id: "bo_mixin2", name: "洋蔥注音 mix-in 2〔小大平片韓〕"),
+    SchemaOption(id: "bo_mixin3", name: "洋蔥注音 mix-in 3〔' [ ] →拉日韓〕"),
+    SchemaOption(id: "bo_mixin4", name: "洋蔥注音 mix-in 4〔全 ˊ ˇ ˋ ˙〕")
+  ]
 
   @Published var colorSchemes: [String] = []
   @Published var applying = false
@@ -35,11 +55,16 @@ final class SquirrelSettingsModel: ObservableObject {
   @Published var iCloudSyncEnabled = false
   @Published var syncStatusText = ""
 
-  /// Schemas receiving the schema-level managed patch.
-  private let onionSchemas = ["bopomo_onionplus", "bopomo_onionplus_space"]
+  /// Schemas receiving the schema-level managed patch (default mode/shape,
+  /// page_size, select labels). All six share element_bopomo:/menu and the
+  /// same switch order, so the patch applies uniformly — including the mix-in
+  /// schemas, so their select labels toggle off exactly like plus (SPEC §22.5).
+  private let onionSchemas = ["bopomo_onionplus", "bopomo_onionplus_space",
+                              "bo_mixin1", "bo_mixin2", "bo_mixin3", "bo_mixin4"]
 
   private var userDir: URL { SquirrelApp.userDir }
   private var squirrelCustomURL: URL { userDir.appendingPathComponent("squirrel.custom.yaml") }
+  private var defaultCustomURL: URL { userDir.appendingPathComponent("default.custom.yaml") }
   private var installationYamlURL: URL { userDir.appendingPathComponent("installation.yaml") }
   private func schemaCustomURL(_ schemaID: String) -> URL {
     userDir.appendingPathComponent("\(schemaID).custom.yaml")
@@ -75,6 +100,21 @@ final class SquirrelSettingsModel: ObservableObject {
       if let v = managed["menu/page_size"], let n = Int(v) { pageSize = n }
       if managed["menu/alternative_select_labels"] != nil { onionSelectLabels = false }
     }
+    defaultSchema = readDefaultSchema() ?? Self.bundledSchemas[0].id
+  }
+
+  /// First `- schema: <id>` entry in the user's default.custom.yaml (the
+  /// current default schema), or nil if the file/entry is absent.
+  private func readDefaultSchema() -> String? {
+    guard let content = try? String(contentsOf: defaultCustomURL, encoding: .utf8) else { return nil }
+    for line in content.components(separatedBy: "\n") {
+      let trimmed = line.trimmingCharacters(in: .whitespaces)
+      if trimmed.hasPrefix("- schema:") {
+        let id = trimmed.dropFirst("- schema:".count).trimmingCharacters(in: .whitespaces)
+        return id.isEmpty ? nil : id
+      }
+    }
+    return nil
   }
 
   /// Write both custom files and redeploy. Single-shot (Apply button).
@@ -111,6 +151,7 @@ final class SquirrelSettingsModel: ObservableObject {
       for schema in onionSchemas {
         try writePatch(url: schemaCustomURL(schema), settings: schemaSettings, template: nil)
       }
+      try writeSchemaList()
     } catch {
       applying = false
       statusText = error.localizedDescription
@@ -126,6 +167,19 @@ final class SquirrelSettingsModel: ObservableObject {
       self.applying = false
       self.statusText = NSLocalizedString("Applied ✓", comment: "Settings")
     }
+  }
+
+  /// Regenerate default.custom.yaml with the selected schema first (SPEC §22).
+  /// This file is distro-owned (it only carries schema_list) so it is rewritten
+  /// wholesale — unlike squirrel.custom.yaml, hand edits here are not preserved.
+  private func writeSchemaList() throws {
+    let ids = [defaultSchema] + Self.bundledSchemas.map(\.id).filter { $0 != defaultSchema }
+    var lines = ["# 洋蔥注音方案清單（偏好設定 UI 管理，第一項為預設方案 — SPEC §22）",
+                 "patch:",
+                 "  schema_list:"]
+    lines += ids.map { "    - schema: \($0)" }
+    try (lines.joined(separator: "\n") + "\n")
+      .write(to: defaultCustomURL, atomically: true, encoding: .utf8)
   }
 
   private func writePatch(url: URL, settings: [String: Any], template: String?) throws {

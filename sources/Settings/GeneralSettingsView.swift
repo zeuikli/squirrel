@@ -34,6 +34,9 @@ struct GeneralSettingsView: View {
       }
 
       Section(NSLocalizedString("Input schema (洋蔥注音)", comment: "Settings")) {
+        Picker(NSLocalizedString("Schema", comment: "Settings"), selection: $model.defaultSchema) {
+          ForEach(SquirrelSettingsModel.bundledSchemas) { Text($0.name).tag($0.id) }
+        }
         Picker(NSLocalizedString("Default mode", comment: "Settings"), selection: $model.defaultAsciiMode) {
           Text(NSLocalizedString("中文", comment: "Settings")).tag(false)
           Text(NSLocalizedString("英文", comment: "Settings")).tag(true)
@@ -51,6 +54,9 @@ struct GeneralSettingsView: View {
             .font(.footnote)
             .foregroundColor(.orange)
         }
+        Text(NSLocalizedString("Changing the schema takes effect on Apply (redeploy). You can also switch on the fly from Rime's schema menu (Ctrl+`).", comment: "Settings"))
+          .font(.footnote)
+          .foregroundColor(.secondary)
       }
 
       Section(NSLocalizedString("Behavior", comment: "Settings")) {
