@@ -40,6 +40,22 @@
 
 > ⚠️ 本套件內含洋蔥詞庫（約 180MB），**僅供個人／內部使用**；公開散佈請先取得 [Onion_Rime_Files](https://github.com/oniondelta/Onion_Rime_Files) 作者授權。
 
+iCloud 同步（跨機同步個人詞頻）
+---
+
+本分支以 Rime 原生同步機制（`sync_dir` 指向 iCloud Drive）跨機同步**個人化詞頻（`*.userdb`）與設定備份**，走一般檔案路徑、**零需 Apple Developer entitlement**。
+
+啟用方式：
+
+  1. 右鍵輸入法圖示 →「Preferences…」→ **General** 分頁 →「**Sync**」區。
+  2. 開啟「**iCloud 同步**」開關 —— 會在 iCloud Drive 建立 `RimeSync/` 資料夾，並把同步路徑寫入 `~/Library/Rime/installation.yaml`（**即時生效，不需重新部署或重啟**）。
+  3. 點「**立即同步**」可手動觸發一次同步（匯出本機 `*.userdb` 快照、並雙向合併其他機器的快照）。
+  4. **每一台 Mac 都要各自開啟此選項**才會彼此合併。同步檔位於 `~/Library/Mobile Documents/com~apple~CloudDocs/RimeSync/<installation_id>/`。
+
+關閉開關即移除同步路徑、回落本機 `~/Library/Rime/sync/`；個人詞頻不會被刪除。
+
+> ⚠️ 若 iCloud 開啟「最佳化 Mac 儲存空間」，快照可能被收回為 placeholder，導致某次同步讀取失敗（**不會毀損本機資料**，librime 會報錯後跳過）。可於 Finder 對 `RimeSync` 資料夾選「立即下載／保留下載」。
+
 安裝輸入法
 ---
 
