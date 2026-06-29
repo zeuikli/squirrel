@@ -68,7 +68,8 @@
 ### 多語言與 Prompt（Preferences… → Voice）
 
 - **Language**：支援 9 種 — 繁體中文、English、日本語、한국어、Deutsch、Français、Italiano、Español、Português（非中文由 Whisper 原生輸出該語言書寫系統）。
-- **LLM cleanup pass**：開啟後以 LLM 清理辨識結果（去填充詞、自我修正、補標點；中文強制台灣正體）；關閉則用原始辨識。
+- **繁體保證（本機）**：中文辨識一律經本機 **OpenCC `s2twp`** 轉為台灣正體（秒級、離線）。因此即使 LLM cleanup 關閉或失敗，**出字仍是繁體**（軟體／網路／資訊…等台灣用語）。
+- **LLM cleanup pass**：開啟後額外以 LLM 做語意潤飾（去填充詞、自我修正、補標點）；關閉則用原始辨識（繁體仍由 OpenCC 保障）。
 - **Prompts**：可自訂 **Transcribe prompt**（Whisper 引導，導入專有名詞／風格）與 **Cleanup system prompt**（清理規則），各附「Reset to default」還原當前語言預設。
 - **Push-to-talk key / Hotkey engine**：可改觸發鍵與熱鍵引擎（NSEvent 全域監聽＝免輸入監控；CGEventTap＝需輸入監控）。**Play sounds** 可開關提示音。
 
