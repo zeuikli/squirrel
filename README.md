@@ -40,6 +40,57 @@
 
 > ⚠️ 本套件內含洋蔥詞庫（約 180MB），**僅供個人／內部使用**；公開散佈請先取得 [Onion_Rime_Files](https://github.com/oniondelta/Onion_Rime_Files) 作者授權。
 
+語音輸入（按住右 ⌥ 講話）
+---
+
+把游標放在任何文字框 → **按住右 ⌥（Option）講話 → 放開** → 約 1 秒後（雲端辨識）辨識文字（台灣正體）自動上字。
+
+上字方式**自動依目標 app 選擇**：一般原生 app（備忘錄、Telegram、瀏覽器…）走輸入法原生通道、不碰剪貼簿；VSCode 等 **Chromium/Electron** app 自動以「複製＋⌘V」貼上（需「輔助使用」權限，辨識文字會留在剪貼簿）。
+
+### 權限（一次性）
+
+| 權限 | 用途 | 授權位置 |
+|------|------|----------|
+| 麥克風 | 錄音 | 首次按右 ⌥ 時跳出 → 允許 |
+| 輔助使用（**必要**）| ① 監聽右 ⌥ 熱鍵 ② 在 Electron app 自動送 ⌘V | 系統設定 → 隱私權與安全性 → 輔助使用 → 開啟 Squirrel |
+| 輸入監控 | 僅當熱鍵引擎切為 CGEventTap 時 | 同上 → 輸入監控 |
+
+權限狀態可在 Preferences… → **Voice** 頁最上方即時查看（✓／✗），缺的旁邊有 Grant 按鈕。
+
+### 後端（Preferences… → Voice → Backend，擇一）
+
+- **Groq API（建議，最快）**：貼上 API key → Save key。
+- **ChatGPT Web（session）**：Sign in to ChatGPT… 登入 → Check status 顯示 Logged in ✓。
+- **Gemini Web（session）**：Sign in to Gemini… 登入 Google 帳號 → Check status ✓（吃 Gemini 訂閱、免 API key；實驗性，走 gemini.google.com 逆向 RPC）。
+
+> 金鑰／登入 session 存於 `~/Library/Application Support/Squirrel/`（權限 `0600`），**不進系統 Keychain**（1.1.6+），安裝／升級不再跳鑰匙圈提示。從舊版升級者需在 Voice 頁**重新登入** ChatGPT/Gemini 一次（Groq key 自動沿用）。
+
+### 多語言與 Prompt（Preferences… → Voice）
+
+- **Language**：支援 9 種 — 繁體中文、English、日本語、한국어、Deutsch、Français、Italiano、Español、Português（非中文由 Whisper 原生輸出該語言書寫系統）。
+- **LLM cleanup pass**：開啟後以 LLM 清理辨識結果（去填充詞、自我修正、補標點；中文強制台灣正體）；關閉則用原始辨識。
+- **Prompts**：可自訂 **Transcribe prompt**（Whisper 引導，導入專有名詞／風格）與 **Cleanup system prompt**（清理規則），各附「Reset to default」還原當前語言預設。
+- **Push-to-talk key / Hotkey engine**：可改觸發鍵與熱鍵引擎（NSEvent 全域監聽＝免輸入監控；CGEventTap＝需輸入監控）。**Play sounds** 可開關提示音。
+
+個性化設定（Preferences…）
+---
+
+右鍵輸入法圖示 →「**Preferences…**」開啟偏好設定，**General** 分頁可調：
+
+- **Appearance（外觀）**：配色方案（Color scheme）、字型與字級（Font／Font size 10–48）、候選列版面（Candidate layout：水平／垂直）、文字方向（Text orientation）。
+- **Input schema（洋蔥注音）**：
+  - **Schema**：預設方案（7 項：洋蔥注音 plus／plus 空格選字／mix-in 1–4／地球拼音）。
+  - **Default mode**：預設中／英（中文／西文）。
+  - **Default shape**：預設半／全形。
+  - **Candidates per page**：每頁候選數（1–10；用洋蔥 8 標籤時建議設 8）。
+  - **Onion select labels**：洋蔥選字標籤（⒈𝚀𝚈 …）開關；關閉回落數字標籤。
+- **Behavior（行為）**：行內預編輯（Inline preedit）、通知顯示時機（Show notifications）、選單列圖示顯示（Show menu bar icon）。
+- **Sync**：iCloud 同步（見下節）。
+
+底部按鈕：**Apply (redeploy)** 套用並重新部署、**Reload current values** 重讀現值、**Open Rime folder…** 開啟 `~/Library/Rime`。
+
+> 變更方案在 Apply（重新部署）後生效；也可隨時用 Rime 方案選單（`` Ctrl+` ``）即時切換。設定寫入 `~/Library/Rime/` 的 `squirrel.custom.yaml`／`default.custom.yaml`／`<schema>.custom.yaml`，與手寫 patch 相容。
+
 iCloud 同步（跨機同步個人詞頻）
 ---
 
