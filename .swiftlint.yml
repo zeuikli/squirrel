@@ -45,9 +45,9 @@ type_name:
   excluded: # excluded via string
   allowed_symbols: ["_"] # these are allowed in type names
 identifier_name:
-  min_length: # only min_length
+  min_length: # short idiomatic locals (v, s, c, …) are warnings, not build-failing errors
     warning: 3
-    error: 2
+    error: 1
   excluded: [i, URL, of, by] # excluded via string array
 large_tuple:
   warning: 3
