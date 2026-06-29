@@ -3,6 +3,7 @@ on:
   push:
     tags:
       - '*'
+      - '!custom-*'   # custom-* tags are handled by custom-dmg.yml; avoid double-packaging
     branches:
       - master
   workflow_dispatch:
