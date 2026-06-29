@@ -24,6 +24,8 @@ on:
 jobs:
   build:
     runs-on: macos-26
+    permissions:
+      contents: write   # required for the release-attach step to create/update a release
     env:
       # Match action-build.sh: universal binary + bundled octagram grammar.
       ARCHS: 'arm64 x86_64'
