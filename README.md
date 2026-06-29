@@ -25,6 +25,21 @@
   * 【中州韻】（ibus-rime、fcitx-rime）用於 Linux
   * 【小狼毫】用於 Windows
 
+本分支客製功能（語音版）
+---
+
+本分支在原版鼠鬚管之上整合以下功能（macOS 13+）：
+
+  * **內建洋蔥注音 plus 詞庫**：預載「☆注音(洋蔥plus版)☆」與四個 mix-in 變體，內含英／日／韓／希臘／西里爾等多語掛接，裝完即用、免手動安裝方案；首次切換自動部署（一次性約 1–2 分鐘，編譯產物置於 `~/Library/Rime/build/`）。
+  * **語音輸入**：按住右 ⌥（Option）即說即上字，支援九種語言；後端可選（Gemini／Groq／ChatGPT），於偏好設定登入或填入 API key。
+  * **圖形化偏好設定**：右鍵輸入法圖示 →「Preferences…」，可調外觀、候選數、預設中英模式、選字標籤、語音與方案層級設定，無需手改 YAML。
+  * **iCloud 設定同步**：跨機同步個人設定。
+  * **一鍵 DMG 安裝**：DMG 內附 `install.sh`，自動完成註冊／啟用／選用，並保留個人詞頻（`~/Library/Rime/*.userdb`）。
+
+安裝與首次設定詳見 [INSTALL-zh.md](INSTALL-zh.md)。
+
+> ⚠️ 本套件內含洋蔥詞庫（約 180MB），**僅供個人／內部使用**；公開散佈請先取得 [Onion_Rime_Files](https://github.com/oniondelta/Onion_Rime_Files) 作者授權。
+
 安裝輸入法
 ---
 
