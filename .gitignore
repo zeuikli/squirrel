@@ -19,4 +19,4 @@ package/*.xml
 *~
 .*.swp
 .DS_Store
-data/onion/
+# data/onion/ is committed (tested Onion lexicon snapshot) for reproducible builds

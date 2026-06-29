@@ -1,0 +1,19 @@
+{
+  "name": "標點後方標註_注音和雙拼方案用（避〔〕。）",
+  "segmentation": {
+    "type": "mmseg",
+    "dict": {
+      "type": "text",
+      "file": "punct_mark.txt"
+    }
+  },
+  "conversion_chain": [{
+    "dict": {
+      "type": "group",
+      "dicts": [{
+        "type": "text",
+        "file": "punct_mark.txt"
+      }]
+    }
+  }]
+}

@@ -51,28 +51,11 @@ jobs:
       - name: Lint
         run: swiftlint
 
-      - name: Checkout Onion_Rime_Files (lexicon source)
-        uses: actions/checkout@v6
-        with:
-          repository: oniondelta/Onion_Rime_Files
-          path: onion-src
-          fetch-depth: 1
-
+      # data/onion is committed (a tested Onion lexicon snapshot) for
+      # reproducible builds — no longer regenerated from Onion_Rime_Files HEAD,
+      # which had drifted and shipped broken schema data (SPEC §13.6).
       - name: Install build deps (librime, Sparkle, plum recipes)
         run: ./action-install.sh
-
-      - name: Generate Onion data and register sources
-        run: |
-          # pbxproj in an isolated venv (runner Python is PEP-668 managed).
-          python3 -m venv "$RUNNER_TEMP/venv"
-          source "$RUNNER_TEMP/venv/bin/activate"
-          pip install --quiet pbxproj
-          # Curate data/onion/ from the Onion_Rime_Files checkout (SPEC §13.6).
-          scripts/update-onion.sh "$GITHUB_WORKSPACE/onion-src"
-          # Register data/onion and Voice/Settings sources in the Xcode target
-          # (idempotent — already committed, this is a belt-and-braces guard).
-          python3 scripts/add-onion-files.py
-          python3 scripts/add-voice-files.py
 
       - name: Set up code signing
         env:

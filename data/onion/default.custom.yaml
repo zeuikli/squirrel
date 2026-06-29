@@ -1,0 +1,10 @@
+# 洋蔥注音預設方案清單（本客製版內建，SPEC §13.5 / §22）
+# 第一項為預設方案；偏好設定 UI 可改寫順序（選中者排第一）後重新部署。
+patch:
+  schema_list:
+    - schema: bopomo_onionplus
+    - schema: bopomo_onionplus_space
+    - schema: bo_mixin1
+    - schema: bo_mixin2
+    - schema: bo_mixin3
+    - schema: bo_mixin4

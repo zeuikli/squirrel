@@ -1,0 +1,650 @@
+# Rime schema settings
+# encoding: utf-8
+# 《洋蔥注音 plus版 設定頁》
+schema:
+  schema_id: bopomo_onionplus
+  name: "☆注音(洋蔥plus版)☆"
+  version: "202602"
+  author:
+    - 『洋蔥』
+  description: |
+    注音符號輸入，採用「大千式」鍵盤排列。
+
+  dependencies:
+    - symbols_bpmf
+    - cangjie5
+    - easy_en_lower
+    - easy_en_upper
+    # - easy_en_super
+    - latinin1
+    - jpnin1
+    # - hangeul  #韓文形碼專用#
+    - hangeul_hnc
+    - greek
+    - cyrillic
+    - allbpm
+    - fullshape
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: ["中文", "英文"]
+  - name: full_shape
+    reset: 0
+    states: ["半形", "全形"]
+  - name: ascii_punct
+    reset: 0
+    states: ["。，", "．，"]
+  - name: simplification
+    reset: 0
+    states: ["原體", "简体"]
+  - name: character_range_bhjm
+    reset: 1
+    states: ["完整", "精簡"]
+  - name: emoji_segestion
+    reset: 1
+    states: [ 🈚️, 🈶️ ]
+  - name: back_mark
+    reset: 1
+    states: [ 無註, 註釋 ]
+  # - name: back_mark_series
+  #   reset: 1
+  #   # states: [ 無註, 註釋 ]
+  - name: punct_mark
+    reset: 1
+    # states: [ 無, 註 ]
+  - name: unicode_comment
+    reset: 0
+    states: [ '🄽', '🅄' ]
+    # states: [ 'nil', 'Unicode(URL)' ]
+  # - name: debug_comment
+  #   reset: 0
+    # states: [ 'Ⓝ', 'Ⓓ' ]
+    # states: [ 'normal', 'Debug' ]
+  - name: en_sort
+    reset: 0
+    states: [ 個排, 序排 ]
+
+engine:
+  filters:
+    - simplifier@character_range_bhjm
+    - lua_filter@mix_cf2_miss_filter  #合併 charset_filter2 和 missing_mark_filter，兩個 lua filter 太耗效能。
+    # - lua_filter@charset_filter2  #去除opencc轉換後留下的「᰼᰼」。
+    # - lua_filter@charset_cjk_filter  #打開後中文只保留CJK（精簡），但外語不受影響。
+    # - lua_filter@missing_mark_filter  #補上標點符號因直上和 opencc 衝突沒附註之選項
+    - reverse_lookup_filter@e_reverse_lookup
+    - lua_filter@en_sort_filter
+    - lua_filter@convert_english_filter
+    - lua_filter@convert_japan_filter
+    - simplifier@emoji_switch
+    - simplifier@zh_cn
+    - lua_filter@back_mark_filter@back_mark
+    - lua_filter@back_mark_filter@back_mark_series
+    # - simplifier@back_mark
+    # - simplifier@back_mark_series
+    - simplifier@punct_mark
+    - reverse_lookup_filter@bpm_reverse_lookup
+    - uniquifier
+    - lua_filter@comment_filter_unicode  # unicode 和 debug 分開，同時開啟無法記憶
+    # - lua_filter@comment_filter_debug  # unicode 和 debug 分開，同時開啟無法記憶
+    # - lua_filter@comment_filter_unicode_debug
+  processors:
+    - lua_processor@mix_apc_s2rm_ltk
+    # - lua_processor@ascii_punct_change
+    # - lua_processor@s2r_most
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - recognizer@recognizer2  #順序超過 key_binder 會有 Bug（輸入ㄡˇㄩ會跑出ㄡˇㄡㄩ）？待釐清！
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+#    - fluency_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - matcher@recognizer2
+    - abc_segmentor
+    - affix_segmentor@emoji_series
+    - affix_segmentor@reverse2_lookup
+    - affix_segmentor@easy_en
+    # - affix_segmentor@easy_en_upper
+    # - affix_segmentor@easy_en_script
+    - affix_segmentor@european
+    - affix_segmentor@japan
+    - affix_segmentor@korea
+    - affix_segmentor@fs2
+    - affix_segmentor@gr2
+    - affix_segmentor@cyr2
+    - affix_segmentor@all_bpm
+    - lua_segmentor@mount_allbpm
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - lua_translator@lua_custom_phrase
+    # - table_translator@custom_phrase
+    - table_translator@emoji_series
+    - script_translator@reverse2_lookup
+    - table_translator@easy_en
+    - table_translator@easy_en_upper
+    # - script_translator@easy_en_script
+    - script_translator@european
+    - script_translator@japan
+    - script_translator@korea
+    - script_translator@fs2
+    - script_translator@gr2
+    - script_translator@cyr2
+    - script_translator@all_bpm
+    - lua_translator@mf_translator
+    # - lua_translator@t2_translator
+    - lua_translator@email_url_translator
+    - lua_translator@instruction_grave_bpmf
+    # - lua_translator@p_convert_japan_translator
+    - script_translator
+################################# lua 引用 ####################################
+mf_translator:
+  prefix: "'/"
+
+lua_custom_phrase:
+  user_dict: "bopomo_onionplus_phrase"
+  # user_dict: "lua_custom_phrase"
+################################### 濾鏡 ######################################
+zh_cn:
+  opencc_config: tw2s.json
+  tips: all
+  tags: [ abc ]
+
+character_range_bhjm:
+  opencc_config: ocm_moedict_big5e_hkscs_jis.json #s2tw.json #t2tw.json
+  option_name: character_range_bhjm
+  tags: [ abc, reverse2_lookup ]
+
+emoji_switch:
+  opencc_config: emoji_t.json
+  option_name: emoji_segestion
+  tags: [ abc ]
+#  tips: all
+
+back_mark_series:
+  opencc_config: back_mark_series.json
+  option_name: back_mark
+  tags: [ emoji_series ]
+
+back_mark:
+  opencc_config: back_mark.json
+  option_name: back_mark
+  tags: [ abc, japan, european, korea, fs2 ]
+
+# back_mark_series:
+#   opencc_config: back_mark_series.json
+#   option_name: back_mark_series
+#   show_in_comment: true
+#   tags: [ emoji_series ]
+#   tips: all #char #none
+#   comment_format:
+#     - erase/^.*〕.+$/  #去除一個條目有多個轉換。
+#     - erase/^.+〔.*$/  #去除一個條目有多個轉換。
+#     - xform/^/  /  #沒 comment 的條目不會因此多兩空白。
+#     - xform/@/ /
+
+# back_mark:
+#   opencc_config: back_mark.json
+#   option_name: back_mark
+#   show_in_comment: true
+#   tags: [ abc, japan, european, korea, fs2 ]
+#   tips: char #all #none
+#   comment_format:
+#     # - erase/^.*〕.+$/  #去除一個條目有多個轉換。
+#     # - erase/^.+〔.*$/  #去除一個條目有多個轉換。
+#     - xform/^/  /  #沒 comment 的條目不會因此多兩空白。
+#     - xform/@/ /
+
+punct_mark:
+  opencc_config: punct_mark.json
+  option_name: punct_mark
+  show_in_comment: true
+  tags: [ punct ]
+  tips: all
+  comment_format:
+    - erase/^.*〔.*〕.+$/
+    - erase/^.+〔.*〕$/
+
+en_sort_filter:
+  tags: [ easy_en ]
+
+convert_english_filter:
+  tags: [ easy_en ]
+
+convert_japan_filter:
+  tags: [ japan ]
+
+# mix_cf2_miss_filter:
+#   tags: [ punct, abc, reverse2_lookup ]
+################################### 選單 ######################################
+menu:
+  __include: element_bopomo:/menu
+################################### 拼寫 ######################################
+speller:
+  alphabet: "1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/- 3467"
+  initials: "1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/-"
+  finals: " 6347"
+  delimiter: "\\"
+  use_space: true
+  algebra:
+##### 非正確注音（補空碼或慣用發音）轉寫 #####
+    - xform/[)(]//
+########################################
+    - xform/iu/iU/ #iou
+    - xform/ui/uI/ #uei
+    - xform/ong/ung/
+    - xform/yi?/i/
+    - xform/wu?/u/
+    - xform/iu/v/
+    - xform/([jqx])u/$1v/
+    - xform/([iuv])n/$1en/
+    - xform/zhi?/Z/
+    - xform/chi?/C/
+    - xform/shi?/S/
+    - xform/([zcsr])i/$1/
+    - xform/ai/A/
+    - xform/ei/I/
+    - xform/ao/O/
+    - xform/ou/U/
+    - xform/ang/K/
+    - xform/eng/G/
+    - xform/an/M/
+    - xform/en/N/
+    - xform/er/R/
+    - xform/eh/E/
+    - xform/([iv])e/$1E/
+##############字母簡化############
+    - abbrev/^([bpmfdtnlgkhjqxZCSrzcsiuvaoeEAIOUMNKGR]).+$/$1/
+    - abbrev/^([bpmfdtnlgkhjqxZCSrzcsiuv])([iuvaoeEAIOUMNKG])\d$/$1$2/ #[R]
+    - abbrev/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])([aoeEAIOUMNKG])\d$/$1$2$3/ #[R]
+#    - abbrev/^([bpmfdtnlgkhjqxZCSrzcsiuv]).+(\d)$/$1$2/ #使得ㄎˇㄈˇ（可否）可以打的出來 #新增iuv，使得ㄧˊㄉˊ（贏得）可以打出
+#    - abbrev/^([bpmfdtnlgkhjqxZCSrzcs]).+(\d)$/$1$2/ #同上，但少了ㄧㄨㄩ
+    - abbrev/^([bpmfdtnlgkhjqx]).+(\d)$/$1$2/ #同上，但再少了ㄓㄔㄕㄖㄗㄘㄙ
+##############內嵌注音文############
+    - xform|^＊([12345])$|r$1| #聲調，「ㄖ」「聲調」打出聲調不被省略
+    - abbrev|^＊([bpmfdtnlgkhjqxZCSrzcsiuvaoeEAIOUMNKGR])$|$1|
+    - abbrev|^＊([bpmfdtnlgkhjqx])$|$1 | #\x31=數字1
+    - erase|^＊([bpmfdtnlgkhjqx])$|| #消除不含聲調注音（不消除也不影響）
+    - xform|^＊([ZCSrzcsiuvaoeEAIOUMNKGR])$|$1 | #\x31=數字1
+    - xform|^＊＊|| #開頭「＊＊」使注音文不被前面縮略，該正則回復
+##########注音聲韻母亂序##########
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])/$2$1/
+    - derive/^([iuv])([aoeEAIOUMNKG])/$2$1/ #[R]
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([aoeEAIOUMNKG])/$2$1/ #[R]
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])([aoeEAIOUMNKG])/$3$2$1/ #[R]
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])([aoeEAIOUMNKG])/$3$1$2/ #[R]
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])([aoeEAIOUMNKG])/$2$3$1/ #[R]
+    - derive/^([bpmfdtnlgkhjqxZCSrzcs])([iuv])([aoeEAIOUMNKG])/$1$3$2/ #[R]
+    - 'xlit|bpmfdtnlgkhjqxZCSrzcsiuvaoeEAIOUMNKGR12345|1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/- 6347|'
+########################## 以下開始幾大段為各種翻譯器 ########################
+translator:
+  dictionary: bopomo_onionplus.extended
+  prism: bopomo_onionplus
+  # enable_charset_filter: false
+  enable_completion: false #新版有長詞補全，用此關閉
+  enable_user_dict: true
+  # initial_quality: 0
+  preedit_format:
+    - "xlit|1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/- 6347|ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦˉˊˇˋ˙|"
+    - 'xform/\\/⁞/' #全形空格　 #半形空格  #| #⁞ #⁝ #⋮ #¦ #┆
+############################## 短語 #########################################
+# custom_phrase:
+#   dictionary: ""
+#   user_dict: bopomo_onionplus_phrase
+#   db_class: stabledb
+#   enable_completion: false
+#   enable_sentence: false
+#   initial_quality: 1
+################################ 反查注音 ###################################
+reverse2_lookup:
+  tag: reverse2_lookup
+  dictionary: cangjie5
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "="
+  suffix: "'"
+  tips: "《查》▶"
+  closing_tips: "◀《查》"
+  preedit_format:
+#    - "xlit|abcdefghijklmnopqrstuvwxyz|ABCDEFGHIJKLMNOPQRSTUVWXYZ|"
+    - "xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田難卜符|"
+    - xform/^/《查》/
+    - 'xform/\\/ /'
+
+bpm_reverse_lookup:
+  tags: [ reverse2_lookup ]
+  overwrite_comment: true
+  dictionary: bopomo_onionplus.extended
+  comment_format:
+    - xform/iu/iU/ #iou
+    - xform/ui/uI/ #uei
+    - xform/ong/ung/
+    - xform/yi?/i/
+    - xform/wu?/u/
+    - xform/iu/v/
+    - xform/([jqx])u/$1v/
+    - xform/([iuv])n/$1en/
+    - xform/zhi?/Z/
+    - xform/chi?/C/
+    - xform/shi?/S/
+    - xform/([zcsr])i/$1/
+    - xform/ai/A/
+    - xform/ei/I/
+    - xform/ao/O/
+    - xform/ou/U/
+    - xform/ang/K/
+    - xform/eng/G/
+    - xform/an/M/
+    - xform/en/N/
+    - xform/er/R/
+    - xform/eh/E/
+    - xform/([iv])e/$1E/
+    - xform/1//
+    - 'xlit|bpmfdtnlgkhjqxZCSrzcsiuvaoeEAIOUMNKGR2345|ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦˊˇˋ˙|'
+################################『外掛其他語言』##################################
+easy_en:
+  tag: easy_en
+  dictionary: easy_en_lower #easy_en_super
+  #prism: easy_en_super
+  # enable_encoder: false
+  # encode_commit_history: false
+  enable_sentence: false
+  enable_completion: true
+  # sentence_over_completion: false
+  enable_user_dict: false
+  # strict_spelling: false
+  # spelling_hints: 2
+  # initial_quality: 1000
+  prefix: "3"
+  # suffix: " "
+  tips: "《Easy》▶"
+  closing_tips: "◀《Easy》"
+  extra_tags:
+    - easy_en_upper
+    # - easy_en_script
+  preedit_format:
+    - xform/^/《Easy》/
+    # - xform/》;/》; /
+    # - xform|》[/]|》/ |
+    # - xform|》'|》' |
+    - 'xform/\\/ /'
+  comment_format:
+    - xform/.+//  #刪除尚未輸入完整碼之提示 ~abc
+  #   # - xform|[~a-z;/.'-]+||
+  #   - xform/^.+⌗// #easy_en_super用
+  #   - xform|^[ a-z;/.'-]+|| #easy_en_super用
+  #   - xform/@@/\n          /
+  #   - xform/@/ /
+
+# easy_en_script:
+#   __include: /easy_en
+#   tag: easy_en_script
+#   # enable_encoder: true
+#   enable_completion: false
+#   enable_sentence: false
+#   enable_user_dict: false
+#   # spelling_hints: 1
+#   # initial_quality: 0
+#   extra_tags: []
+#   # comment_format: []
+
+easy_en_upper:
+  tag: easy_en_upper
+  dictionary: easy_en_upper
+  # enable_encoder: false
+  # encode_commit_history: false
+  enable_sentence: false
+  enable_completion: false
+  # sentence_over_completion: false
+  enable_user_dict: false
+  preedit_format:
+    - xform/^/《Easy》/
+    - xform/\\/ /
+
+e_reverse_lookup:
+  tags: [ easy_en ]
+  overwrite_comment: true
+  dictionary: easy_en_lcomment #easy_en_super
+  comment_format:
+    # - xform/^.+⌗// #easy_en_super用
+    # - xform|^[ a-z;/.'-]+|| #easy_en_super用
+    - xform/@@/\n          /
+    - xform/@/ /
+
+european:
+  tag: european
+  dictionary: latinin1.extended
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "4"
+  suffix: "'"
+  tips: "《拉》▶"
+  closing_tips: "◀《拉》"
+  disable_user_dict_for_patterns:
+    - ^[-a-z,./]{1}[;/]?$
+    - ^[a-z]+;;$
+  preedit_format:
+    - xform/^/《拉》/
+    - 'xform/\\/ /'
+
+korea:
+  tag: korea
+  dictionary: hangeul_hnc.extended
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "7"
+  suffix: "'"
+  tips: "《韓》▶"
+  closing_tips: "◀《韓》"
+  disable_user_dict_for_patterns:
+    - ^[a-z]+[/]?[/abcdefghijklmnopqrstuwxyz]$
+  preedit_format:
+    - "xlit|abcdefghijklmnopqrstuvwxyz|ABCDEFGHIJKLMNOPQRSTUVWXYZ|"
+    - xform/QQ/‹ʜᴊ›/
+    - xform|\/\/|‹ʜᴊ›|
+    - xform/Q/‹ʜᴄᴊ›/
+    - xform|\/|‹ʜᴄᴊ›|
+    - xform/V/‹漢›/
+    - xform/;/‹漢›/
+    - xform/^/《韓》/
+    - 'xform/\\/ /'
+
+#韓文形碼專用#
+# korea:
+#   tag: korea
+#   dictionary: hangeul.extended
+#   enable_completion: false
+#   enable_sentence: false
+#   enable_user_dict: true
+#   prefix: "7"
+#   suffix: "'"
+#   tips: "《韓》▶"
+#   closing_tips: "◀《韓》"
+#   disable_user_dict_for_patterns:
+#     - ^[a-z]{1,2}$
+#   preedit_format:
+#     - "xlit|abcdefghijklmnopqrstuvwxyz|ABCDEFGHIJKLMNOPQRSTUVWXYZ|"
+#     - xform/^/《韓》/
+#     - 'xform/\\/ /'
+
+japan:
+  tag: japan
+  dictionary: jpnin1.extended
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "6"
+  suffix: "'"
+  tips: "《日》▶"
+  closing_tips: "◀《日》"
+  disable_user_dict_for_patterns:
+    - ^-{1,2}$
+    # - ^[.]$
+    # - ^[aiueohn]$
+    # - ^[kstnhmrgzdbp][aiueo]$
+    # - ^[sc]hi$
+    # - ^tsu$
+    # - ^fu$
+    # - ^y[auo]$
+    # - ^w[ao]$
+    # - ^n$
+    # - ^[kgsztnhbpmr]y[auo]$
+    # - ^[sc]h[auo]$
+    # - ^j[auo]$
+  preedit_format:
+    - "xlit|abcdefghijklmnopqrstuvwxyz|ABCDEFGHIJKLMNOPQRSTUVWXYZ|"
+    - xform/^/《日》/
+    - 'xform/\\/ /'
+################################『外掛其他語言 2 』##################################
+gr2:
+  tag: gr2
+  dictionary: greek.extended
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "77"
+  suffix: "'"
+  tips: "《希》▶"
+  closing_tips: "◀《希》"
+  disable_user_dict_for_patterns:
+    - ^[a-z]{1}[;/]?$
+  preedit_format:
+    - xform/^/《希》/
+    - 'xform/\\/ /'
+
+cyr2:
+  tag: cyr2
+  dictionary: cyrillic.extended
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "66"
+  suffix: "'"
+  tips: "《俄》▶"
+  closing_tips: "◀《俄》"
+  disable_user_dict_for_patterns:
+    - ^[a-z]{1}[;/]?$
+    - ^b[fir][;/]?$
+    - ^eb[;/]?$
+    - ^nu[;/]?$
+    - ^rk[;/]?$
+    - ^wy[;/]?$
+    - ^[a-z]+;;$
+  preedit_format:
+    - xform/^/《俄》/
+    - 'xform/\\/ /'
+
+fs2:
+  tag: fs2
+  dictionary: fullshape.extended
+  prism: fullshape
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: true
+  prefix: "]["
+  suffix: "'"
+  tips: "《全》▶"
+  closing_tips: "◀《全》"
+  disable_user_dict_for_patterns:
+    - ^[-a-z,./]{1}[;/]?$
+  preedit_format:
+    - xform/^/《全》/
+    - 'xform/\\/ /'
+################################『ㄅㄆㄇ注音文』##################################
+all_bpm:
+  tag: all_bpm
+  dictionary: allbpm
+  # enable_charset_filter: false
+  enable_completion: false
+  enable_user_dict: false
+  prefix: "';"
+  suffix: "'"
+  tips: "《注音文》▶"
+  closing_tips: "◀《注音文》"
+  preedit_format:
+    - xform/';'?/A/
+    - xform/^/《注音文》/
+    - xform/^《注音文》(.+)A$/$1《注音文》/
+    - xform/A//
+    - "xlit|1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/-6347 |ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦˊˇˋ˙ˉ|"
+    - 'xform/\\//'
+#######################<EMOJI>和<顏文字>系列符號（方案掛載）##########################
+emoji_series:
+  tag: emoji_series
+  dictionary: symbols_bpmf
+  # enable_charset_filter: false
+  # enable_encoder: false
+  # encode_commit_history: false
+  enable_sentence: false
+  enable_completion: false
+  # sentence_over_completion: false
+  enable_user_dict: true
+  prefix: "`"
+  suffix: "'"
+  tips: "《emoji集》▶"
+  closing_tips: "◀《emoji集》"
+  preedit_format:
+    __include: element_bopomo:/emoji_series
+################################ 符號處理 ##################################
+punctuator:
+  import_preset: punct_bopomo
+############################### 按鍵處理 #################################
+key_binder:
+  import_preset: default
+  bindings:
+    ### 以下舊的寫法（需去除「element_bopomo:/key_binder」中的「__append:」） ###
+    # __include: element_bopomo:/key_binder
+    # __patch: element_bopomo:/key_binder_plus
+    # __append:
+    ### 以下新的寫法 ###
+    __patch:
+      - element_bopomo:/key_binder
+      - element_bopomo:/key_binder_plus
+
+editor:
+  bindings:
+    __include: element_bopomo:/editor
+########################## 用正則調出各種功能 ##############################
+recognizer:
+  patterns:
+    __include: element_bopomo:/r_patterns_plus
+#     # url: "^(https?:|ftp:|mailto:|file:).*$"
+#     # email: "^[a-z][-_.0-9a-z]*@.*$"
+# ###################
+#     punct: "^'$|``$|[[][[]'?$|[]][]]'?$|[][]'$|[[][]]$|[[][[][]][]]$|[[]'[]]'$|[[][[]'[]][]]'$|'''?$|===?$|=``?$|=''?$|=''?=''?$|=[][][][]?$|=[][][][]?=[][][][]?$|=[-,./;][-,./;]?$|=,,=[.][.]$|=[0-9]$|=9=0$|==[].,90'[]+$"
+#     emoji_series: "(?<![=`])`[-/0-9a-z]*'?$|(?<![=`])``[-/0-9a-z]+'?$"
+#     reverse2_lookup: "=[a-z]*'?$"  #"=(?![;])[a-z;]*'?$"
+# ###################
+#     easy_en: "^3[a-z;/.,'-]*$|(?<=')3[a-z;/.,'-]*$|(?<=[=][-0-9,.;=`])3[a-z;/.,'-]*$|(?<=[=][-,.;=`][-,.;=`])3[a-z;/.,'-]*$|(?<=(?<![]])[][])3[a-z;/.,'-]*$|(?<=[]][]])3[a-z;/.,'-]*$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])3[a-z;/.,'-]*$"
+#     european: "^4[a-z;,./-]*'?$|(?<=')4[a-z;,./-]*'?$|(?<=[=][-0-9,.;=`])4[a-z;,./-]*'?$|(?<=[=][-,.;=`][-,.;=`])4[a-z;,./-]*'?$|(?<=(?<![]])[][])4[a-z;,./-]*'?$|(?<=[]][]])4[a-z;,./-]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])4[a-z;,./-]*'?$"
+#     japan: "^6[a-z;,./-]*'?$|(?<=')6[a-z;,./-]*'?$|(?<=[=][-0-9,.;=`])6[a-z;,./-]*'?$|(?<=[=][-,.;=`][-,.;=`])6[a-z;,./-]*'?$|(?<=(?<![]])[][])6[a-z;,./-]*'?$|(?<=[]][]])6[a-z;,./-]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])6[a-z;,./-]*'?$"
+#     korea: "^7[a-z,.;/]*'?$|(?<=')7[a-z,.;/]*'?$|(?<=[=][-0-9,.;=`])7[a-z,.;/]*'?$|(?<=[=][-,.;=`][-,.;=`])7[a-z,.;/]*'?$|(?<=(?<![]])[][])7[a-z,.;/]*'?$|(?<=[]][]])7[a-z,.;/]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])7[a-z,.;/]*'?$"
+#     #韓文形碼專用# korea: "^7[a-z;/]*'?$|(?<=')7[a-z;/]*'?$|(?<=[=][-0-9,.;=`])7[a-z;/]*'?$|(?<=[=][-,.;=`][-,.;=`])7[a-z;/]*'?$|(?<=(?<![]])[][])7[a-z;/]*'?$|(?<=[]][]])7[a-z;/]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])7[a-z;/]*'?$"
+#     cyr2: "^66[a-z;/]*'?$|(?<=')66[a-z;/]*'?$|(?<=[=][-0-9,.;=`])66[a-z;/]*'?$|(?<=[=][-,.;=`][-,.;=`])66[a-z;/]*'?$|(?<=(?<![]])[][])66[a-z;/]*'?$|(?<=[]][]])66[a-z;/]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])66[a-z;/]*'?$"
+#     gr2: "^77[a-z;/]*'?$|(?<=')77[a-z;/]*'?$|(?<=[=][-0-9,.;=`])77[a-z;/]*'?$|(?<=[=][-,.;=`][-,.;=`])77[a-z;/]*'?$|(?<=(?<![]])[][])77[a-z;/]*'?$|(?<=[]][]])77[a-z;/]*'?$|(?<=(?<!'/)(?<!')(?<![][])(?<![][][^\\\\s]{1})(?<![][][^\\\\s]{2})(?<![][][^\\\\s]{3})(?<![][][^\\\\s]{4})(?<![][][^\\\\s]{5})(?<![][][^\\\\s]{6})(?<![][][^\\\\s]{7})(?<![][][^\\\\s]{8})(?<![][][^\\\\s]{9})(?<![][][^\\\\s]{10})(?<![][][^\\\\s]{11})(?<![][][^\\\\s]{12})(?<![][][^\\\\s]{13})(?<!'/[^\\\\s]{1})(?<!'/[^\\\\s]{2})(?<!'/[^\\\\s]{3})(?<!'/[^\\\\s]{4})(?<!'/[^\\\\s]{5})(?<!'/[^\\\\s]{6})(?<!'/[^\\\\s]{7})(?<!'/[^\\\\s]{8})(?<!'/[^\\\\s]{9})(?<!'/[^\\\\s]{10})(?<!'/[^\\\\s]{11})(?<!'/[^\\\\s]{12})(?<!'/[^\\\\s]{13})[-,./;a-z125890][3467 ])77[a-z;/]*'?$"
+#     fs2: "[]][[][-,./a-z;0-9]*'?$"
+#     all_bpm: "';[-a-z0-9.,/; ]*'?$|^[-a-z0-9.,/; ]+';'$"
+#     # lua: "^[a-z][-_.0-9a-z]*@.*$|^(https?:|ftp:|mailto:|file:).*$|'/[-+*^/.,'();0-9a-z]*$" #"'/[';]?[a-z0-9.,/-]*$"
+#     email_url_translator: "^[a-z][-_.0-9a-z]*@.*$|^(https?:|ftp:|mailto:|file:).*$"
+#     mf_translator: "'/[-+*^/.,'();0-9a-z]*$"
+#     #舊# lua: "^[a-z][-_.0-9a-z]*@.*$|^(https?:|ftp:|mailto:|file:).*$|'/[';/]?[a-z]*$|'/[0-9./-]*$|'/[xucoi][0-9a-z]+$"
+
+recognizer2:
+  patterns:
+    __include: element_bopomo:/r2_patterns_plus
+
+# __patch:
+#   # 使用八股文語言模型
+#   - grammar:/hant?
+#   # 用家自選配置
+#   - bopomo_onionplus.custom:/patch?

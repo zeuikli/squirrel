@@ -1,0 +1,22 @@
+{
+  "name": "後方標註_emoji集專用",
+  "segmentation": {
+    "type": "mmseg",
+    "dict": {
+      "type": "text",
+      "file": "back_mark_script.txt"
+    }
+  },
+  "conversion_chain": [{
+    "dict": {
+      "type": "group",
+      "dicts": [{
+        "type": "text",
+        "file": "back_mark_script.txt"
+      }, {
+        "type": "text",
+        "file": "back_mark_table.txt"
+      }]
+    }
+  }]
+}
