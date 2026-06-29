@@ -310,7 +310,7 @@ final class VoiceInputController {
                                                         transcribePrompt: settings.transcribePrompt,
                                                         cleanupPrompt: settings.cleanupPrompt)
         guard !final.isEmpty else { status = .ready; return }
-        deliver(final)
+        deliver(toTraditionalIfChinese(final))
         status = .ready
         return
       }
@@ -334,12 +334,22 @@ final class VoiceInputController {
           NSLog("[SquirrelVoice] cleanup skipped: %@", error.localizedDescription)
         }
       }
-      deliver(final)
+      deliver(toTraditionalIfChinese(final))
       status = .ready
     } catch {
       status = .error(error.localizedDescription)
       playErrorFeedback(error.localizedDescription)
     }
+  }
+
+  /// Guarantee Traditional Chinese for zh: ChatGPT/Groq transcription can return
+  /// Simplified, and the LLM cleanup is optional (ChatGPT's cleanup endpoint is
+  /// even proof-of-work gated). OpenCC s2twp converts locally in ~ms with no
+  /// network, so 繁體 is guaranteed regardless of the cleanup pass (SPEC §4.9).
+  /// Idempotent on already-Traditional text; only applied for Chinese.
+  private func toTraditionalIfChinese(_ text: String) -> String {
+    guard settings.transcribeLanguage.hasPrefix("zh") else { return text }
+    return OpenCCConverter.toTraditionalTW(text)
   }
 
   /// Process-wide diagnostic of the last delivery (which path took the text).
@@ -435,5 +445,36 @@ final class VoiceInputController {
   private func playErrorFeedback(_ message: String) {
     if settings.playSounds { NSSound.beep() }
     NSLog("[SquirrelVoice] error: %@", message)
+  }
+}
+
+/// Local Simplified→Traditional(Taiwan) conversion via the bundled opencc CLI
+/// (`Contents/MacOS/opencc`, self-contained — only libc++/libSystem) and the
+/// bundled config (`SharedSupport/opencc/s2twp.json`). Spawned per commit
+/// (~tens of ms, negligible vs the voice round-trip). Any failure returns the
+/// input unchanged — voice text is never lost (SPEC §4.9).
+enum OpenCCConverter {
+  private static let tool = Bundle.main.url(forAuxiliaryExecutable: "opencc")
+  private static let config = Bundle.main.sharedSupportURL?.appendingPathComponent("opencc/s2twp.json")
+
+  static func toTraditionalTW(_ input: String) -> String {
+    guard !input.isEmpty, let tool = tool, let config = config,
+          FileManager.default.fileExists(atPath: config.path) else { return input }
+    let proc = Process()
+    proc.executableURL = tool
+    proc.arguments = ["-c", config.path]
+    let inPipe = Pipe(), outPipe = Pipe()
+    proc.standardInput = inPipe
+    proc.standardOutput = outPipe
+    proc.standardError = FileHandle.nullDevice
+    do { try proc.run() } catch { return input }
+    inPipe.fileHandleForWriting.write(Data(input.utf8))
+    try? inPipe.fileHandleForWriting.close()
+    let data = outPipe.fileHandleForReading.readDataToEndOfFile()
+    proc.waitUntilExit()
+    guard proc.terminationStatus == 0,
+          let out = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !out.isEmpty else { return input }
+    return out
   }
 }

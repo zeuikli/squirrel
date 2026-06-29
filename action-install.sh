@@ -31,6 +31,10 @@ cp -R download/dist librime/
 cp -R download/share/opencc librime/share/
 cp -R download/Sparkle.framework Frameworks/
 
+# Self-contained opencc CLI (from the rime-deps archive) — bundled into the app
+# for local Simplified→Traditional(Taiwan) conversion of voice text (SPEC §4.8).
+cp download/bin/opencc bin/opencc && chmod +x bin/opencc
+
 # skip building librime and opencc-data; use downloaded artifacts
 make copy-rime-binaries copy-opencc-data
 
