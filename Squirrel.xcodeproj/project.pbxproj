@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4494494E9D2E0912F29C0C90 /* fullshape.schema.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 2E9C4CC4A29A2B07C9B42506 /* fullshape.schema.yaml */; };
+		44844119BED88B0B1FC3B030 /* back_mark.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = AF14400C81E6D43F4A7F02BC /* back_mark.json */; };
 		037A47128059D7A8EE85D7D7 /* terra_pinyin_onion.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 00994244BA22936EB3062569 /* terra_pinyin_onion.dict.yaml */; };
 		06A5449789094F13AD80AA36 /* phrases.jp_hkkreduce.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 7DDE46ABB1B29BF5EB4C537E /* phrases.jp_hkkreduce.dict.yaml */; };
 		07714BAFBA16B7A3AC30FD41 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38142BBB284A4B05834FD90 /* HotkeyManager.swift */; };
