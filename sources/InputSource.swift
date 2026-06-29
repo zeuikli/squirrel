@@ -10,7 +10,9 @@ import InputMethodKit
 
 final class SquirrelInstaller {
   enum InputMode: String, CaseIterable {
-    static let primary = Self.hans
+    // This distribution ships Taiwan-Traditional schemas (洋蔥注音) — the
+    // Hant variant is the one users actually enable (SPEC §21).
+    static let primary = Self.hant
     case hans = "im.rime.inputmethod.Squirrel.Hans"
     case hant = "im.rime.inputmethod.Squirrel.Hant"
   }
@@ -58,29 +60,39 @@ final class SquirrelInstaller {
     }
     let modesToEnable = modes.isEmpty ? [.primary] : modes
     for (mode, inputSource) in getInputSource(modes: modesToEnable) {
-      if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled), !enabled {
-        let error = TISEnableInputSource(inputSource)
-        print("Enable \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
-      }
+      // Enable unconditionally. We must NOT gate on the current isEnabled flag:
+      // when install.sh runs `--disable-input-source` then `--enable-input-source`
+      // as two separate short-lived processes, this process's TIS snapshot can
+      // still report the source as enabled (the disable hasn't propagated), so a
+      // `!enabled` guard would skip the enable and leave the IME disabled —
+      // forcing a manual re-add in System Settings. TISEnableInputSource is a
+      // no-op when already enabled, so calling it always is safe.
+      let error = TISEnableInputSource(inputSource)
+      print("Enable \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
     }
   }
 
   func select(mode: InputMode? = nil) {
     let enabledInputModes = enabledModes()
-    let modeToSelect = mode ?? .primary
+    var modeToSelect = mode ?? .primary
     if !enabledInputModes.contains(modeToSelect) {
       if mode != nil {
         enable(modes: [modeToSelect])
+      } else if let fallback = enabledInputModes.first {
+        // No explicit mode requested and the primary isn't enabled — select
+        // whichever variant the user has enabled instead of bailing out.
+        modeToSelect = fallback
       } else {
         print("Default method not enabled yet: \(modeToSelect.rawValue)")
         return
       }
     }
     for (mode, inputSource) in getInputSource(modes: [modeToSelect]) {
-      if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled),
+      if let selected = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelected), selected {
+        print("Already selected: \(mode.rawValue)")
+      } else if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled),
          let selectable = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelectCapable),
-         let selected = getBool(for: inputSource, key: kTISPropertyInputSourceIsSelected),
-         enabled && selectable && !selected {
+         enabled && selectable {
         let error = TISSelectInputSource(inputSource)
         print("Selection \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
       } else {

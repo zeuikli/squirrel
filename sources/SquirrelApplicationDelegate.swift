@@ -21,6 +21,11 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   var enableNotifications = false
   var showStatusIcon: Bool = true
   var statusItem: NSStatusItem?
+  /// Transient indicator shown only while voice input is in progress (SPEC
+  /// §23). Independent of `statusItem` (the 中/Ａ icon, which never changes).
+  var voiceStatusItem: NSStatusItem?
+  var voiceController: VoiceInputController?
+  var voiceSettingsWindow: VoiceSettingsWindowController?
   let updateController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
   var supportsGentleScheduledUpdateReminders: Bool {
     true
@@ -65,11 +70,45 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     // swiftlint:disable:next notification_center_detachment
     NotificationCenter.default.removeObserver(self)
     DistributedNotificationCenter.default().removeObserver(self)
+    if let controller = voiceController {
+      voiceController = nil
+      Task { @MainActor in controller.stop() }
+    }
     panel?.hide()
     if let item = statusItem {
       NSStatusBar.system.removeStatusItem(item)
       statusItem = nil
     }
+    if let item = voiceStatusItem {
+      NSStatusBar.system.removeStatusItem(item)
+      voiceStatusItem = nil
+    }
+  }
+
+  /// Show a transient mic indicator in the menu bar while the voice pipeline is
+  /// active (recording / transcribing / cleaning); remove it otherwise. Never
+  /// touches the 中/Ａ `statusItem` (SPEC §23).
+  func updateVoiceStatusItem(_ status: VoiceInputController.Status?) {
+    let tooltip: String?
+    switch status {
+    case .recording:    tooltip = NSLocalizedString("Voice: recording…", comment: "Voice")
+    case .transcribing: tooltip = NSLocalizedString("Voice: transcribing…", comment: "Voice")
+    case .cleaning:     tooltip = NSLocalizedString("Voice: cleaning up…", comment: "Voice")
+    default:            tooltip = nil   // warming / ready / error / nil → idle
+    }
+    guard let tooltip = tooltip else {
+      if let item = voiceStatusItem {
+        NSStatusBar.system.removeStatusItem(item)
+        voiceStatusItem = nil
+      }
+      return
+    }
+    let item = voiceStatusItem ?? NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+    if let button = item.button {
+      button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: tooltip)
+      button.toolTip = tooltip
+    }
+    voiceStatusItem = item
   }
 
   func updateStatusIcon(asciiMode: Bool, schemaLabel: String?) {
@@ -179,6 +218,43 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
       panel.load(config: config, forDarkMode: false)
       panel.load(config: config, forDarkMode: true)
     }
+    refreshVoiceInput()
+  }
+
+  /// Start / reload / stop the voice input controller to match the merged
+  /// settings (UserDefaults > squirrel.yaml). Idempotent: called at launch,
+  /// after deploy, and when the Settings UI saves a change.
+  func refreshVoiceInput() {
+    let settings = VoiceConfig.load(config: config)
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+      if settings.enabled {
+        if let controller = self.voiceController {
+          controller.reload(settings: settings)
+        } else {
+          let controller = VoiceInputController(settings: settings)
+          self.voiceController = controller
+          controller.start()
+        }
+      } else if let controller = self.voiceController {
+        controller.stop()
+        self.voiceController = nil
+      }
+    }
+  }
+
+  func openVoiceSettings() {
+    openPreferences(tab: .voice)
+  }
+
+  func openPreferences(tab: SettingsTab = .general) {
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+      if self.voiceSettingsWindow == nil {
+        self.voiceSettingsWindow = VoiceSettingsWindowController()
+      }
+      self.voiceSettingsWindow?.show(tab: tab)
+    }
   }
 
   func loadSettings(for schemaID: String) {
@@ -230,6 +306,14 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
   func addObservers() {
     let center = NSWorkspace.shared.notificationCenter
     center.addObserver(forName: NSWorkspace.willPowerOffNotification, object: nil, queue: nil, using: workspaceWillPowerOff)
+
+    NotificationCenter.default.addObserver(forName: VoiceConfig.settingsChanged, object: nil, queue: .main) { [weak self] _ in
+      self?.refreshVoiceInput()
+    }
+
+    NotificationCenter.default.addObserver(forName: .squirrelVoiceStatusChanged, object: nil, queue: .main) { [weak self] note in
+      self?.updateVoiceStatusItem(note.object as? VoiceInputController.Status)
+    }
 
     let notifCenter = DistributedNotificationCenter.default()
     notifCenter.addObserver(forName: .init("SquirrelReloadNotification"), object: nil, queue: nil, using: rimeNeedsReload)
