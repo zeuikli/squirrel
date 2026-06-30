@@ -340,6 +340,7 @@ final class VoiceInputController {
       guard !raw.isEmpty else { status = .ready; return }
 
       var final = raw
+      var cleanupFailed = false
       if settings.cleanupEnabled {
         status = .cleaning
         let cleanupModel = activeCleanupModel
@@ -348,11 +349,21 @@ final class VoiceInputController {
                                              model: cleanupModel, language: settings.cleanupLanguage)
         } catch {
           // Cleanup failed — fall back to the raw transcript so text is never lost.
+          // OpenCC s2twp below still guarantees Traditional output; only the
+          // semantic polish (filler removal, punctuation, formatting) is missing.
+          // Surface that instead of failing silently (SPEC §4.9b).
           final = raw
-          NSLog("[SquirrelVoice] cleanup skipped: %@", error.localizedDescription)
+          cleanupFailed = true
+          Self.lastCommitDiagnostic = "[cleanup] failed: \(error.localizedDescription) — delivered unpolished transcript"
+          NSLog("[SquirrelVoice] cleanup failed: %@", error.localizedDescription)
         }
       }
       deliver(enforceTraditional(final))
+      if cleanupFailed {
+        SquirrelApplicationDelegate.showMessage(
+          msgText: NSLocalizedString("Voice cleanup unavailable — inserted unpolished transcript",
+                                     comment: "Voice"))
+      }
       status = .ready
     } catch {
       status = .error(error.localizedDescription)
