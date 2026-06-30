@@ -5,7 +5,7 @@ name: custom dmg ci
 # required local steps: Onion lexicon bundling, DMG assembly, and signing.
 #
 # Triggers:
-#   - push a tag matching custom-*   (e.g. custom-1.1.7) → attaches DMG to a draft release
+#   - push a version tag X.Y.Z or X.Y.Z.W (e.g. 1.1.7) → attaches DMG to a draft release
 #   - manual run (workflow_dispatch) → DMG uploaded as a build artifact
 #
 # Signing (see scripts/setup-signing.sh): if the repo defines the secret
@@ -18,7 +18,8 @@ name: custom dmg ci
 on:
   push:
     tags:
-      - 'custom-*'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
 
 jobs:
@@ -101,7 +102,7 @@ jobs:
         id: ver
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            v="${GITHUB_REF_NAME#custom-}"
+            v="$GITHUB_REF_NAME"
           else
             v="$(git describe --always)"
           fi
