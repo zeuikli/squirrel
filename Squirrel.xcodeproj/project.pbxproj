@@ -91,7 +91,6 @@
 		44CD640C15E2646B0021234E /* librime.1.dylib in Copy 3rd-party Frameworks */ = {isa = PBXBuildFile; fileRef = 44CD640915E2633D0021234E /* librime.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44E21A9016A653E700C2B08F /* rime_deployer in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8E16A653E700C2B08F /* rime_deployer */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44E21A9116A653E700C2B08F /* rime_dict_manager in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44E21A8F16A653E700C2B08F /* rime_dict_manager */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		AECC11147A0000000000C002 /* opencc in CopyFiles */ = {isa = PBXBuildFile; fileRef = AECC11147A0000000000C001 /* opencc */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		45634F5BA40287157BFFD18C /* emoji_t.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 58B54AB38D230CD130E62745 /* emoji_t.json */; };
 		46394BE79326B9DD7B00A8F7 /* phrases.jp_hk.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 24D74228AE10078248EA985A /* phrases.jp_hk.dict.yaml */; };
 		48C74970BE509F463994AFC4 /* bo_mixin_phrase.txt in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = BCBB4648B855188B13458D17 /* bo_mixin_phrase.txt */; };
@@ -419,7 +418,6 @@
 				442C64921F7A410A0027EFBE /* rime-install in CopyFiles */,
 				44E21A9016A653E700C2B08F /* rime_deployer in CopyFiles */,
 				44E21A9116A653E700C2B08F /* rime_dict_manager in CopyFiles */,
-				AECC11147A0000000000C002 /* opencc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,7 +507,6 @@
 		44CD640915E2633D0021234E /* librime.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librime.1.dylib; path = lib/librime.1.dylib; sourceTree = "<group>"; };
 		44E21A8E16A653E700C2B08F /* rime_deployer */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = rime_deployer; path = bin/rime_deployer; sourceTree = "<group>"; };
 		44E21A8F16A653E700C2B08F /* rime_dict_manager */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = rime_dict_manager; path = bin/rime_dict_manager; sourceTree = "<group>"; };
-		AECC11147A0000000000C001 /* opencc */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = opencc; path = bin/opencc; sourceTree = "<group>"; };
 		44F1EB381431F8270015FD04 /* Squirrel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squirrel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		48E24824839D873FFD2F9B13 /* punct_mark_plus.txt */ = {isa = PBXFileReference; name = punct_mark_plus.txt; path = data/onion/opencc/punct_mark_plus.txt; sourceTree = SOURCE_ROOT; };
 		5043492B94B3EE23C582B878 /* space_f.dict.yaml */ = {isa = PBXFileReference; name = space_f.dict.yaml; path = data/onion/space_f.dict.yaml; sourceTree = SOURCE_ROOT; };
