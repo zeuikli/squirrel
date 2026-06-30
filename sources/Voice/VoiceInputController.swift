@@ -141,6 +141,24 @@ final class VoiceInputController {
     }
   }
 
+  /// True when transcription targets Traditional Chinese (Taiwan). The web
+  /// transcribe endpoints (and Whisper `language: zh`) lean Simplified, and the
+  /// LLM cleanup that's meant to fix that can be off, fail, or ignore the rule —
+  /// so we convert deterministically (SPEC §4.9).
+  private var wantsTraditionalChinese: Bool {
+    guard settings.transcribeLanguage == "zh" else { return false }
+    let target = settings.cleanupLanguage
+    return target.isEmpty || target.hasPrefix("zh-TW") || target.hasPrefix("zh-Hant")
+  }
+
+  /// Force Taiwan Traditional output via OpenCC s2twp, independent of cleanup.
+  /// Idempotent on already-Traditional text; returns the input unchanged for
+  /// non-Chinese targets or if the converter is unavailable.
+  private func enforceTraditional(_ text: String) -> String {
+    guard wantsTraditionalChinese else { return text }
+    return OpenCCBridge.s2twpConverter().convert(text)
+  }
+
   private func warmBackend() async {
     status = .warming
     switch settings.backend {
@@ -310,7 +328,7 @@ final class VoiceInputController {
                                                         transcribePrompt: settings.transcribePrompt,
                                                         cleanupPrompt: settings.cleanupPrompt)
         guard !final.isEmpty else { status = .ready; return }
-        deliver(final)
+        deliver(enforceTraditional(final))
         status = .ready
         return
       }
@@ -334,7 +352,7 @@ final class VoiceInputController {
           NSLog("[SquirrelVoice] cleanup skipped: %@", error.localizedDescription)
         }
       }
-      deliver(final)
+      deliver(enforceTraditional(final))
       status = .ready
     } catch {
       status = .error(error.localizedDescription)

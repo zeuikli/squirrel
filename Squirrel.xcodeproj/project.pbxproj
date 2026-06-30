@@ -194,6 +194,7 @@
 		CBF44FA792D89C9D48EAEB00 /* ocm_moedict_big5e_hkscs_jis.json in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = F9274ECD9A8577A8213738FD /* ocm_moedict_big5e_hkscs_jis.json */; };
 		CCE24EEFABE32AE24A71E3B7 /* back_mark_script.txt in Copy opencc Files */ = {isa = PBXBuildFile; fileRef = 559044D7B1D50815DE77C7DB /* back_mark_script.txt */; };
 		D15744898F6F7D6DB57455D2 /* VoiceInputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */; };
+		0AC0DC0000000000000000B2 /* OpenCCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0DC0000000000000000A2 /* OpenCCBridge.mm */; };
 		D26434552706A15100857391 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26434542706A15100857391 /* QuartzCore.framework */; };
 		D3584458B745EF98BDD188AA /* punct_bopomo.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = 77BD4AAE96DBE7FA69DC5D0A /* punct_bopomo.yaml */; };
 		DB284708819F2FC96326E52A /* jpnin1.dict.yaml in Copy Shared Support Files */ = {isa = PBXBuildFile; fileRef = D18D4EBCBB6D311D9F9C948B /* jpnin1.dict.yaml */; };
@@ -642,6 +643,8 @@
 		EA144B208C55981607ED1526 /* SquirrelSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SquirrelSettingsModel.swift; path = sources/Settings/SquirrelSettingsModel.swift; sourceTree = SOURCE_ROOT; };
 		F0614F6FA3E39A629AB48B98 /* cyrillic.dict.yaml */ = {isa = PBXFileReference; name = cyrillic.dict.yaml; path = data/onion/cyrillic.dict.yaml; sourceTree = SOURCE_ROOT; };
 		F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceInputController.swift; path = sources/Voice/VoiceInputController.swift; sourceTree = SOURCE_ROOT; };
+		0AC0DC0000000000000000A1 /* OpenCCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenCCBridge.h; path = sources/Voice/OpenCCBridge.h; sourceTree = SOURCE_ROOT; };
+		0AC0DC0000000000000000A2 /* OpenCCBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCCBridge.mm; path = sources/Voice/OpenCCBridge.mm; sourceTree = SOURCE_ROOT; };
 		F30442019B33705CF5FF19C7 /* allbpm.dict.yaml */ = {isa = PBXFileReference; name = allbpm.dict.yaml; path = data/onion/allbpm.dict.yaml; sourceTree = SOURCE_ROOT; };
 		F45E005E2B8CA81C00179B75 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		F6034511AC99755906810455 /* essay-zh-hant-mc.txt */ = {isa = PBXFileReference; name = "essay-zh-hant-mc.txt"; path = "data/onion/essay-zh-hant-mc.txt"; sourceTree = SOURCE_ROOT; };
@@ -988,6 +991,8 @@
 				5B874FEDA5090DFC2A562CF4 /* SpeechProvider.swift */,
 				87314EDCB1DB95132154D9EC /* VoiceConfig.swift */,
 				F1644DF3B35A0B04542F0EED /* VoiceInputController.swift */,
+				0AC0DC0000000000000000A1 /* OpenCCBridge.h */,
+				0AC0DC0000000000000000A2 /* OpenCCBridge.mm */,
 				303B470AB82F986C9F22F58E /* VoicePrompts.swift */,
 				5A714AD6BABCCC27014D35A1 /* VoiceSettingsView.swift */,
 				2F1745D68B219315603F9536 /* VoiceSettingsWindow.swift */,
@@ -1105,6 +1110,7 @@
 				8AF64982AFC17600E66297DD /* SpeechProvider.swift in Sources */,
 				0AAB4E979B19C18124EF9878 /* VoiceConfig.swift in Sources */,
 				D15744898F6F7D6DB57455D2 /* VoiceInputController.swift in Sources */,
+				0AC0DC0000000000000000B2 /* OpenCCBridge.mm in Sources */,
 				566440F186A6EFC0BFB168FB /* VoicePrompts.swift in Sources */,
 				94E8490FB3B0D81761AFC316 /* VoiceSettingsView.swift in Sources */,
 				5E004FBEBAF94DD5A681B677 /* VoiceSettingsWindow.swift in Sources */,
@@ -1153,6 +1159,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(SRCROOT)/download/lib",
+					"$(SRCROOT)/librime/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -1162,7 +1170,7 @@
 					"$(OTHER_CPLUSPLUSFLAGS_QUOTED_FOR_TARGET_1)",
 					"$(OTHER_CPLUSPLUSFLAGS_QUOTED_FOR_TARGET_2)",
 				);
-				OTHER_LDFLAGS = "-lrime.1";
+				OTHER_LDFLAGS = "-lrime.1 -lopencc -lmarisa";
 				PRODUCT_BUNDLE_IDENTIFIER = im.rime.inputmethod.Squirrel;
 				PRODUCT_NAME = Squirrel;
 				SDKROOT = macosx;
@@ -1208,6 +1216,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(SRCROOT)/download/lib",
+					"$(SRCROOT)/librime/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -1217,7 +1227,7 @@
 					"$(OTHER_CPLUSPLUSFLAGS_QUOTED_FOR_TARGET_1)",
 					"$(OTHER_CPLUSPLUSFLAGS_QUOTED_FOR_TARGET_2)",
 				);
-				OTHER_LDFLAGS = "-lrime.1";
+				OTHER_LDFLAGS = "-lrime.1 -lopencc -lmarisa";
 				PRODUCT_BUNDLE_IDENTIFIER = im.rime.inputmethod.Squirrel;
 				PRODUCT_NAME = Squirrel;
 				SDKROOT = macosx;
