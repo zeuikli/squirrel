@@ -165,10 +165,30 @@ enum VoiceConfig {
     s.maxRecordingSeconds = int(.maxRecordingSeconds, "voice_input/max_recording_seconds", s.maxRecordingSeconds)
     s.playSounds = bool(.playSounds, "voice_input/play_sounds", s.playSounds)
     s.noActiveClient = VoiceNoClientFallback(rawValue: str(.noActiveClient, "voice_input/no_active_client", s.noActiveClient.rawValue)) ?? .clipboard
+    // Modifiers: UserDefaults (raw bitmask) > yaml "control+option" string > default.
     if let v = d.object(forKey: Key.customModifiers.rawValue) as? Int {
       s.customModifiers = UInt(v)
+    } else if let raw = config?.getString("voice_input/hotkey/modifiers"), !raw.isEmpty {
+      s.customModifiers = parseModifiers(raw)
     }
     return s
+  }
+
+  /// Parse a "control+option"-style modifier string into an `NSEvent.ModifierFlags`
+  /// raw bitmask. Accepts +, comma or space separators and common aliases /
+  /// glyphs. Unknown tokens are ignored.
+  static func parseModifiers(_ raw: String) -> UInt {
+    var flags: NSEvent.ModifierFlags = []
+    for token in raw.lowercased().split(whereSeparator: { $0 == "+" || $0 == "," || $0 == " " }) {
+      switch String(token) {
+      case "control", "ctrl", "⌃": flags.insert(.control)
+      case "option", "opt", "alt", "⌥": flags.insert(.option)
+      case "command", "cmd", "⌘": flags.insert(.command)
+      case "shift", "⇧": flags.insert(.shift)
+      default: break
+      }
+    }
+    return flags.rawValue
   }
 
   /// Persist a UI edit and notify listeners (the running VoiceInputController).

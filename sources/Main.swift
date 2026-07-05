@@ -15,9 +15,12 @@ struct SquirrelApp {
   } else {
     try! FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("Rime", isDirectory: true)
   }
-  static let appDir = "/Library/Input Library/Squirrel.app".withCString { dir in
-    URL(fileURLWithFileSystemRepresentation: dir, isDirectory: false, relativeTo: nil)
-  }
+  // The running app bundle's own location — correct for both the system-wide
+  // pkg install (/Library/Input Methods) and the per-user DMG install
+  // (~/Library/Input Methods). A hardcoded path here (previously the
+  // nonexistent "/Library/Input Library/Squirrel.app") makes
+  // TISRegisterInputSource register from a path that doesn't exist.
+  static let appDir = Bundle.main.bundleURL
   static let logDir = FileManager.default.temporaryDirectory.appending(component: "rime.squirrel", directoryHint: .isDirectory)
 
   // swiftlint:disable:next cyclomatic_complexity

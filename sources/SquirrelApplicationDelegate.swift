@@ -72,7 +72,10 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     DistributedNotificationCenter.default().removeObserver(self)
     if let controller = voiceController {
       voiceController = nil
-      Task { @MainActor in controller.stop() }
+      // Terminate handlers run on the main thread; stop synchronously so the
+      // recorder temp file and event tap are torn down before the process exits
+      // (a detached Task may never run during teardown).
+      MainActor.assumeIsolated { controller.stop() }
     }
     panel?.hide()
     if let item = statusItem {

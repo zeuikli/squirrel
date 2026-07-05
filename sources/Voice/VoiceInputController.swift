@@ -48,6 +48,11 @@ final class VoiceInputController {
   private let hotkey = HotkeyManager()
   private var pipeline: Task<Void, Never>?
   private var busy = false
+  /// True between hotkey press and release. Guards the record-start race: the
+  /// hotkey can be released during the async mic gate, before `recorder.start()`
+  /// runs — without this the recorder would start after release and run to the
+  /// max-duration timeout (SPEC §V1).
+  private var hotkeyHeld = false
   private var permPoll: Timer?
   private var recTimeout: Timer?
   /// The app that was frontmost when the hotkey was pressed — delivery targets
@@ -89,6 +94,10 @@ final class VoiceInputController {
     hotkey.stop()
     pipeline?.cancel()
     recorder.cancel()
+    hotkeyHeld = false
+    // Clear any in-progress indicator so the transient menu-bar mic icon is
+    // removed when voice input is disabled mid-recording (SPEC §V5).
+    status = .ready
     NSLog("[SquirrelVoice] stopped")
   }
 
@@ -264,7 +273,11 @@ final class VoiceInputController {
 
   private func beginRecording() {
     guard !busy, !recorder.isRecording else { return }
-    if case .warming = status { playErrorFeedback("voice backend still warming"); return }
+    // Recording is local, so start even while the backend is still warming
+    // (the pipeline awaits web-session readiness before transcribing; a missing
+    // Groq key surfaces as a clear transcribe error). This avoids losing the
+    // user's first sentence right after launch (SPEC §O1).
+    hotkeyHeld = true
     // Pin the delivery target NOW (hotkey press), while the user's app is still
     // frontmost — not at delivery time, which is seconds later after recognition.
     let front = NSWorkspace.shared.frontmostApplication
@@ -273,12 +286,20 @@ final class VoiceInputController {
     }
     Task {
       guard await PermissionsManager.requestMic() else {
+        hotkeyHeld = false
         status = .error("Microphone permission needed")
         playErrorFeedback("microphone permission needed")
         return
       }
       do {
         try recorder.start()
+        // The hotkey may have been released during the async mic gate; if so,
+        // don't leave a recording running to the max-duration timeout — discard.
+        guard hotkeyHeld else {
+          recorder.cancel()
+          status = .ready
+          return
+        }
         status = .recording
         if settings.playSounds { NSSound(named: "Tink")?.play() }
         // safety: auto-stop at the configured max duration
@@ -295,6 +316,7 @@ final class VoiceInputController {
   }
 
   private func finishRecording() {
+    hotkeyHeld = false
     recTimeout?.invalidate()
     recTimeout = nil
     guard recorder.isRecording else { return }
@@ -306,10 +328,10 @@ final class VoiceInputController {
       return
     }
     pipeline?.cancel()
-    pipeline = Task { await runPipeline(url: url) }
+    pipeline = Task { await runPipeline(url: url, durationMs: durationMs) }
   }
 
-  private func runPipeline(url: URL) async {
+  private func runPipeline(url: URL, durationMs: Double) async {
     busy = true
     defer {
       busy = false
@@ -317,26 +339,34 @@ final class VoiceInputController {
     }
     do {
       let provider = activeProvider
+      // Bound WebContent memory growth after a long idle stretch (SPEC §V3);
+      // no-op during active use. Reload happens before the readiness await below.
+      (provider as? GeminiWebBridge)?.recycleIfIdle()
       await awaitWebReadyIfNeeded()
       status = .transcribing
 
       // Fast path: Gemini Web is an LLM, so transcribe + cleanup run in ONE
       // StreamGenerate call (halves network latency vs two round-trips).
       if settings.cleanupEnabled, let gemini = provider as? GeminiWebBridge {
-        let final = try await gemini.transcribeAndClean(audioURL: url,
+        let combined = try await gemini.transcribeAndClean(audioURL: url,
                                                         language: settings.transcribeLanguage,
                                                         transcribePrompt: settings.transcribePrompt,
                                                         cleanupPrompt: settings.cleanupPrompt)
+        let final = VoicePrompts.stripHallucination(combined)
         guard !final.isEmpty else { status = .ready; return }
         deliver(enforceTraditional(final))
         status = .ready
         return
       }
 
-      let raw = try await provider.transcribe(audioURL: url,
+      let transcribed = try await provider.transcribe(audioURL: url,
                                               language: settings.transcribeLanguage,
                                               model: activeTranscribeModel,
-                                              prompt: settings.transcribePrompt)
+                                              prompt: settings.transcribePrompt,
+                                              durationMs: durationMs)
+      // Drop known Whisper silence/noise hallucinations before cleanup so
+      // ambient sound isn't polished into plausible-looking text (SPEC §O7).
+      let raw = VoicePrompts.stripHallucination(transcribed)
       guard !raw.isEmpty else { status = .ready; return }
 
       var final = raw
@@ -405,16 +435,33 @@ final class VoiceInputController {
     let target = captureTargetApp ?? NSWorkspace.shared.frontmostApplication
     let bundleID = target?.bundleIdentifier ?? ""
     let frontNow = NSWorkspace.shared.frontmostApplication
-    if let target = target, target != frontNow {
+    let didReactivate = target != nil && target != frontNow
+    if let target = target, didReactivate {
       target.activate(options: [])   // bring the capture app back to front
     }
     if Self.needsPasteDelivery(bundleID) {
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → clipboard + ⌘V paste (\(text.count) chars)"
       pasteViaClipboard(text)
     } else if SquirrelInputController.canCommitVoiceText {
-      NotificationCenter.default.post(name: .squirrelVoiceCommit, object: text)
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → IMK insertText (\(text.count) chars)"
       NSLog("[SquirrelVoice] committed %d chars via IMK to %@", text.count, bundleID)
+      if didReactivate {
+        // Let the re-activation take effect first, so the commit lands in the
+        // capture app's IMK client and not whichever window had drifted to front
+        // during recognition (SPEC §V6). Matches the paste path's settle delay.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+          NotificationCenter.default.post(name: .squirrelVoiceCommit, object: text)
+        }
+      } else {
+        NotificationCenter.default.post(name: .squirrelVoiceCommit, object: text)
+      }
+    } else if settings.noActiveClient == .discard {
+      // No text field focused and the user opted to discard (SPEC §V2) — don't
+      // touch the clipboard.
+      Self.lastCommitDiagnostic = "[commit] \(bundleID) → no IMK client, discarded per no_active_client (\(text.count) chars)"
+      NSLog("[SquirrelVoice] discarded %d chars (no IMK client, no_active_client=discard)", text.count)
+      SquirrelApplicationDelegate.showMessage(
+        msgText: NSLocalizedString("Voice text discarded — no text field focused", comment: "Voice"))
     } else {
       // No active IMK client (some apps activate their IME only on first compose).
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → no IMK client, clipboard + ⌘V paste (\(text.count) chars)"

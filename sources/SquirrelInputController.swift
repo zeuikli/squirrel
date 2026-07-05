@@ -31,6 +31,9 @@ final class SquirrelInputController: IMKInputController {
   private var chordTimer: Timer?
   private var chordDuration: TimeInterval = 0
   private var currentApp: String = ""
+  /// Block-based NotificationCenter observers registered in init; removed in
+  /// deinit so they don't outlive this controller (IMK creates many).
+  private var notificationObservers: [NSObjectProtocol] = []
 
   // swiftlint:disable:next cyclomatic_complexity
   override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
@@ -196,25 +199,25 @@ final class SquirrelInputController: IMKInputController {
     super.init(server: server, delegate: delegate, client: client)
     createSession()
 
-    NotificationCenter.default.addObserver(
+    notificationObservers.append(NotificationCenter.default.addObserver(
       forName: .init("SquirrelSetASCIIModeNotification"),
       object: nil,
       queue: nil
     ) { [weak self] notification in
       self?.handleASCIIModeToggle(notification)
-    }
+    })
 
-    NotificationCenter.default.addObserver(
+    notificationObservers.append(NotificationCenter.default.addObserver(
       forName: .init("SquirrelReportASCIIModeNotification"),
       object: nil,
       queue: nil
     ) { [weak self] notification in
       self?.reportASCIIMode(notification)
-    }
+    })
 
     // Voice input: commit recognized text through the native IMK channel.
     // Only the controller owning the focused session handles it.
-    NotificationCenter.default.addObserver(
+    notificationObservers.append(NotificationCenter.default.addObserver(
       forName: .squirrelVoiceCommit,
       object: nil,
       queue: .main
@@ -222,7 +225,7 @@ final class SquirrelInputController: IMKInputController {
       guard let self = self, self === Self.current,
             let text = notification.object as? String, !text.isEmpty else { return }
       self.commit(string: text)
-    }
+    })
   }
 
   override func deactivateServer(_ sender: Any!) {
@@ -330,6 +333,10 @@ final class SquirrelInputController: IMKInputController {
   }
 
   deinit {
+    for observer in notificationObservers {
+      NotificationCenter.default.removeObserver(observer)
+    }
+    notificationObservers.removeAll()
     destroySession()
   }
 }

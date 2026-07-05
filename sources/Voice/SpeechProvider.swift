@@ -16,7 +16,9 @@ protocol SpeechProvider: AnyObject {
   /// `model` is the Whisper model name (ignored by backends with a fixed model).
   /// `prompt` is the Whisper initial prompt steering style/script (e.g.
   /// Traditional Chinese); backends without prompt support ignore it.
-  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String
+  /// `durationMs` is the real recording length; backends that don't need it
+  /// (Groq, Gemini) ignore it, the ChatGPT endpoint reports it.
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String, durationMs: Double) async throws -> String
 
   /// Run the cleanup LLM pass over `raw` using `prompt`. Returns cleaned text.
   func cleanup(raw: String, prompt: String, model: String, language: String) async throws -> String
