@@ -24,8 +24,12 @@ extension DataSizeable {
     memset(valuePointer, 0, MemoryLayout<Self>.size)
     var value = valuePointer.move()
     valuePointer.deallocate()
-    let offset = MemoryLayout.size(ofValue: \Self.data_size)
-    value.data_size = Int32(MemoryLayout<Self>.size - offset)
+    // librime convention: data_size = sizeof(struct) - sizeof(data_size field).
+    // Must be the Int32 field width (4), not MemoryLayout.size(ofValue:) of a
+    // key-path object (which is the 8-byte key-path pointer) — the latter
+    // under-reports data_size by 4 bytes and makes librime treat trailing
+    // fields as absent.
+    value.data_size = Int32(MemoryLayout<Self>.size - MemoryLayout<Int32>.size)
     return value
   }
 

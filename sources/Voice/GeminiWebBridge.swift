@@ -194,7 +194,7 @@ final class GeminiWebBridge: NSObject, WKNavigationDelegate, SpeechProvider {
   /// `model` is unused — the Gemini web account serves whatever model it serves
   /// (can't be pinned). `prompt` (e.g. Traditional Chinese steering) is folded
   /// into the transcribe instruction (SPEC §4.5b).
-  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String {
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String, durationMs: Double) async throws -> String {
     guard isReady else { throw BridgeError.notReady }
     lastActivity = Date()
     let data = try Data(contentsOf: audioURL)
@@ -224,7 +224,16 @@ final class GeminiWebBridge: NSObject, WKNavigationDelegate, SpeechProvider {
 
     let fileId = try await uploadFile(b64: b64, mime: mime, filename: name)
     let langHint = language.isEmpty ? "" : " The spoken language is \"\(language)\"."
-    let styleHint = transcribePrompt.isEmpty ? "" : " 風格/偏好：\(transcribePrompt)"
+    // Style hint label follows the target language: Chinese wording for zh,
+    // language-neutral otherwise (a Chinese label biased non-zh output).
+    let styleHint: String
+    if transcribePrompt.isEmpty {
+      styleHint = ""
+    } else if language == "zh" {
+      styleHint = " 風格/偏好：\(transcribePrompt)"
+    } else {
+      styleHint = " Style/preference: \(transcribePrompt)"
+    }
     let instruction = """
     請先把這段音訊逐字轉錄（保留原語言，不要翻譯），再依下列規則整理，最後只輸出整理後的文字，不要加任何說明、引號或前後綴。\(langHint)\(styleHint)
 

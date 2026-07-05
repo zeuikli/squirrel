@@ -10,7 +10,7 @@ import AppKit
 final class SquirrelPanel: NSPanel {
   private let view: SquirrelView
   private let back: NSView
-  var inputController: SquirrelInputController?
+  weak var inputController: SquirrelInputController?
 
   var position: NSRect
   private var screenRect: NSRect = .zero
@@ -252,7 +252,7 @@ final class SquirrelPanel: NSPanel {
       line.mutableString.replaceOccurrences(of: "[candidate]", with: candidate, range: NSRange(location: 0, length: line.length))
       line.mutableString.replaceOccurrences(of: "[comment]", with: comment, range: NSRange(location: 0, length: line.length))
 
-      if line.length <= 10 {
+      if line.length > 1 && line.length <= 10 {
         line.addAttribute(.noBreak, value: true, range: NSRange(location: 1, length: line.length-1))
       }
 
@@ -445,8 +445,8 @@ private extension SquirrelPanel {
 
       maxHeight = 0
     } else {
-      if theme.memorizeSize && (vertical && position.midY / screenRect.height < 0.5) ||
-          (vertical && position.minX + max(contentRect.width, maxHeight) + theme.edgeInset.width * 2 > screenRect.maxX) {
+      if theme.memorizeSize && ((vertical && position.midY / screenRect.height < 0.5) ||
+          (vertical && position.minX + max(contentRect.width, maxHeight) + theme.edgeInset.width * 2 > screenRect.maxX)) {
         if contentRect.width >= maxHeight {
           maxHeight = contentRect.width
         } else {

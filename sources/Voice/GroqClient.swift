@@ -46,7 +46,7 @@ final class GroqClient: SpeechProvider {
 
   // MARK: - Transcribe
 
-  func transcribe(audioURL: URL, language: String, model: String, prompt: String) async throws -> String {
+  func transcribe(audioURL: URL, language: String, model: String, prompt: String, durationMs: Double) async throws -> String {
     let apiKey = try key()
     let fileData = try Data(contentsOf: audioURL)
     let filename = audioURL.lastPathComponent
@@ -64,6 +64,9 @@ final class GroqClient: SpeechProvider {
     // Initial prompt steers Whisper's output script (Traditional vs
     // Simplified Chinese) — `language: zh` alone defaults to Simplified.
     if !prompt.isEmpty { field("prompt", prompt) }
+    // Greedy decode (temperature 0): most deterministic/stable transcription,
+    // independent of any server-side default drift.
+    field("temperature", "0")
     field("response_format", "json")
     body.append("--\(boundary)\r\n")
     body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n")
@@ -88,11 +91,15 @@ final class GroqClient: SpeechProvider {
 
   func cleanup(raw: String, prompt: String, model: String, language: String) async throws -> String {
     let apiKey = try key()
-    let message = VoicePrompts.cleanupMessage(prompt: prompt, raw: raw)
+    // System = cleanup rules, user = raw transcript: better instruction-following
+    // than one concatenated user message, and keeps the transcript clearly the data.
     let payload: [String: Any] = [
       "model": model,
       "temperature": 0.2,
-      "messages": [["role": "user", "content": message]]
+      "messages": [
+        ["role": "system", "content": prompt],
+        ["role": "user", "content": raw]
+      ]
     ]
     var req = URLRequest(url: base.appendingPathComponent("chat/completions"))
     req.httpMethod = "POST"
