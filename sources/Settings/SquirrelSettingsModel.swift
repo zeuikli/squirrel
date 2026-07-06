@@ -25,7 +25,8 @@ final class SquirrelSettingsModel: ObservableObject {
   // Onion schema patch keys (bopomo_onionplus + _space, SPEC §15.7)
   @Published var defaultAsciiMode: Bool = false      // switches/@0/reset: false=中文 true=英文
   @Published var defaultFullShape: Bool = false      // switches/@1/reset: false=半形 true=全形
-  @Published var pageSize: Int = 8                   // menu/page_size (effective in-schema)
+  @Published var onionPageSize: Int = 8              // 洋蔥系列 menu/page_size (effective in-schema)
+  @Published var terraPageSize: Int = 5              // 地球拼音 menu/page_size (inherits Rime default 5)
   @Published var onionSelectLabels: Bool = true      // menu/alternative_select_labels keep/remove
   // Default/active schema picker (SPEC §22): writes default.custom.yaml.
   @Published var defaultSchema: String = "bopomo_onionplus"
@@ -98,8 +99,13 @@ final class SquirrelSettingsModel: ObservableObject {
       let managed = RimeCustomPatcher.managedSettings(in: content)
       if let v = managed["switches/@0/reset"] { defaultAsciiMode = v == "1" }
       if let v = managed["switches/@1/reset"] { defaultFullShape = v == "1" }
-      if let v = managed["menu/page_size"], let n = Int(v) { pageSize = n }
+      if let v = managed["menu/page_size"], let n = Int(v) { onionPageSize = n }
       if managed["menu/alternative_select_labels"] != nil { onionSelectLabels = false }
+    }
+    // 地球拼音的 page_size 存在自己的 custom.yaml，獨立於洋蔥系列。
+    if let content = try? String(contentsOf: schemaCustomURL("terra_pinyin"), encoding: .utf8) {
+      let managed = RimeCustomPatcher.managedSettings(in: content)
+      if let v = managed["menu/page_size"], let n = Int(v) { terraPageSize = n }
     }
     defaultSchema = readDefaultSchema() ?? Self.bundledSchemas[0].id
   }
@@ -140,7 +146,7 @@ final class SquirrelSettingsModel: ObservableObject {
     var schemaSettings: [String: Any] = [
       "switches/@0/reset": defaultAsciiMode ? 1 : 0,
       "switches/@1/reset": defaultFullShape ? 1 : 0,
-      "menu/page_size": pageSize
+      "menu/page_size": onionPageSize
     ]
     if !onionSelectLabels {
       // YAML null deletes the node → falls back to plain numeric labels.
@@ -152,6 +158,9 @@ final class SquirrelSettingsModel: ObservableObject {
       for schema in onionSchemas {
         try writePatch(url: schemaCustomURL(schema), settings: schemaSettings, template: nil)
       }
+      // 地球拼音：獨立的 page_size，不套洋蔥專屬的 switches / select_labels。
+      try writePatch(url: schemaCustomURL("terra_pinyin"),
+                     settings: ["menu/page_size": terraPageSize], template: nil)
       try writeSchemaList()
     } catch {
       applying = false

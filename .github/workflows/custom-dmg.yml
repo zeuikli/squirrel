@@ -5,9 +5,13 @@ name: custom dmg ci
 # required local steps: Onion lexicon bundling, DMG assembly, and signing.
 #
 # Triggers:
-#   - push a version tag X.Y.Z or X.Y.Z.W (e.g. 1.1.7) → attaches DMG to a draft release
+#   - push a version tag X.Y.Z or X.Y.Z.W (e.g. 1.1.7.1) → publishes a draft
+#     release for that tag with generated release notes + attached DMG
 #   - push to master / pull request → full build + DMG artifact (validation, no release)
-#   - manual run (workflow_dispatch) → DMG uploaded as a build artifact
+#   - manual run (workflow_dispatch) → DMG uploaded as a build artifact; set the
+#     publish_release input to also create the tag (version from project.pbxproj,
+#     or the version input) and publish a draft release — GITHUB_TOKEN creates the
+#     tag, so no local tag push is needed.
 #
 # Building on every PR / push to master (not just at tag time) catches compile
 # breaks — most importantly a new sources/Voice or sources/Settings file that
@@ -30,6 +34,15 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+.[0-9]+'
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Create tag + publish a draft release from this run'
+        type: boolean
+        default: false
+      version:
+        description: 'Version / tag to release (blank = read from project.pbxproj)'
+        type: string
+        default: ''
 
 jobs:
   build:
@@ -109,9 +122,16 @@ jobs:
 
       - name: Determine version
         id: ver
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             v="$GITHUB_REF_NAME"
+          elif [ -n "$INPUT_VERSION" ]; then
+            v="$INPUT_VERSION"
+          elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            # Blank input → read the app version straight from project.pbxproj.
+            v="$(xcrun agvtool what-version -terse)"
           else
             v="$(git describe --always)"
           fi
@@ -127,10 +147,35 @@ jobs:
           path: package/*.dmg
           retention-days: 90
 
-      - name: Attach DMG to release
-        if: ${{ github.ref_type == 'tag' }}
+      # Release notes: commit list since the previous tag (same format as the
+      # retired release-ci). Self-contained — no git-cliff install needed in CI.
+      # Two paths:
+      #   - tag push: action-changelog.sh (current tag = HEAD, prev = tag before)
+      #   - manual dispatch: no tag at HEAD yet, so list <last tag>..HEAD directly
+      - name: Generate release notes
+        if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            ./action-changelog.sh > "$RUNNER_TEMP/release-notes.md"
+          else
+            prev="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+            echo "**Change log since ${prev:-the beginning}:**" > "$RUNNER_TEMP/release-notes.md"
+            echo >> "$RUNNER_TEMP/release-notes.md"
+            git log --oneline --decorate "${prev:+$prev..}HEAD" --pretty='format:- %h %s' \
+              | grep -v Merge >> "$RUNNER_TEMP/release-notes.md" || true
+          fi
+
+      # Publishes a draft release. On manual dispatch ncipollo creates the tag
+      # (pointing at this run's commit) via GITHUB_TOKEN — no local tag push, and
+      # no cross-workflow trigger needed since the release happens in this job.
+      - name: Publish draft release (tag + notes + DMG)
+        if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
         uses: ncipollo/release-action@v1
         with:
+          tag: ${{ steps.ver.outputs.version }}
+          name: ${{ steps.ver.outputs.version }}
+          commit: ${{ github.sha }}
+          bodyFile: ${{ runner.temp }}/release-notes.md
           artifacts: "package/*.dmg"
           draft: true
           allowUpdates: true
