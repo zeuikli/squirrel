@@ -45,11 +45,14 @@ struct GeneralSettingsView: View {
           Text(NSLocalizedString("半形", comment: "Settings")).tag(false)
           Text(NSLocalizedString("全形", comment: "Settings")).tag(true)
         }
-        Stepper(value: $model.pageSize, in: 1...10) {
-          Text(String(format: NSLocalizedString("Candidates per page: %d", comment: "Settings"), model.pageSize))
+        Stepper(value: $model.onionPageSize, in: 1...10) {
+          Text(String(format: NSLocalizedString("Onion candidates per page: %d", comment: "Settings"), model.onionPageSize))
+        }
+        Stepper(value: $model.terraPageSize, in: 1...10) {
+          Text(String(format: NSLocalizedString("地球拼音 candidates per page: %d", comment: "Settings"), model.terraPageSize))
         }
         Toggle(NSLocalizedString("Onion select labels (⒈𝚀𝚈 ⒉𝙰𝙷 …)", comment: "Settings"), isOn: $model.onionSelectLabels)
-        if model.onionSelectLabels && model.pageSize != 8 {
+        if model.onionSelectLabels && model.onionPageSize != 8 {
           Text(NSLocalizedString("⚠︎ Onion labels define 8 entries — set candidates per page to 8 to avoid display bugs.", comment: "Settings"))
             .font(.footnote)
             .foregroundColor(.orange)

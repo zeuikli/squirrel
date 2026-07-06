@@ -5,7 +5,8 @@ name: custom dmg ci
 # required local steps: Onion lexicon bundling, DMG assembly, and signing.
 #
 # Triggers:
-#   - push a version tag X.Y.Z or X.Y.Z.W (e.g. 1.1.7) → attaches DMG to a draft release
+#   - push a version tag X.Y.Z or X.Y.Z.W (e.g. 1.1.7.1) → publishes a draft
+#     release for that tag with generated release notes + attached DMG
 #   - push to master / pull request → full build + DMG artifact (validation, no release)
 #   - manual run (workflow_dispatch) → DMG uploaded as a build artifact
 #
@@ -127,10 +128,19 @@ jobs:
           path: package/*.dmg
           retention-days: 90
 
-      - name: Attach DMG to release
+      # Release notes: commit list since the previous tag (same format as the
+      # retired release-ci). Self-contained — no git-cliff install needed in CI.
+      - name: Generate release notes
+        if: ${{ github.ref_type == 'tag' }}
+        run: ./action-changelog.sh > "$RUNNER_TEMP/release-notes.md"
+
+      - name: Publish draft release (tag + notes + DMG)
         if: ${{ github.ref_type == 'tag' }}
         uses: ncipollo/release-action@v1
         with:
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          bodyFile: ${{ runner.temp }}/release-notes.md
           artifacts: "package/*.dmg"
           draft: true
           allowUpdates: true
