@@ -16,17 +16,32 @@ final class SquirrelInstaller {
     case hans = "im.rime.inputmethod.Squirrel.Hans"
     case hant = "im.rime.inputmethod.Squirrel.Hant"
   }
+  // Every TIS record, INCLUDING duplicates that share an input source ID.
+  // Repeated installs (a still-mounted DMG volume, Trash backups, stale app
+  // bundles) register multiple bundles that each expose the same source ID;
+  // the collapsed `inputSources` dict below keeps only one per ID, so
+  // disable() iterates this full list instead — otherwise the menu keeps
+  // showing residual 鼠鬚管 entries (a subset never gets disabled).
+  private lazy var allInputSources: [TISInputSource] = {
+    TISCreateInputSourceList(nil, true).takeRetainedValue() as! [TISInputSource]
+  }()
+  // One representative record per source ID (last wins). Used by
+  // enable()/select()/enabledModes(): those must act on a single clean
+  // record — enabling every duplicate would re-surface the residue disable()
+  // just cleared.
   private lazy var inputSources: [String: TISInputSource] = {
     var inputSources = [String: TISInputSource]()
-    var matchingSources = [InputMode: TISInputSource]()
-    let sourceList = TISCreateInputSourceList(nil, true).takeRetainedValue() as! [TISInputSource]
-    for inputSource in sourceList {
-      let sourceIDRef = TISGetInputSourceProperty(inputSource, kTISPropertyInputSourceID)
-      guard let sourceID = unsafeBitCast(sourceIDRef, to: CFString?.self) as String? else { continue }
+    for inputSource in allInputSources {
+      guard let sourceID = sourceID(of: inputSource) else { continue }
       inputSources[sourceID] = inputSource
     }
     return inputSources
   }()
+
+  private func sourceID(of inputSource: TISInputSource) -> String? {
+    let sourceIDRef = TISGetInputSourceProperty(inputSource, kTISPropertyInputSourceID)
+    return unsafeBitCast(sourceIDRef, to: CFString?.self) as String?
+  }
 
   func enabledModes() -> [InputMode] {
     var enabledModes = Set<InputMode>()
@@ -109,10 +124,14 @@ final class SquirrelInstaller {
 
   func disable(modes: [InputMode] = []) {
     let modesToDisable = modes.isEmpty ? InputMode.allCases : modes
-    for (mode, inputSource) in getInputSource(modes: modesToDisable) {
+    let targetIDs = Set(modesToDisable.map { $0.rawValue })
+    // Walk the full list (not the collapsed dict) so every duplicate record
+    // sharing a target source ID gets disabled, clearing menu residue.
+    for inputSource in allInputSources {
+      guard let sourceID = sourceID(of: inputSource), targetIDs.contains(sourceID) else { continue }
       if let enabled = getBool(for: inputSource, key: kTISPropertyInputSourceIsEnabled), enabled {
         let error = TISDisableInputSource(inputSource)
-        print("Disable \(error == noErr ? "succeeds" : "fails") for input source: \(mode.rawValue)")
+        print("Disable \(error == noErr ? "succeeds" : "fails") for input source: \(sourceID)")
       }
     }
   }

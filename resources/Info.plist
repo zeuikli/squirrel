@@ -41,8 +41,11 @@
 				</array>
 				<key>tsInputModeDefaultStateKey</key>
 				<false/>
+				<!-- 本 fork 只出台灣正體（洋蔥）；runtime 不依 mode ID 分支，Hans 與
+				     Hant 餵同一個 Rime 引擎。保留 Hans 條目讓升級時 disable(allCases)
+				     仍能清掉舊版曾啟用的 Hans，但隱藏它，避免選單多出無用的「簡體」項。 -->
 				<key>tsInputModeIsVisibleKey</key>
-				<true/>
+				<false/>
 				<key>tsInputModeKeyEquivalentModifiersKey</key>
 				<integer>4608</integer>
 				<key>tsInputModeMenuIconFileKey</key>
@@ -50,7 +53,7 @@
 				<key>tsInputModePaletteIconFileKey</key>
 				<string>rime.pdf</string>
 				<key>tsInputModePrimaryInScriptKey</key>
-				<true/>
+				<false/>
 				<key>tsInputModeScriptKey</key>
 				<string>smUnicodeScript</string>
 			</dict>
@@ -85,7 +88,6 @@
 		</dict>
 		<key>tsVisibleInputModeOrderedArrayKey</key>
 		<array>
-			<string>im.rime.inputmethod.Squirrel.Hans</string>
 			<string>im.rime.inputmethod.Squirrel.Hant</string>
 		</array>
 	</dict>
