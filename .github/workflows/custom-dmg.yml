@@ -46,7 +46,7 @@ on:
         type: string
         default: ''
       notes:
-        description: 'Release notes (Markdown; blank = auto commit list)'
+        description: 'Release highlights (Markdown; title + install footer auto-added; blank = auto commit list)'
         type: string
         default: ''
       draft:
@@ -157,28 +157,45 @@ jobs:
           path: package/*.dmg
           retention-days: 90
 
-      # Release notes: commit list since the previous tag (same format as the
-      # retired release-ci). Self-contained — no git-cliff install needed in CI.
-      # Two paths:
-      #   - tag push: action-changelog.sh (current tag = HEAD, prev = tag before)
-      #   - manual dispatch: no tag at HEAD yet, so list <last tag>..HEAD directly
+      # Release notes = standard template (title + install/lexicon footer, the
+      # same shell as 1.1.6.x / 1.1.7) wrapped around a body. The body is:
+      #   - the maintainer's `notes` highlights (dispatch input), or
+      #   - tag push → action-changelog.sh, or
+      #   - other dispatch → commit list <last tag>..HEAD
+      # Self-contained — no git-cliff install needed in CI.
       - name: Generate release notes
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
         env:
           INPUT_NOTES: ${{ github.event.inputs.notes }}
+          VERSION: ${{ steps.ver.outputs.version }}
         run: |
+          NOTES="$RUNNER_TEMP/release-notes.md"
+          BODY="$RUNNER_TEMP/notes-body.md"
           if [ -n "$INPUT_NOTES" ]; then
-            # Maintainer supplied rich notes at dispatch time — use them verbatim.
-            printf '%s\n' "$INPUT_NOTES" > "$RUNNER_TEMP/release-notes.md"
+            printf '%s\n' "$INPUT_NOTES" > "$BODY"
           elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            ./action-changelog.sh > "$RUNNER_TEMP/release-notes.md"
+            ./action-changelog.sh > "$BODY"
           else
             prev="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-            echo "**Change log since ${prev:-the beginning}:**" > "$RUNNER_TEMP/release-notes.md"
-            echo >> "$RUNNER_TEMP/release-notes.md"
+            echo "**Change log since ${prev:-the beginning}:**" > "$BODY"
+            echo >> "$BODY"
             git log --oneline --decorate "${prev:+$prev..}HEAD" --pretty='format:- %h %s' \
-              | grep -v Merge >> "$RUNNER_TEMP/release-notes.md" || true
+              | grep -v Merge >> "$BODY" || true
           fi
+          # Template: title + highlights/changelog + fixed install & lexicon footer.
+          {
+            echo "**鼠鬚管（語音版）$VERSION**"
+            echo
+            cat "$BODY"
+          } > "$NOTES"
+          cat >> "$NOTES" <<'FOOTER'
+
+---
+
+**安裝**：下載 DMG → 雙擊 → 把 `install.sh` 拖進「終端機」執行。詳見 [INSTALL-zh.md](https://github.com/zeuikli/squirrel/blob/master/INSTALL-zh.md)。macOS 13+。
+
+> 本套件含洋蔥詞庫（約 180MB）。詞庫來源：[Onion_Rime_Files](https://github.com/oniondelta/Onion_Rime_Files)。
+FOOTER
 
       # Publishes the release. On manual dispatch ncipollo creates the tag
       # (pointing at this run's commit) via GITHUB_TOKEN — no local tag push, and
