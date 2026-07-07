@@ -80,6 +80,22 @@ echo "→ 更新 LaunchServices 註冊（鎖定新版路徑）…"
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
 "$LSREGISTER" -f "$DST" 2>/dev/null || true
 
+# 殘留根因：反覆安裝會在 LaunchServices 留下多個已註冊的 Squirrel.app —
+# 掛載中的 DMG 卷（/Volumes/…）、垃圾桶內的舊版備份、舊下載副本等。每個都各自
+# 在輸入來源選單貢獻一組項目（本 bundle 宣告 Hant，升級前的舊版還含 Hans），
+# 就是使用者看到「一堆、一部分簡一部分繁」的來源。-f 新路徑只註冊、不移除舊的，
+# 故逐一 unregister 除了正式安裝路徑（$DST）以外的每一個 Squirrel.app。
+echo "→ 清除其他位置殘留的鼠鬚管註冊（DMG／垃圾桶／舊版）…"
+"$LSREGISTER" -dump 2>/dev/null \
+  | sed -n 's/^[[:space:]]*path:[[:space:]]*//p' \
+  | sed 's/ (0x[0-9a-f]*)$//' \
+  | grep -E '/Squirrel\.app$' \
+  | sort -u \
+  | while IFS= read -r stale; do
+      [ "$stale" = "$DST" ] && continue
+      "$LSREGISTER" -u "$stale" 2>/dev/null && echo "   已移除殘留註冊：$stale" || true
+    done
+
 echo "→ 註冊輸入法…"
 "$DST/Contents/MacOS/Squirrel" --register-input-source || true
 

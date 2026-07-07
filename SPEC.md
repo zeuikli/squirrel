@@ -12,6 +12,7 @@
 |------|------|------|--------|------|
 | C1 | Main.swift / InputSource.swift | 輸入法註冊路徑錯誤 | 高 | 已修 |
 | C2 | BridgingFunctions.swift | librime `data_size` 少算 4 bytes | 中（潛在） | 已修 |
+| C3 | Info.plist / InputSource.swift / make-dmg.sh | 反覆安裝殘留多個輸入法項（含未用的簡體） | 中 | 已修 |
 | P1 | SquirrelPanel.swift | 運算子優先序 bug 使 `memorize_size:false` 失效 | 中 | 已修 |
 | P2 | SquirrelPanel.swift | `inputController` 強參考延後 session 釋放 | 低 | 已修 |
 | P3 | SquirrelPanel.swift | 空候選列產生負長度 `NSRange` | 低（潛在） | 已修 |
@@ -53,6 +54,19 @@ value.data_size = Int32(MemoryLayout<Self>.size - offset)  // → size - 8
 `\Self.data_size` 是一個 `WritableKeyPath` 物件（參考型別），`size(ofValue:)` 回傳的是指標大小（64-bit 上為 **8**），不是欄位 `Int32` 的 **4**。librime 的慣例是 `data_size = sizeof(Type) - sizeof(data_size)`（即 `size - 4`）。目前值小了 4 bytes，librime 的 `RIME_STRUCT_HAS_MEMBER` 會把「結尾最後 4 bytes 內的欄位」判為不存在而回傳零值。
 
 **修正**：改為 `MemoryLayout<Int32>.size`（= 4），得到 `size - 4`，與 librime 約定一致。此修正只會讓 librime 認得「更完整」的結構，不會越界，安全。
+
+### C3 — 反覆安裝殘留多個輸入法項，一部分還是簡體（中）
+使用者回報：裝完選單列仍留一堆「鼠鬚管」，一部分繁體、一部分簡體。兩個獨立成因：
+
+1. **簡體那半 — bundle 宣告了從不使用的 Hans 模式**：`resources/Info.plist` 把 `Squirrel.Hans` 與 `Squirrel.Hant` 都列為可見（`tsInputModeIsVisibleKey=true` + 都在 `tsVisibleInputModeOrderedArrayKey`）。本 fork 只出台灣正體（洋蔥），`SquirrelInputController` runtime 完全不依 mode ID 分支，Hans 與 Hant 餵同一個 Rime 引擎——那個「簡體」項純粹是多餘。
+2. **重複那堆 — LaunchServices 殘留多個 bundle 註冊**：每次安裝都在 LaunchServices 留下已註冊的 `Squirrel.app`——掛載中的 DMG 卷（`/Volumes/…`）、垃圾桶內的舊版備份（`install.sh` 搬到 Trash 卻不 unregister）、舊 build 副本。每一個都各自貢獻一組 Hant（升級前的舊版還含 Hans）選單項。`lsregister -f "$DST"` 只註冊新路徑、不移除舊的。
+
+**修正**：
+- `Info.plist`：Hans `tsInputModeIsVisibleKey→false`、`tsInputModePrimaryInScriptKey→false`、移出 `tsVisibleInputModeOrderedArrayKey`。保留 dict 條目讓升級時 `disable(allCases)` 仍能清掉舊版曾啟用的 Hans。
+- `scripts/make-dmg.sh`（產生的 `install.sh`）：`lsregister -f "$DST"` 後逐一 unregister 除安裝目標外的每個 `Squirrel.app`（DMG／垃圾桶／舊版）。
+- `sources/InputSource.swift`：`disable()` 改走含重複記錄的完整清單（原本的 `[String: TISInputSource]` dict 會把同 ID 折疊成一筆、只 disable 到其一）；`enable()`/`select()` 仍取單一乾淨記錄，避免把殘留重新啟用。
+
+> 註：macOS 只在登入時重建輸入來源清單，故 LaunchServices 清乾淨後，選單列殘留項要**登出再登入**才會完全消失（`install.sh` 已提示）。
 
 ### P1 — 運算子優先序使 `memorize_size: false` 在直排失效（中）
 `sources/SquirrelPanel.swift:448`
