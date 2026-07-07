@@ -20,3 +20,5 @@ package/*.xml
 .*.swp
 .DS_Store
 # data/onion/ is committed (tested Onion lexicon snapshot) for reproducible builds
+# SPEC.md 為本地開發紀錄（保存在開發目錄），不發佈到 GitHub
+SPEC.md
