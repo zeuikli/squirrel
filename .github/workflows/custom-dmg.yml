@@ -157,12 +157,17 @@ jobs:
           path: package/*.dmg
           retention-days: 90
 
+      # git-cliff powers the auto changelog (action-changelog.sh groups commits
+      # by feat/fix/… per cliff.toml). Only needed when we actually publish.
+      - name: Install git-cliff (grouped changelog)
+        if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
+        run: brew install git-cliff
+
       # Release notes = standard template (title + install/lexicon footer, the
       # same shell as 1.1.6.x / 1.1.7) wrapped around a body. The body is:
       #   - the maintainer's `notes` highlights (dispatch input), or
-      #   - tag push → action-changelog.sh, or
+      #   - tag push → action-changelog.sh (git-cliff grouped changelog), or
       #   - other dispatch → commit list <last tag>..HEAD
-      # Self-contained — no git-cliff install needed in CI.
       - name: Generate release notes
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
         env:
@@ -174,13 +179,13 @@ jobs:
           if [ -n "$INPUT_NOTES" ]; then
             printf '%s\n' "$INPUT_NOTES" > "$BODY"
           elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            # Tag push: grouped changelog for the released range (git-cliff).
             ./action-changelog.sh > "$BODY"
           else
-            prev="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-            echo "**Change log since ${prev:-the beginning}:**" > "$BODY"
-            echo >> "$BODY"
-            git log --oneline --decorate "${prev:+$prev..}HEAD" --pretty='format:- %h %s' \
-              | grep -v Merge >> "$BODY" || true
+            # Manual dispatch (no tag at HEAD yet): grouped changelog for the
+            # commits since the last tag, labelled with this run's version.
+            git-cliff --config cliff.toml --unreleased --tag "$VERSION" 2>/dev/null \
+              | sed -e '/^<a name=/d' -e '/^## /d' | awk 'NF{f=1} f' > "$BODY" || true
           fi
           # Template: title + highlights/changelog + fixed install & lexicon footer.
           {
