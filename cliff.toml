@@ -10,7 +10,7 @@ body = """
 - {{ commit.message }} ({{ commit.id | truncate(length=7, end="") }})
 {% endfor %}
 {% endfor -%}
-**Full Changelog**: https://github.com/rime/squirrel/compare/{{ previous.version }}...{{ version }}
+**Full Changelog**: https://github.com/zeuikli/squirrel/compare/{{ previous.version }}...{{ version }}
 
 """
 trim = false

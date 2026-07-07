@@ -10,8 +10,10 @@ name: custom dmg ci
 #   - push to master / pull request → full build + DMG artifact (validation, no release)
 #   - manual run (workflow_dispatch) → DMG uploaded as a build artifact; set the
 #     publish_release input to also create the tag (version from project.pbxproj,
-#     or the version input) and publish a draft release — GITHUB_TOKEN creates the
-#     tag, so no local tag push is needed.
+#     or the version input) and publish a release — GITHUB_TOKEN creates the tag,
+#     so no local tag push is needed. Supply the `notes` input for rich release
+#     notes (blank = auto commit list); uncheck `draft` to publish live in one
+#     step instead of leaving a draft to publish by hand.
 #
 # Building on every PR / push to master (not just at tag time) catches compile
 # breaks — most importantly a new sources/Voice or sources/Settings file that
@@ -36,13 +38,21 @@ on:
   workflow_dispatch:
     inputs:
       publish_release:
-        description: 'Create tag + publish a draft release from this run'
+        description: 'Create tag + publish a release from this run'
         type: boolean
         default: false
       version:
         description: 'Version / tag to release (blank = read from project.pbxproj)'
         type: string
         default: ''
+      notes:
+        description: 'Release highlights (Markdown; title + install footer auto-added; blank = auto commit list)'
+        type: string
+        default: ''
+      draft:
+        description: 'Keep as draft (uncheck to publish live)'
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -147,28 +157,53 @@ jobs:
           path: package/*.dmg
           retention-days: 90
 
-      # Release notes: commit list since the previous tag (same format as the
-      # retired release-ci). Self-contained — no git-cliff install needed in CI.
-      # Two paths:
-      #   - tag push: action-changelog.sh (current tag = HEAD, prev = tag before)
-      #   - manual dispatch: no tag at HEAD yet, so list <last tag>..HEAD directly
+      # git-cliff powers the auto changelog (action-changelog.sh groups commits
+      # by feat/fix/… per cliff.toml). Only needed when we actually publish.
+      - name: Install git-cliff (grouped changelog)
+        if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
+        run: brew install git-cliff
+
+      # Release notes = standard template (title + install/lexicon footer, the
+      # same shell as 1.1.6.x / 1.1.7) wrapped around a body. The body is:
+      #   - the maintainer's `notes` highlights (dispatch input), or
+      #   - tag push → action-changelog.sh (git-cliff grouped changelog), or
+      #   - other dispatch → commit list <last tag>..HEAD
       - name: Generate release notes
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
+        env:
+          INPUT_NOTES: ${{ github.event.inputs.notes }}
+          VERSION: ${{ steps.ver.outputs.version }}
         run: |
-          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            ./action-changelog.sh > "$RUNNER_TEMP/release-notes.md"
+          NOTES="$RUNNER_TEMP/release-notes.md"
+          BODY="$RUNNER_TEMP/notes-body.md"
+          if [ -n "$INPUT_NOTES" ]; then
+            printf '%s\n' "$INPUT_NOTES" > "$BODY"
+          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            # Tag push: grouped changelog for the released range (git-cliff).
+            ./action-changelog.sh > "$BODY"
           else
-            prev="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-            echo "**Change log since ${prev:-the beginning}:**" > "$RUNNER_TEMP/release-notes.md"
-            echo >> "$RUNNER_TEMP/release-notes.md"
-            git log --oneline --decorate "${prev:+$prev..}HEAD" --pretty='format:- %h %s' \
-              | grep -v Merge >> "$RUNNER_TEMP/release-notes.md" || true
+            # Manual dispatch (no tag at HEAD yet): grouped changelog for the
+            # commits since the last tag, labelled with this run's version.
+            git-cliff --config cliff.toml --unreleased --tag "$VERSION" 2>/dev/null \
+              | sed -e '/^<a name=/d' -e '/^## /d' | awk 'NF{f=1} f' > "$BODY" || true
           fi
+          # Template: title + highlights/changelog + fixed install & lexicon
+          # footer. Footer lives in .github/release-footer.md (a heredoc here
+          # would need column-0 lines, which break the YAML run: block scalar).
+          {
+            echo "**鼠鬚管（語音版）$VERSION**"
+            echo
+            cat "$BODY"
+            cat .github/release-footer.md
+          } > "$NOTES"
 
-      # Publishes a draft release. On manual dispatch ncipollo creates the tag
+      # Publishes the release. On manual dispatch ncipollo creates the tag
       # (pointing at this run's commit) via GITHUB_TOKEN — no local tag push, and
       # no cross-workflow trigger needed since the release happens in this job.
-      - name: Publish draft release (tag + notes + DMG)
+      # Draft by default (safe); dispatch with the `draft` input unchecked to
+      # publish live in one step. `notes` input (above) supplies rich release
+      # notes without a follow-up manual edit.
+      - name: Publish release (tag + notes + DMG)
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
         uses: ncipollo/release-action@v1
         with:
@@ -177,6 +212,6 @@ jobs:
           commit: ${{ github.sha }}
           bodyFile: ${{ runner.temp }}/release-notes.md
           artifacts: "package/*.dmg"
-          draft: true
+          draft: ${{ github.event.inputs.draft != 'false' }}
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
