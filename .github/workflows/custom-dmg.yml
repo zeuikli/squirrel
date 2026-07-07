@@ -10,8 +10,10 @@ name: custom dmg ci
 #   - push to master / pull request → full build + DMG artifact (validation, no release)
 #   - manual run (workflow_dispatch) → DMG uploaded as a build artifact; set the
 #     publish_release input to also create the tag (version from project.pbxproj,
-#     or the version input) and publish a draft release — GITHUB_TOKEN creates the
-#     tag, so no local tag push is needed.
+#     or the version input) and publish a release — GITHUB_TOKEN creates the tag,
+#     so no local tag push is needed. Supply the `notes` input for rich release
+#     notes (blank = auto commit list); uncheck `draft` to publish live in one
+#     step instead of leaving a draft to publish by hand.
 #
 # Building on every PR / push to master (not just at tag time) catches compile
 # breaks — most importantly a new sources/Voice or sources/Settings file that
@@ -36,13 +38,21 @@ on:
   workflow_dispatch:
     inputs:
       publish_release:
-        description: 'Create tag + publish a draft release from this run'
+        description: 'Create tag + publish a release from this run'
         type: boolean
         default: false
       version:
         description: 'Version / tag to release (blank = read from project.pbxproj)'
         type: string
         default: ''
+      notes:
+        description: 'Release notes (Markdown; blank = auto commit list)'
+        type: string
+        default: ''
+      draft:
+        description: 'Keep as draft (uncheck to publish live)'
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -154,8 +164,13 @@ jobs:
       #   - manual dispatch: no tag at HEAD yet, so list <last tag>..HEAD directly
       - name: Generate release notes
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
+        env:
+          INPUT_NOTES: ${{ github.event.inputs.notes }}
         run: |
-          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+          if [ -n "$INPUT_NOTES" ]; then
+            # Maintainer supplied rich notes at dispatch time — use them verbatim.
+            printf '%s\n' "$INPUT_NOTES" > "$RUNNER_TEMP/release-notes.md"
+          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
             ./action-changelog.sh > "$RUNNER_TEMP/release-notes.md"
           else
             prev="$(git describe --tags --abbrev=0 2>/dev/null || true)"
@@ -165,10 +180,13 @@ jobs:
               | grep -v Merge >> "$RUNNER_TEMP/release-notes.md" || true
           fi
 
-      # Publishes a draft release. On manual dispatch ncipollo creates the tag
+      # Publishes the release. On manual dispatch ncipollo creates the tag
       # (pointing at this run's commit) via GITHUB_TOKEN — no local tag push, and
       # no cross-workflow trigger needed since the release happens in this job.
-      - name: Publish draft release (tag + notes + DMG)
+      # Draft by default (safe); dispatch with the `draft` input unchecked to
+      # publish live in one step. `notes` input (above) supplies rich release
+      # notes without a follow-up manual edit.
+      - name: Publish release (tag + notes + DMG)
         if: ${{ github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true') }}
         uses: ncipollo/release-action@v1
         with:
@@ -177,6 +195,6 @@ jobs:
           commit: ${{ github.sha }}
           bodyFile: ${{ runner.temp }}/release-notes.md
           artifacts: "package/*.dmg"
-          draft: true
+          draft: ${{ github.event.inputs.draft != 'false' }}
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
