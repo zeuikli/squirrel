@@ -13,12 +13,14 @@ import AppKit
 enum VoiceBackend: String, CaseIterable {
   case groq
   case chatgpt
+  case chatgptLiveWeb = "chatgpt_live_web"
   case geminiWeb = "gemini_web"
 
   var label: String {
     switch self {
     case .groq:      return "Groq API (key)"
-    case .chatgpt:   return "ChatGPT Web (session)"
+    case .chatgpt:   return "ChatGPT Web transcription (session)"
+    case .chatgptLiveWeb: return "ChatGPT GPT Live Web (experimental)"
     case .geminiWeb: return "Gemini Web (session)"
     }
   }
@@ -26,7 +28,7 @@ enum VoiceBackend: String, CaseIterable {
   /// Web-session backends drive a logged-in WKWebView and must be warmed/awaited
   /// before transcription; key-driven REST backends (groq, gemini_api) don't.
   var isWebSession: Bool {
-    self == .chatgpt || self == .geminiWeb
+    self == .chatgpt || self == .chatgptLiveWeb || self == .geminiWeb
   }
 }
 
@@ -51,6 +53,48 @@ enum VoiceTriggerKind: String, CaseIterable {
 enum VoiceNoClientFallback: String {
   case clipboard
   case discard
+}
+
+enum GPTLiveInteractionMode: String, CaseIterable {
+  case transcriptionOnly = "transcription_only"
+  case conversation
+
+  var label: String {
+    switch self {
+    case .transcriptionOnly: return "Insert transcript (mute + auto-close)"
+    case .conversation: return "ChatGPT voice conversation"
+    }
+  }
+}
+
+enum GPTLiveVoiceGender: String, CaseIterable {
+  case systemDefault = "default"
+  case feminine
+  case masculine
+
+  var label: String {
+    switch self {
+    case .systemDefault: return "Follow ChatGPT default"
+    case .feminine: return "Feminine voice"
+    case .masculine: return "Masculine voice"
+    }
+  }
+}
+
+enum GPTLiveVoiceTone: String, CaseIterable {
+  case balanced
+  case warm
+  case calm
+  case energetic
+
+  var label: String {
+    switch self {
+    case .balanced: return "Balanced"
+    case .warm: return "Warm"
+    case .calm: return "Calm"
+    case .energetic: return "Energetic"
+    }
+  }
 }
 
 /// Whisper languages offered in the UI (SPEC §19.1). Other ISO-639-1 codes
@@ -91,6 +135,23 @@ struct VoiceSettings {
   var maxRecordingSeconds: Int = 60
   var playSounds: Bool = true
   var noActiveClient: VoiceNoClientFallback = .clipboard
+  var gptLiveMode: GPTLiveInteractionMode = .transcriptionOnly
+  var gptLiveGender: GPTLiveVoiceGender = .systemDefault
+  var gptLiveTone: GPTLiveVoiceTone = .balanced
+
+  var gptLiveVoiceSlug: String? {
+    switch (gptLiveGender, gptLiveTone) {
+    case (.systemDefault, _): return nil
+    case (.feminine, .balanced): return "maple"
+    case (.feminine, .warm): return "juniper"
+    case (.feminine, .calm): return "vale"
+    case (.feminine, .energetic): return "breeze"
+    case (.masculine, .balanced): return "arbor"
+    case (.masculine, .warm): return "ember"
+    case (.masculine, .calm): return "cove"
+    case (.masculine, .energetic): return "spruce"
+    }
+  }
 }
 
 /// Loads the merged snapshot and persists UI edits to UserDefaults.
@@ -119,6 +180,9 @@ enum VoiceConfig {
     case maxRecordingSeconds = "voice.maxRecordingSeconds"
     case playSounds = "voice.playSounds"
     case noActiveClient = "voice.noActiveClient"
+    case gptLiveMode = "voice.gptLiveMode"
+    case gptLiveGender = "voice.gptLiveGender"
+    case gptLiveTone = "voice.gptLiveTone"
   }
 
   /// Merge UserDefaults > squirrel.yaml > hard defaults.
@@ -165,6 +229,9 @@ enum VoiceConfig {
     s.maxRecordingSeconds = int(.maxRecordingSeconds, "voice_input/max_recording_seconds", s.maxRecordingSeconds)
     s.playSounds = bool(.playSounds, "voice_input/play_sounds", s.playSounds)
     s.noActiveClient = VoiceNoClientFallback(rawValue: str(.noActiveClient, "voice_input/no_active_client", s.noActiveClient.rawValue)) ?? .clipboard
+    s.gptLiveMode = GPTLiveInteractionMode(rawValue: str(.gptLiveMode, "voice_input/chatgpt_live/mode", s.gptLiveMode.rawValue)) ?? .transcriptionOnly
+    s.gptLiveGender = GPTLiveVoiceGender(rawValue: str(.gptLiveGender, "voice_input/chatgpt_live/gender", s.gptLiveGender.rawValue)) ?? .systemDefault
+    s.gptLiveTone = GPTLiveVoiceTone(rawValue: str(.gptLiveTone, "voice_input/chatgpt_live/tone", s.gptLiveTone.rawValue)) ?? .balanced
     // Modifiers: UserDefaults (raw bitmask) > yaml "control+option" string > default.
     if let v = d.object(forKey: Key.customModifiers.rawValue) as? Int {
       s.customModifiers = UInt(v)

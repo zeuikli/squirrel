@@ -250,6 +250,16 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     openPreferences(tab: .voice)
   }
 
+  func openChatGPTLiveTest(targetApplication: NSRunningApplication?) {
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      if self.voiceSettingsWindow == nil {
+        self.voiceSettingsWindow = VoiceSettingsWindowController()
+      }
+      self.voiceSettingsWindow?.showChatGPTLive(targetApplication: targetApplication)
+    }
+  }
+
   func openPreferences(tab: SettingsTab = .general) {
     Task { @MainActor [weak self] in
       guard let self = self else { return }

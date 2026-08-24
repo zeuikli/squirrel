@@ -22,6 +22,7 @@ private struct SettingsRootView: View {
   @ObservedObject var voiceModel: VoiceSettingsModel
   @Binding var selection: SettingsTab
   var openLogin: () -> Void
+  var openChatGPTLive: () -> Void
   var openGeminiLogin: () -> Void
 
   var body: some View {
@@ -29,7 +30,8 @@ private struct SettingsRootView: View {
       GeneralSettingsView(model: generalModel)
         .tabItem { Text(NSLocalizedString("General", comment: "Settings")) }
         .tag(SettingsTab.general)
-      VoiceSettingsView(model: voiceModel, openLogin: openLogin, openGeminiLogin: openGeminiLogin)
+      VoiceSettingsView(model: voiceModel, openLogin: openLogin,
+                        openChatGPTLive: openChatGPTLive, openGeminiLogin: openGeminiLogin)
         .tabItem { Text(NSLocalizedString("Voice", comment: "Settings")) }
         .tag(SettingsTab.voice)
     }
@@ -42,8 +44,10 @@ private struct SettingsRootView: View {
 final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
   private var window: NSWindow?
   private var loginWindow: NSWindow?
+  private var chatGPTLiveWindow: NSWindow?
   private var geminiLoginWindow: NSWindow?
   private var generalModel: SquirrelSettingsModel?
+  private weak var lastExternalApplication: NSRunningApplication?
   private var tabSelection = TabSelectionBox()
 
   /// Bridges the SwiftUI tab binding to this AppKit controller.
@@ -52,6 +56,10 @@ final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
   }
 
   func show(tab: SettingsTab = .general) {
+    if let front = NSWorkspace.shared.frontmostApplication,
+       front.bundleIdentifier != Bundle.main.bundleIdentifier {
+      lastExternalApplication = front
+    }
     Self.installEditMenuIfNeeded()
     if window == nil {
       let general = SquirrelSettingsModel()
@@ -60,6 +68,7 @@ final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
       let box = tabSelection
       let view = SettingsRootViewWrapper(box: box, generalModel: general, voiceModel: voice,
                                          openLogin: { [weak self] in self?.showLogin() },
+                                         openChatGPTLive: { [weak self] in self?.showChatGPTLive(targetApplication: nil) },
                                          openGeminiLogin: { [weak self] in self?.showGeminiLogin() })
       let host = NSHostingController(rootView: view)
       let win = NSWindow(contentViewController: host)
@@ -84,11 +93,13 @@ final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
     let generalModel: SquirrelSettingsModel
     let voiceModel: VoiceSettingsModel
     var openLogin: () -> Void
+    var openChatGPTLive: () -> Void
     var openGeminiLogin: () -> Void
 
     var body: some View {
       SettingsRootView(generalModel: generalModel, voiceModel: voiceModel,
-                       selection: $box.tab, openLogin: openLogin, openGeminiLogin: openGeminiLogin)
+                       selection: $box.tab, openLogin: openLogin,
+                       openChatGPTLive: openChatGPTLive, openGeminiLogin: openGeminiLogin)
     }
   }
 
@@ -162,6 +173,29 @@ final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
     geminiLoginWindow?.makeKeyAndOrderFront(nil)
   }
 
+  func showChatGPTLive(targetApplication: NSRunningApplication?) {
+    if let targetApplication,
+       targetApplication.bundleIdentifier != Bundle.main.bundleIdentifier {
+      lastExternalApplication = targetApplication
+    }
+    NSApp.setActivationPolicy(.regular)
+    NSApp.activate(ignoringOtherApps: true)
+    if chatGPTLiveWindow == nil {
+      let view = ChatGPTLiveTestContainer(targetApplication: lastExternalApplication, done: { [weak self] in
+        self?.chatGPTLiveWindow?.close()
+      })
+      let host = NSHostingController(rootView: view)
+      let win = NSWindow(contentViewController: host)
+      win.title = NSLocalizedString("GPT Live web test", comment: "Voice settings")
+      win.styleMask = [.titled, .closable, .resizable]
+      win.isReleasedWhenClosed = false
+      win.delegate = self
+      win.center()
+      chatGPTLiveWindow = win
+    }
+    chatGPTLiveWindow?.makeKeyAndOrderFront(nil)
+  }
+
   func windowWillClose(_ notification: Notification) {
     guard let closing = notification.object as? NSWindow else { return }
     if closing == loginWindow {
@@ -175,10 +209,16 @@ final class VoiceSettingsWindowController: NSObject, NSWindowDelegate {
       Task { await GeminiWebBridge.persistSharedSession() }
       return
     }
+    if closing == chatGPTLiveWindow {
+      chatGPTLiveWindow = nil
+      Task { await ChatGPTBridge.persistSharedSession() }
+      return
+    }
     if closing == window {
       window = nil
       generalModel = nil
       loginWindow?.close()
+      chatGPTLiveWindow?.close()
       geminiLoginWindow?.close()
       // Back to a background-only IME once all our windows are gone.
       NSApp.setActivationPolicy(.accessory)

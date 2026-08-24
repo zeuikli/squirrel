@@ -11,6 +11,9 @@
 //  Any failure → log + sound + back to idle; cleanup failure falls back to
 //  the raw transcript so text is never lost.
 //
+// The controller intentionally owns the complete recording/transcription
+// state machine so cancellation and provider teardown share one lifecycle.
+// swiftlint:disable type_body_length
 
 import Foundation
 import AppKit
@@ -95,6 +98,9 @@ final class VoiceInputController {
     pipeline?.cancel()
     recorder.cancel()
     hotkeyHeld = false
+    if settings.backend == .chatgptLiveWeb {
+      ChatGPTLiveBackgroundController.shared.shutdown(reason: "voice_controller_stopped")
+    }
     // Clear any in-progress indicator so the transient menu-bar mic icon is
     // removed when voice input is disabled mid-recording (SPEC §V5).
     status = .ready
@@ -103,7 +109,15 @@ final class VoiceInputController {
 
   /// Apply new settings in place (idempotent; called on deploy / UI change).
   func reload(settings: VoiceSettings) {
+    let previous = self.settings
     self.settings = settings
+    if previous.backend == .chatgptLiveWeb,
+       settings.backend != .chatgptLiveWeb ||
+       previous.gptLiveMode != settings.gptLiveMode ||
+       previous.gptLiveGender != settings.gptLiveGender ||
+       previous.gptLiveTone != settings.gptLiveTone {
+      ChatGPTLiveBackgroundController.shared.shutdown(reason: "voice_settings_changed")
+    }
     if currentEngine() == .cgtap, !PermissionsManager.inputMonitoringTrusted {
       PermissionsManager.requestInputMonitoring()
     }
@@ -121,6 +135,9 @@ final class VoiceInputController {
     case .chatgpt:
       if bridge == nil { bridge = ChatGPTBridge() }
       return bridge!
+    case .chatgptLiveWeb:
+      if bridge == nil { bridge = ChatGPTBridge() }
+      return bridge!  // beginRecording() redirects this mode to the Voice UI
     case .geminiWeb:
       if geminiBridge == nil { geminiBridge = GeminiWebBridge() }
       return geminiBridge!
@@ -132,6 +149,7 @@ final class VoiceInputController {
   private func awaitWebReadyIfNeeded() async {
     switch settings.backend {
     case .chatgpt:   await bridge?.waitUntilReady()
+    case .chatgptLiveWeb: break
     case .geminiWeb: await geminiBridge?.waitUntilReady()
     default:         break
     }
@@ -146,6 +164,7 @@ final class VoiceInputController {
     switch settings.backend {
     case .groq:      return settings.cleanupModel
     case .chatgpt:   return settings.cleanupChatGPTModel
+    case .chatgptLiveWeb: return settings.cleanupChatGPTModel
     case .geminiWeb: return settings.cleanupModel   // ignored by the web bridge
     }
   }
@@ -154,10 +173,18 @@ final class VoiceInputController {
   /// transcribe endpoints (and Whisper `language: zh`) lean Simplified, and the
   /// LLM cleanup that's meant to fix that can be off, fail, or ignore the rule —
   /// so we convert deterministically (SPEC §4.9).
-  private var wantsTraditionalChinese: Bool {
+  ///
+  /// Keep this decision based on the immutable settings snapshot rather than
+  /// the detected script of the returned text: converting a Japanese or English
+  /// target just because it happens to contain Han characters would be wrong.
+  static func wantsTraditionalChineseOutput(for settings: VoiceSettings) -> Bool {
     guard settings.transcribeLanguage == "zh" else { return false }
     let target = settings.cleanupLanguage
     return target.isEmpty || target.hasPrefix("zh-TW") || target.hasPrefix("zh-Hant")
+  }
+
+  private var wantsTraditionalChinese: Bool {
+    Self.wantsTraditionalChineseOutput(for: settings)
   }
 
   /// Force Taiwan Traditional output via OpenCC s2twp, independent of cleanup.
@@ -165,6 +192,16 @@ final class VoiceInputController {
   /// non-Chinese targets or if the converter is unavailable.
   private func enforceTraditional(_ text: String) -> String {
     guard wantsTraditionalChinese else { return text }
+    return OpenCCBridge.s2twpConverter().convert(text)
+  }
+
+  /// The narrowly scoped normalization used only by GPT Live's final
+  /// transcript delivery paths. Both the visible Web Test and the background
+  /// push-to-talk controller supply their current settings snapshot, so a
+  /// non-Chinese target never receives an unintended Simplified→Traditional
+  /// conversion.
+  static func normalizedLiveTranscript(_ text: String, settings: VoiceSettings) -> String {
+    guard wantsTraditionalChineseOutput(for: settings) else { return text }
     return OpenCCBridge.s2twpConverter().convert(text)
   }
 
@@ -192,6 +229,9 @@ final class VoiceInputController {
         status = .error(error.localizedDescription)
         NSLog("[SquirrelVoice] ChatGPT warm failed: %@", error.localizedDescription)
       }
+    case .chatgptLiveWeb:
+      status = .ready
+      NSLog("[SquirrelVoice] GPT Live Web ready — hotkey opens official Voice UI")
     case .geminiWeb:
       if geminiBridge == nil { geminiBridge = GeminiWebBridge() }
       do {
@@ -272,6 +312,13 @@ final class VoiceInputController {
   // MARK: - Recording pipeline
 
   private func beginRecording() {
+    if settings.backend == .chatgptLiveWeb {
+      let front = NSWorkspace.shared.frontmostApplication
+      if front?.bundleIdentifier != Bundle.main.bundleIdentifier { captureTargetApp = front }
+      ChatGPTLiveBackgroundController.shared.start(targetApplication: captureTargetApp, settings: settings)
+      status = .ready
+      return
+    }
     guard !busy, !recorder.isRecording else { return }
     // Recording is local, so start even while the backend is still warming
     // (the pipeline awaits web-session readiness before transcribing; a missing
@@ -319,6 +366,10 @@ final class VoiceInputController {
     hotkeyHeld = false
     recTimeout?.invalidate()
     recTimeout = nil
+    if settings.backend == .chatgptLiveWeb {
+      ChatGPTLiveBackgroundController.shared.finishUtterance()
+      return
+    }
     guard recorder.isRecording else { return }
     if settings.playSounds { NSSound(named: "Pop")?.play() }
     guard let (url, durationMs) = recorder.stop() else { status = .ready; return }
@@ -441,7 +492,7 @@ final class VoiceInputController {
     }
     if Self.needsPasteDelivery(bundleID) {
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → clipboard + ⌘V paste (\(text.count) chars)"
-      pasteViaClipboard(text)
+      Self.pasteViaClipboard(text)
     } else if SquirrelInputController.canCommitVoiceText {
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → IMK insertText (\(text.count) chars)"
       NSLog("[SquirrelVoice] committed %d chars via IMK to %@", text.count, bundleID)
@@ -465,7 +516,7 @@ final class VoiceInputController {
     } else {
       // No active IMK client (some apps activate their IME only on first compose).
       Self.lastCommitDiagnostic = "[commit] \(bundleID) → no IMK client, clipboard + ⌘V paste (\(text.count) chars)"
-      pasteViaClipboard(text)
+      Self.pasteViaClipboard(text)
     }
   }
 
@@ -477,7 +528,7 @@ final class VoiceInputController {
   /// read the pasteboard *asynchronously* after the synthetic ⌘V — often >1s
   /// later — so an early restore makes them paste the PREVIOUS clipboard content
   /// (confirmed: "keeps last text"). The recognized text stays on the clipboard.
-  private func pasteViaClipboard(_ text: String) {
+  private static func pasteViaClipboard(_ text: String, delay: TimeInterval = 0.15) {
     let pb = NSPasteboard.general
     pb.clearContents()
     pb.setString(text, forType: .string)
@@ -496,7 +547,7 @@ final class VoiceInputController {
     // The 0.15s delay lets the push-to-talk modifier key-up settle AND the target
     // app's re-activation (in deliver) finish, so the ⌘V isn't merged with a stale
     // Option flag and lands in the right window.
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
       let src = CGEventSource(stateID: .hidSystemState)
       let vKey = CGKeyCode(9)   // 'v'
       let down = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: true)
@@ -508,8 +559,38 @@ final class VoiceInputController {
     }
   }
 
+  /// GPT Live runs in a foreground WKWebView, so the IMK current client still
+  /// points at (or has just detached from) that WebView when the final transcript
+  /// arrives. Always use the proven clipboard/HID path after reactivating the app
+  /// captured before the Voice window opened; this avoids committing back into
+  /// ChatGPT or losing the text during the IMK focus handoff.
+  static func deliverLiveTranscript(_ text: String,
+                                    to target: NSRunningApplication?,
+                                    settings: VoiceSettings) {
+    let text = normalizedLiveTranscript(text, settings: settings)
+    guard let target, !target.isTerminated,
+          target.bundleIdentifier != Bundle.main.bundleIdentifier else {
+      let pb = NSPasteboard.general
+      pb.clearContents()
+      pb.setString(text, forType: .string)
+      lastCommitDiagnostic = "[GPT Live] no external target — copied transcript; press ⌘V (\(text.count) chars)"
+      NSLog("[SquirrelVoice] GPT Live copied %d chars (no external target)", text.count)
+      SquirrelApplicationDelegate.showMessage(
+        msgText: NSLocalizedString("GPT Live transcript copied — press ⌘V to paste", comment: "Voice"))
+      return
+    }
+    let bundleID = target.bundleIdentifier ?? "unknown"
+    target.activate(options: [])
+    lastCommitDiagnostic = "[GPT Live] \(bundleID) → clipboard + ⌘V paste (\(text.count) chars)"
+    ChatGPTLiveProtocolLog.shared.write("delivery target=\(bundleID) method=clipboard_paste chars=\(text.count) result=scheduled")
+    NSLog("[SquirrelVoice] GPT Live delivering %d chars via clipboard paste to %@", text.count, bundleID)
+    pasteViaClipboard(text, delay: 0.40)
+  }
+
   private func playErrorFeedback(_ message: String) {
     if settings.playSounds { NSSound.beep() }
     NSLog("[SquirrelVoice] error: %@", message)
   }
 }
+
+// swiftlint:enable type_body_length

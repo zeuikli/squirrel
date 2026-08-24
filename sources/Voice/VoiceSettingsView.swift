@@ -24,6 +24,9 @@ final class VoiceSettingsModel: ObservableObject {
   @Published var playSounds: Bool
   @Published var cookiesPath: String
   @Published var geminiCookiesPath: String
+  @Published var gptLiveMode: GPTLiveInteractionMode
+  @Published var gptLiveGender: GPTLiveVoiceGender
+  @Published var gptLiveTone: GPTLiveVoiceTone
 
   @Published var groqKeyField: String = ""
   @Published var groqKeyStatus: String = ""
@@ -53,6 +56,9 @@ final class VoiceSettingsModel: ObservableObject {
     playSounds = s.playSounds
     cookiesPath = s.cookiesPath
     geminiCookiesPath = s.geminiCookiesPath
+    gptLiveMode = s.gptLiveMode
+    gptLiveGender = s.gptLiveGender
+    gptLiveTone = s.gptLiveTone
     lastLanguage = s.transcribeLanguage
     refreshGroqKeyStatus()
     // Live permission readout: TCC grants flip while System Settings is open.
@@ -111,6 +117,9 @@ final class VoiceSettingsModel: ObservableObject {
     VoiceConfig.set(.playSounds, playSounds)
     VoiceConfig.set(.cookiesPath, cookiesPath)
     VoiceConfig.set(.geminiCookiesPath, geminiCookiesPath)
+    VoiceConfig.set(.gptLiveMode, gptLiveMode.rawValue)
+    VoiceConfig.set(.gptLiveGender, gptLiveGender.rawValue)
+    VoiceConfig.set(.gptLiveTone, gptLiveTone.rawValue)
     persistPrompts()
     VoiceConfig.notifyChanged()
   }
@@ -225,6 +234,7 @@ final class VoiceSettingsModel: ObservableObject {
 struct VoiceSettingsView: View {
   @ObservedObject var model: VoiceSettingsModel
   var openLogin: () -> Void
+  var openChatGPTLive: () -> Void
   var openGeminiLogin: () -> Void
   /// Diagnostics are hidden by default; users expand only when troubleshooting.
   @State private var showDiagnostics = false
@@ -321,7 +331,7 @@ struct VoiceSettingsView: View {
             .font(.system(.footnote))
             .frame(minHeight: 48, maxHeight: 80)
             .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
-          if model.backend == .chatgpt {
+          if model.backend == .chatgpt || model.backend == .chatgptLiveWeb {
             Text(NSLocalizedString("Not supported by the ChatGPT Web backend — Groq only.", comment: "Voice settings"))
               .font(.footnote)
               .foregroundColor(.orange)
@@ -378,6 +388,46 @@ struct VoiceSettingsView: View {
           TextField(NSLocalizedString("cookies.json path", comment: "Voice settings"),
                     text: $model.cookiesPath,
                     prompt: Text(NSLocalizedString("Optional, legacy — UI sign-in is preferred", comment: "Voice settings")))
+        }
+      }
+
+      if model.backend == .chatgptLiveWeb {
+        Section(NSLocalizedString("GPT Live Web session", comment: "Voice settings")) {
+          LabeledContent(NSLocalizedString("Status", comment: "Voice settings")) {
+            Text(model.chatgptLoginStatus.isEmpty
+                 ? NSLocalizedString("Not checked —", comment: "Voice settings")
+                 : model.chatgptLoginStatus)
+              .foregroundColor(.secondary)
+          }
+          HStack {
+            Button(NSLocalizedString("Sign in to ChatGPT…", comment: "Voice settings")) { openLogin() }
+            Button(NSLocalizedString("Check session", comment: "Voice settings")) { model.refreshChatGPTStatus() }
+            Button(NSLocalizedString("Open GPT Live test…", comment: "Voice settings")) { openChatGPTLive() }
+            Button(NSLocalizedString("Reveal safe log", comment: "Voice settings")) {
+              NSWorkspace.shared.activateFileViewerSelecting([ChatGPTLiveProtocolLog.shared.url])
+            }
+          }
+          Picker(NSLocalizedString("Use GPT Live for", comment: "Voice settings"), selection: $model.gptLiveMode) {
+            ForEach(GPTLiveInteractionMode.allCases, id: \.self) { Text($0.label).tag($0) }
+          }
+          Picker(NSLocalizedString("Voice preference", comment: "Voice settings"), selection: $model.gptLiveGender) {
+            ForEach(GPTLiveVoiceGender.allCases, id: \.self) { Text($0.label).tag($0) }
+          }
+          Picker(NSLocalizedString("Voice tone", comment: "Voice settings"), selection: $model.gptLiveTone) {
+            ForEach(GPTLiveVoiceTone.allCases, id: \.self) { Text($0.label).tag($0) }
+          }
+          .disabled(model.gptLiveGender == .systemDefault)
+          Text(model.gptLiveMode == .transcriptionOnly
+               ? NSLocalizedString("Default: inserts your words, mutes the assistant reply, then auto-closes. This still uses ChatGPT Voice and may create a chat; it is not a standalone transcription API.", comment: "Voice settings")
+               : NSLocalizedString("Conversation mode keeps the Voice session available for ChatGPT replies; hold the push-to-talk key again for the next turn.", comment: "Voice settings"))
+            .font(.footnote)
+            .foregroundColor(.secondary)
+          Text(NSLocalizedString("Gender and tone map to experimental ChatGPT Web voice presets and may change when the website changes. Follow ChatGPT default ignores tone.", comment: "Voice settings"))
+            .font(.footnote)
+            .foregroundColor(.orange)
+          Text(NSLocalizedString("The push-to-talk key starts official ChatGPT Voice in the background without showing the diagnostic window. The safe protocol log records /realtime/wm, WebRTC and event schemas, but redacts credentials, identifiers, SDP/ICE, payloads and transcript text.", comment: "Voice settings"))
+            .font(.footnote)
+            .foregroundColor(.orange)
         }
       }
 
@@ -444,5 +494,8 @@ struct VoiceSettingsView: View {
     .onChange(of: model.playSounds) { _ in model.save() }
     .onChange(of: model.cookiesPath) { _ in model.save() }
     .onChange(of: model.geminiCookiesPath) { _ in model.save() }
+    .onChange(of: model.gptLiveMode) { _ in model.save() }
+    .onChange(of: model.gptLiveGender) { _ in model.save() }
+    .onChange(of: model.gptLiveTone) { _ in model.save() }
   }
 }
